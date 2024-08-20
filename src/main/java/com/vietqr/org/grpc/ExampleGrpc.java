@@ -1,0 +1,4 @@
+package com.vietqr.org.grpc;
+
+public class ExampleGrpc {
+}
