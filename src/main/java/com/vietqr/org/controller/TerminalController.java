@@ -34,4 +34,13 @@ public class TerminalController {
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id){
+        Object result = terminalService.getTerminalById(id);
+        if(result instanceof ResponseMessageDTO){
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

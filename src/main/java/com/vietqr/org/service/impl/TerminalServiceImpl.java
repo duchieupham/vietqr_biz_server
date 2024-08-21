@@ -59,4 +59,28 @@ public class TerminalServiceImpl implements TerminalService {
 
         return result;
     }
+
+    @Override
+    public Object getTerminalById(String id) {
+        Object result = null;
+        if (id != null && !id.isEmpty()) {
+            try {
+                TerminalEntity entity = repo.getTerminalById(id);
+                if (entity != null) {
+                    result = new ResponseObjectDTO(Status.SUCCESS, entity);
+                } else {
+                    result = new ResponseMessageDTO(Status.FAILED, "E186");
+                    logger.error("getTerminal: Terminal is null" + " at: " + System.currentTimeMillis());
+                }
+            } catch (Exception e) {
+                result = new ResponseObjectDTO(Status.FAILED, "E05");
+                logger.error("getTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            }
+        } else {
+            result = new ResponseObjectDTO(Status.FAILED, "E46");
+            logger.error("getTerminal: Invalid request body" + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
 }
