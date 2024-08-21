@@ -1,6 +1,7 @@
 package com.vietqr.org.controller;
 
 import com.vietqr.org.dto.common.ResponseMessageDTO;
+import com.vietqr.org.dto.terminal.TerminalGetListDTO;
 import com.vietqr.org.dto.terminal.TerminalInsertDTO;
 import com.vietqr.org.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,14 @@ public class TerminalController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<Object> getListOfTerminal(@Validated @RequestBody TerminalGetListDTO dto){
+        Object result = terminalService.getListOfTerminal(dto);
+        if(result instanceof ResponseMessageDTO){
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
