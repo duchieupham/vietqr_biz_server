@@ -1,16 +1,17 @@
 package com.vietqr.org.entity;
 
 import com.vietqr.org.utils.DateTimeUtil;
+import com.vietqr.org.utils.StringUtil;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
-@Table(name = "terminal")
+@Table(name = "terminal", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"code"}),
+        @UniqueConstraint(columnNames = {"public_id"})
+})
 public class TerminalEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -79,26 +80,17 @@ public class TerminalEntity implements Serializable {
     public TerminalEntity() {
     }
 
-    public TerminalEntity(String name, String address, String mid, String code, String rawCode, String publicId, String refId, String bankId, String qrBoxId, boolean sub, String data1, String data2, String traceTransfer) {
-        this.name = name;
-        this.address = address;
-        this.mid = mid;
-        this.code = code;
-        this.rawCode = rawCode;
-        this.publicId = publicId;
-        this.refId = refId;
-        this.bankId = bankId;
-        this.qrBoxId = qrBoxId;
-        this.sub = sub;
-        this.data1 = data1;
-        this.data2 = data2;
-        this.traceTransfer = traceTransfer;
+    public TerminalEntity(String name, String address, String mid, String rawCode, String bankId) {
+        this.name = name.trim();
+        this.address = address.trim();
+        this.mid = mid.trim();
+        this.rawCode = rawCode.trim();
+        this.bankId = bankId.trim();
+        this.code = StringUtil.generateTerminalCode(name);
         UUID uuid = UUID.randomUUID();
         this.id = uuid.toString();
         this.numOfStaff = 0;
-        long createdAt = DateTimeUtil.getNowUTC();
-        this.timeCreated = createdAt;
-
+        this.timeCreated = DateTimeUtil.getNowUTC();
     }
 
     public String getId() {

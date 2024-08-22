@@ -1,5 +1,6 @@
 package com.vietqr.org.controller;
 
+import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.terminal.TerminalFindDTO;
 import com.vietqr.org.dto.terminal.TerminalGetListDTO;
@@ -21,7 +22,7 @@ public class TerminalController {
     @PostMapping("/insert")
     public ResponseEntity<ResponseMessageDTO> insertTerminal(@Validated @RequestBody TerminalInsertDTO dto){
         ResponseMessageDTO result = terminalService.insertTerminal(dto);
-        if("SUCCESS".equals(result.getStatus())){
+        if(Status.SUCCESS.equals(result.getStatus())){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);

@@ -27,7 +27,7 @@ public class TerminalServiceImpl implements TerminalService {
     public ResponseMessageDTO insertTerminal(TerminalInsertDTO dto) {
         ResponseMessageDTO result = null;
         try {
-            TerminalEntity entity = new TerminalEntity(dto.getName(), dto.getAddress(), dto.getMid(), dto.getCode(), dto.getRawCode(), dto.getPublicId(), dto.getRefId(), dto.getBankId(), dto.getQrBoxId(), dto.isSub(), dto.getData1(), dto.getData2(), dto.getTraceTransfer());
+            TerminalEntity entity = new TerminalEntity(dto.getName(), dto.getAddress(), dto.getMid(), dto.getRawCode(), dto.getBankId());
             repo.save(entity);
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
