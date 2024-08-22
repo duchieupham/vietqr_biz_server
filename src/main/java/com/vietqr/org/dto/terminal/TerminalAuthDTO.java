@@ -2,7 +2,7 @@ package com.vietqr.org.dto.terminal;
 
 import javax.validation.constraints.*;
 
-public class TerminalGetByIdDTO {
+public class TerminalAuthDTO {
     @NotNull
     @NotBlank
     @NotEmpty
@@ -13,10 +13,10 @@ public class TerminalGetByIdDTO {
     @NotEmpty
     private String userId;
 
-    public TerminalGetByIdDTO() {
+    public TerminalAuthDTO() {
     }
 
-    public TerminalGetByIdDTO(String id, String userId) {
+    public TerminalAuthDTO(String id, String userId) {
         this.id = id;
         this.userId = userId;
     }

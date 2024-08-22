@@ -74,7 +74,7 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public Object getTerminalById(TerminalGetByIdDTO dto) {
+    public Object getTerminalById(TerminalAuthDTO dto) {
         /*
          * TODO: Check user is belong to the merchant (when connect gRPC)
          * */
@@ -88,7 +88,7 @@ public class TerminalServiceImpl implements TerminalService {
                 logger.error("getTerminalById: Terminal is null at: " + System.currentTimeMillis());
             }
         } catch (Exception e) {
-            result = new ResponseObjectDTO(Status.FAILED, "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("getTerminalById: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
@@ -136,7 +136,7 @@ public class TerminalServiceImpl implements TerminalService {
                 }
             }
         } catch (Exception e) {
-            result = new ResponseObjectDTO(Status.FAILED, "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("searchTerminals: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
@@ -175,7 +175,7 @@ public class TerminalServiceImpl implements TerminalService {
 
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
-            logger.error("insertTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            logger.error("updateTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;
@@ -190,6 +190,31 @@ public class TerminalServiceImpl implements TerminalService {
                 result = false;
             }
         }
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO deleteTerminal(TerminalAuthDTO dto) {
+        /*
+         * TODO: Check user is belong to the merchant (when connect gRPC)
+         *  Update info when update the status
+         * */
+        ResponseMessageDTO result = null;
+
+        try {
+            TerminalEntity entity = repo.findTerminalById(dto.getId());
+            if (entity != null && entity.getStatus()) {
+                repo.deleteTerminal(dto.getId());
+                result = new ResponseMessageDTO(Status.SUCCESS, "");
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E05");
+                logger.error("deleteTerminal: Terminal is null at: " + System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("deleteTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
         return result;
     }
 

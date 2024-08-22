@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -63,6 +64,7 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> findTerminalsByAddress(@Param(value = "mid") String mid, @Param(value = "address") String address);
 
+    @Transactional
     @Modifying
     @Query(value = "UPDATE terminal t"
             + " SET t.name = :name, t.address = :address, t.code = :code, t.bankId = :bankId"
@@ -73,4 +75,12 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
                         @Param("address") String address,
                         @Param("code") String code,
                         @Param("bankId") String bankId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE terminal t"
+            + " SET t.status = false"
+            + " WHERE t.id = :id"
+            , nativeQuery = true)
+    void deleteTerminal(@Param("id") String id);
 }

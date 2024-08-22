@@ -61,7 +61,7 @@ public class TerminalEntity implements Serializable {
     /* status of the terminal is true if it is active else is fault if it is deleted */
     @Column(name = "status")
     private boolean status;
-    
+
     @Column(name = "num_of_staff")
     private int numOfStaff;
 
@@ -150,7 +150,7 @@ public class TerminalEntity implements Serializable {
         this.qrBoxId = qrBoxId;
     }
 
-    public boolean isSub() {
+    public boolean getSub() {
         return sub;
     }
 
@@ -182,7 +182,7 @@ public class TerminalEntity implements Serializable {
         this.traceTransfer = traceTransfer;
     }
 
-    public boolean isStatus() {
+    public boolean getStatus() {
         return status;
     }
 

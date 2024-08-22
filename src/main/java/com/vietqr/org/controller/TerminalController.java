@@ -37,7 +37,7 @@ public class TerminalController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
-        Object result = terminalService.getTerminalById(new TerminalGetByIdDTO(id,userId));
+        Object result = terminalService.getTerminalById(new TerminalAuthDTO(id,userId));
         if(result instanceof ResponseMessageDTO){
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
@@ -56,6 +56,15 @@ public class TerminalController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseMessageDTO> updateTerminalById(@Validated @RequestBody TerminalUpdateDTO dto){
         ResponseMessageDTO result = terminalService.updateTerminal(dto);
+        if(Status.SUCCESS.equals(result.getStatus())){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("/{id}/delete")
+    public ResponseEntity<ResponseMessageDTO> deleteTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
+        ResponseMessageDTO result = terminalService.deleteTerminalById(new TerminalAuthDTO(id,userId));
         if(Status.SUCCESS.equals(result.getStatus())){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
