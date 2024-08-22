@@ -31,15 +31,19 @@ public class TerminalEntity implements Serializable {
     @Column(name = "mid")
     private String mid;
 
+    /* code of the terminal */
     @Column(name = "code")
     private String code;
 
+    /* code of the terminal created by owner */
     @Column(name = "raw_code")
     private String rawCode;
 
+    /* id of terminal when owner use api-service */
     @Column(name = "public_id")
     private String publicId;
 
+    /* terminal id if it's a sub-terminal */
     @Column(name = "ref_id")
     private String refId;
 
@@ -61,8 +65,13 @@ public class TerminalEntity implements Serializable {
     @Column(name = "trace_transfer")
     private String traceTransfer;
 
+    /* status of the terminal is true if it is active else is fault if it is deleted */
     @Column(name = "status")
     private boolean status;
+
+    /* status of the terminal is true if it is active else is fault if it is deleted */
+    @Column(name = "num_of_staff")
+    private byte numOfStaff;
 
     @Column(name = "time_created")
     private long timeCreated;
@@ -86,6 +95,7 @@ public class TerminalEntity implements Serializable {
         this.traceTransfer = traceTransfer;
         UUID uuid = UUID.randomUUID();
         this.id = uuid.toString();
+        this.numOfStaff = 0;
         long createdAt = DateTimeUtil.getNowUTC();
         this.timeCreated = createdAt;
 
@@ -209,6 +219,14 @@ public class TerminalEntity implements Serializable {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public byte getNumOfStaff() {
+        return numOfStaff;
+    }
+
+    public void setNumOfStaff(byte numOfStaff) {
+        this.numOfStaff = numOfStaff;
     }
 
     public long getTimeCreated() {

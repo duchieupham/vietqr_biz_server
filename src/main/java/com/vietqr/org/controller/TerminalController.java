@@ -1,6 +1,7 @@
 package com.vietqr.org.controller;
 
 import com.vietqr.org.dto.common.ResponseMessageDTO;
+import com.vietqr.org.dto.terminal.TerminalFindDTO;
 import com.vietqr.org.dto.terminal.TerminalGetListDTO;
 import com.vietqr.org.dto.terminal.TerminalInsertDTO;
 import com.vietqr.org.service.TerminalService;
@@ -38,6 +39,15 @@ public class TerminalController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id){
         Object result = terminalService.getTerminalById(id);
+        if(result instanceof ResponseMessageDTO){
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchTerminals(@Validated @RequestBody TerminalFindDTO dto){
+        Object result = terminalService.searchTerminals(dto);
         if(result instanceof ResponseMessageDTO){
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
