@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface MerchantRepository extends JpaRepository<MerchantEntity, Long> {
     @Query(value = "SELECT * FROM merchant WHERE id = :id", nativeQuery = true)
     Optional<MerchantEntity> findMerchantById(@Param("id") String id);
+
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM merchant m WHERE m.name = :name)", nativeQuery = true)
+    boolean existsByName(@Param("name") String name);
 }

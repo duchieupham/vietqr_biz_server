@@ -9,6 +9,7 @@ import com.vietqr.org.repository.MerchantRepository;
 import com.vietqr.org.service.MerchantService;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
@@ -29,7 +30,16 @@ public class MerchantServiceImpl implements MerchantService {
             String id = UUID.randomUUID().toString();
             MerchantEntity merchantEntity = new MerchantEntity();
             merchantEntity.setId(id);
-            merchantEntity.setName(merchantRequestDTO.getName());
+            String shortName = merchantRequestDTO.getName();
+            if (shortName == null || shortName.isEmpty()) {
+                shortName = generateShortName(merchantRequestDTO.getFullName());
+                merchantEntity.setName(shortName);
+            } else {
+                merchantEntity.setName(merchantRequestDTO.getName());
+            }
+            if (merchantRepository.existsByName(shortName)) {
+                return new ResponseMessageDTO("FAILED", "E05");
+            }
             merchantEntity.setFullName(merchantRequestDTO.getFullName());
             merchantEntity.setAddress(merchantRequestDTO.getAddress());
             merchantEntity.setNationalId(merchantRequestDTO.getNationalId());
@@ -45,7 +55,7 @@ public class MerchantServiceImpl implements MerchantService {
             merchantRepository.save(merchantEntity);
             result = new ResponseMessageDTO("SUCCESS", "");
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("Insert Merchant ERROR: " + e.getMessage());
             result = new ResponseMessageDTO("FAILED", "E05");
         }
         return result;
@@ -68,7 +78,7 @@ public class MerchantServiceImpl implements MerchantService {
             }
             result = new ResponseObjectDTO("SUCCESS", merchantResponseDTO);
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("Merchant info ERROR: " + e.getMessage());
             result = new ResponseObjectDTO("FAILED", null);
         }
         return result;
@@ -85,7 +95,7 @@ public class MerchantServiceImpl implements MerchantService {
             }
             result = new ResponseMessageDTO("SUCCESS", "");
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("Update merchant ERROR: " + e.getMessage());
             result = new ResponseMessageDTO("FAILED", "E05");
         }
         return result;
@@ -103,10 +113,23 @@ public class MerchantServiceImpl implements MerchantService {
             }
             result = new ResponseMessageDTO("SUCCESS", "");
         } catch (Exception e) {
-            System.out.println("ERROR" + e.getMessage());
+            System.out.println("Delete merchant ERROR" + e.getMessage());
             result = new ResponseMessageDTO("FAILED", "E05");
         }
         return result;
+    }
+
+    private String generateShortName(String fullName) {
+        SecureRandom random = new SecureRandom();
+        String[] words = fullName.split(" ");
+        StringBuilder shortName = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                int index = random.nextInt(words.length);
+                shortName.append(word.charAt(index));
+            }
+        }
+        return shortName.toString();
     }
 
     private MerchantEntity updateMerchantFields(MerchantEntity merchantEntity, MerchantRequestDTO merchantRequestDTO) {
