@@ -2,10 +2,7 @@ package com.vietqr.org.controller;
 
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.terminal.TerminalFindDTO;
-import com.vietqr.org.dto.terminal.TerminalGetListDTO;
-import com.vietqr.org.dto.terminal.TerminalInsertDTO;
-import com.vietqr.org.dto.terminal.TerminalUpdateDTO;
+import com.vietqr.org.dto.terminal.*;
 import com.vietqr.org.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,8 +36,8 @@ public class TerminalController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id){
-        Object result = terminalService.getTerminalById(id);
+    public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
+        Object result = terminalService.getTerminalById(new TerminalGetByIdDTO(id,userId));
         if(result instanceof ResponseMessageDTO){
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }

@@ -29,7 +29,6 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
             + " AND ( name LIKE CONCAT('%', :searchTerm, '%')"
             + " OR address LIKE CONCAT('%', :searchTerm, '%')"
             + " OR code LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR raw_code LIKE CONCAT('%', :searchTerm, '%')"
             + " OR public_id LIKE CONCAT('%', :searchTerm, '%')"
             + " OR ref_id LIKE CONCAT('%', :searchTerm, '%')"
             + " OR bank_id LIKE CONCAT('%', :searchTerm, '%')"
@@ -45,12 +44,6 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
             + " AND name LIKE CONCAT('%', :name, '%')"
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> findTerminalsByName(@Param(value = "mid") String mid, @Param(value = "name") String name);
-
-    @Query(value = "SELECT t.name AS name, t.address AS address, t.bank_id AS bankId, t.num_of_staff AS numOfStaff"
-            + " FROM terminal t WHERE mid = :mid"
-            + " AND raw_code LIKE CONCAT('%', :rawCode, '%')",
-            nativeQuery = true)
-    List<ITerminalResultOfFindDTO> findTerminalsByRawCode(@Param(value = "mid") String mid, @Param(value = "rawCode") String rawCode);
 
     @Query(value = "SELECT t.name AS name, t.address AS address, t.bank_id AS bankId, t.num_of_staff AS numOfStaff"
             + " FROM terminal t WHERE mid = :mid"
@@ -72,12 +65,12 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
 
     @Modifying
     @Query(value = "UPDATE terminal t"
-            + " SET t.name = :name, t.address = :address, t.rawCode = :rowCode, t.bankId = :bankId"
+            + " SET t.name = :name, t.address = :address, t.code = :code, t.bankId = :bankId"
             + " WHERE t.id = :id"
             , nativeQuery = true)
     void updateTerminal(@Param("id") String id,
                         @Param("name") String name,
                         @Param("address") String address,
-                        @Param("rowCode") String rowCode,
+                        @Param("code") String code,
                         @Param("bankId") String bankId);
 }

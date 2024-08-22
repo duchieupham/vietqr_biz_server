@@ -26,14 +26,20 @@ public class TerminalServiceImpl implements TerminalService {
     @Override
     public ResponseMessageDTO insertTerminal(TerminalInsertDTO dto) {
         ResponseMessageDTO result = null;
-        // TODO: Implement generate VietQR Code (when connect gRPC)
+        /*
+         * TODO: Implement generate VietQR Code (when connect gRPC)
+         *  Check user is belong to the merchant
+         * */
         try {
-            TerminalEntity entity = new TerminalEntity(dto.getName(), dto.getAddress(), dto.getMid(), dto.getRawCode(), dto.getBankId());
+            TerminalEntity entity = new TerminalEntity(dto.getName(), dto.getAddress(), dto.getMid(), dto.getCode(), dto.getBankId());
             entity.setCode(generateTerminalCode(entity.getName()));
             UUID uuid = UUID.randomUUID();
             entity.setId(uuid.toString());
             entity.setNumOfStaff(0);
             entity.setTimeCreated(DateTimeUtil.getNowUTC());
+            entity.setPublicId(generatePublicId());
+            entity.setStatus(true);
+            entity.setSub(false);
             repo.save(entity);
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
@@ -46,47 +52,44 @@ public class TerminalServiceImpl implements TerminalService {
 
     @Override
     public Object getListOfTerminal(TerminalGetListDTO dto) {
+        /*
+         * TODO: Check user is belong to the merchant (when connect gRPC)
+         *  Handle role of user: Admin, staff of merchant or terminal
+         * */
         Object result = null;
-        if (dto.getMid() != null && !dto.getMid().isEmpty() && dto.getUserId() != null && !dto.getUserId().isEmpty()) {
-            try {
-                List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminal(dto.getMid());
-                if (entities != null) {
-                    result = new ResponseObjectDTO(Status.SUCCESS, entities);
-                } else {
-                    result = new ResponseMessageDTO(Status.FAILED, "E185");
-                    logger.error("getTerminalsOfMerchant: List of terminal is null" + " at: " + System.currentTimeMillis());
-                }
-            } catch (Exception e) {
-                result = new ResponseObjectDTO(Status.FAILED, "E05");
-                logger.error("getTerminalsOfMerchant: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        try {
+            List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminal(dto.getMid().trim());
+            if (entities != null) {
+                result = new ResponseObjectDTO(Status.SUCCESS, entities);
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E185");
+                logger.error("getListOfTerminal: List of terminal is null at: " + System.currentTimeMillis());
             }
-        } else {
-            result = new ResponseObjectDTO(Status.FAILED, "E46");
-            logger.error("getTerminalsOfMerchant: Invalid request body" + " at: " + System.currentTimeMillis());
+        } catch (Exception e) {
+            result = new ResponseObjectDTO(Status.FAILED, "E05");
+            logger.error("getListOfTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;
     }
 
     @Override
-    public Object getTerminalById(String id) {
+    public Object getTerminalById(TerminalGetByIdDTO dto) {
+        /*
+         * TODO: Check user is belong to the merchant (when connect gRPC)
+         * */
         Object result = null;
-        if (id != null && !id.isEmpty()) {
-            try {
-                TerminalEntity entity = repo.findTerminalById(id);
-                if (entity != null) {
-                    result = new ResponseObjectDTO(Status.SUCCESS, entity);
-                } else {
-                    result = new ResponseMessageDTO(Status.FAILED, "E186");
-                    logger.error("getTerminal: Terminal is null" + " at: " + System.currentTimeMillis());
-                }
-            } catch (Exception e) {
-                result = new ResponseObjectDTO(Status.FAILED, "E05");
-                logger.error("getTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        try {
+            TerminalEntity entity = repo.findTerminalById(dto.getId().trim());
+            if (entity != null) {
+                result = new ResponseObjectDTO(Status.SUCCESS, entity);
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E186");
+                logger.error("getTerminalById: Terminal is null at: " + System.currentTimeMillis());
             }
-        } else {
-            result = new ResponseObjectDTO(Status.FAILED, "E46");
-            logger.error("getTerminal: Invalid request body" + " at: " + System.currentTimeMillis());
+        } catch (Exception e) {
+            result = new ResponseObjectDTO(Status.FAILED, "E05");
+            logger.error("getTerminalById: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;
@@ -94,58 +97,47 @@ public class TerminalServiceImpl implements TerminalService {
 
     @Override
     public Object searchTerminals(TerminalFindDTO dto) {
+        /*
+         * TODO: Check user is belong to the merchant (when connect gRPC)
+         *  Get bank detail consist of bank_account, bank_short_name, img_id
+         * */
         Object result = null;
-        if (dto.getMid() != null && !dto.getMid().isEmpty()) {
-            try {
-                if (dto.getSearchTerm() != null) {
-                    switch (dto.getType()) {
-                        case 0: {
-                            List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByName(dto.getMid(), dto.getSearchTerm());
-                            result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
-                            break;
-                        }
-                        case 1: {
-                            List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByCode(dto.getMid(), dto.getSearchTerm());
-                            result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
-                            break;
-                        }
-                        case 2: {
-                            List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByRawCode(dto.getMid(), dto.getSearchTerm());
-                            result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
-                            break;
-                        }
-                        case 3: {
-                            List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByAddress(dto.getMid(), dto.getSearchTerm());
-                            result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
-                            break;
-                        }
-                        case 4: {
-                            List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByBankId(dto.getMid(), dto.getSearchTerm());
-                            result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
-                            break;
-                        }
-                        case 5: {
-                            List<ITerminalResultOfFindDTO> findDTO = repo.findTerminals(dto.getMid(), dto.getSearchTerm());
-                            result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
-                            break;
-                        }
-                        default: {
-                            result = new ResponseObjectDTO(Status.FAILED, "E46");
-                            logger.error("searchTerminals: Invalid request body, type is invalid" + " at: " + System.currentTimeMillis());
-                            break;
-                        }
-                    }
-                } else {
-                    result = new ResponseMessageDTO(Status.FAILED, "E46");
-                    logger.error("searchTerminals: Invalid request body, search term is null" + " at: " + System.currentTimeMillis());
+        try {
+            switch (dto.getType()) {
+                case 0: {
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByName(dto.getMid(), dto.getSearchTerm());
+                    result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
+                    break;
                 }
-            } catch (Exception e) {
-                result = new ResponseObjectDTO(Status.FAILED, "E05");
-                logger.error("searchTerminals: " + e.getMessage() + " at: " + System.currentTimeMillis());
+                case 1: {
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByCode(dto.getMid(), dto.getSearchTerm());
+                    result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
+                    break;
+                }
+                case 2: {
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByAddress(dto.getMid(), dto.getSearchTerm());
+                    result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
+                    break;
+                }
+                case 3: {
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByBankId(dto.getMid(), dto.getSearchTerm());
+                    result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
+                    break;
+                }
+                case 4: {
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminals(dto.getMid(), dto.getSearchTerm());
+                    result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
+                    break;
+                }
+                default: {
+                    result = new ResponseObjectDTO(Status.FAILED, "E46");
+                    logger.error("searchTerminals: Invalid request body, type is invalid at: " + System.currentTimeMillis());
+                    break;
+                }
             }
-        } else {
-            result = new ResponseObjectDTO(Status.FAILED, "E46");
-            logger.error("searchTerminals: Invalid request body, mid is null or empty" + " at: " + System.currentTimeMillis());
+        } catch (Exception e) {
+            result = new ResponseObjectDTO(Status.FAILED, "E05");
+            logger.error("searchTerminals: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;
@@ -155,14 +147,13 @@ public class TerminalServiceImpl implements TerminalService {
     public ResponseMessageDTO updateTerminal(TerminalUpdateDTO dto) {
         ResponseMessageDTO result = null;
         /*
-        * TODO: Implement re-generate VietQR Code if update code (when connect gRPC).
-        * TODO: Check user is belong to the merchant.
-        * */
+         * TODO: Implement re-generate VietQR Code if update code (when connect gRPC)
+         *  Check user is belong to the merchant
+         * */
 
         try {
             TerminalEntity entity = repo.findTerminalById(dto.getId());
-
-            if (entity.getName().equals(dto.getName().trim()) && entity.getAddress().equals(dto.getAddress().trim()) && entity.getRawCode().equals(dto.getRawCode().trim()) && entity.getBankId().equals(dto.getBankId().trim())) {
+            if (entity.getName().equals(dto.getName().trim()) && entity.getAddress().equals(dto.getAddress().trim()) && entity.getCode().equals(dto.getCode().trim()) && entity.getBankId().equals(dto.getBankId().trim())) {
                 result = new ResponseMessageDTO(Status.FAILED, "E46");
                 logger.error("updateTerminal: Invalid request body at: " + System.currentTimeMillis());
             } else {
@@ -172,13 +163,13 @@ public class TerminalServiceImpl implements TerminalService {
                 if (!entity.getAddress().equals(dto.getAddress().trim())) {
                     entity.setAddress(dto.getAddress().trim());
                 }
-                if (!entity.getRawCode().equals(dto.getRawCode().trim())) {
-                    entity.setRawCode(dto.getRawCode().trim());
+                if (!entity.getCode().equals(dto.getCode().trim())) {
+                    entity.setCode(dto.getCode().trim());
                 }
                 if (!entity.getBankId().equals(dto.getBankId().trim())) {
                     entity.setBankId(dto.getBankId().trim());
                 }
-                repo.updateTerminal(entity.getId(), entity.getName(), entity.getAddress(), entity.getRawCode(), entity.getBankId());
+                repo.updateTerminal(entity.getId(), entity.getName(), entity.getAddress(), entity.getCode(), entity.getBankId());
                 result = new ResponseMessageDTO(Status.SUCCESS, "");
             }
 
@@ -213,5 +204,9 @@ public class TerminalServiceImpl implements TerminalService {
             return firstPart + randomString;
         }
         return result + StringUtil.generateRandomString(LENGTH - result.length());
+    }
+
+    private String generatePublicId() {
+        return "TER" + StringUtil.generateRandomString(8);
     }
 }

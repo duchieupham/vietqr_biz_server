@@ -20,8 +20,8 @@ public class TerminalUpdateDTO {
 
     @NotBlank
     @NotEmpty
-    @Size(min = 15, max = 15)
-    private String rawCode;
+    @Size(min = 1, max = 15)
+    private String code;
 
     @NotBlank
     @NotEmpty
@@ -35,51 +35,51 @@ public class TerminalUpdateDTO {
     public TerminalUpdateDTO() {
     }
 
-    public String getId() {
+    public @NotNull @NotBlank @NotEmpty String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NotNull @NotBlank @NotEmpty String id) {
         this.id = id;
     }
 
-    public String getName() {
+    public @NotBlank @NotEmpty @Size(min = 1, max = 100) String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NotBlank @NotEmpty @Size(min = 1, max = 100) String name) {
         this.name = name;
     }
 
-    public String getAddress() {
+    public @NotBlank @NotEmpty @Size(min = 1, max = 200) String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(@NotBlank @NotEmpty @Size(min = 1, max = 200) String address) {
         this.address = address;
     }
 
-    public String getRawCode() {
-        return rawCode;
+    public @NotBlank @NotEmpty @Size(min = 1, max = 15) String getCode() {
+        return code;
     }
 
-    public void setRawCode(String rawCode) {
-        this.rawCode = rawCode;
+    public void setCode(@NotBlank @NotEmpty @Size(min = 1, max = 15) String code) {
+        this.code = code;
     }
 
-    public String getBankId() {
+    public @NotBlank @NotEmpty String getBankId() {
         return bankId;
     }
 
-    public void setBankId(String bankId) {
+    public void setBankId(@NotBlank @NotEmpty String bankId) {
         this.bankId = bankId;
     }
 
-    public String getUserId() {
+    public @NotNull @NotBlank @NotEmpty String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(@NotNull @NotBlank @NotEmpty String userId) {
         this.userId = userId;
     }
 }

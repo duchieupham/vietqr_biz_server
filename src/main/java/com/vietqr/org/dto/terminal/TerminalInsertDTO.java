@@ -1,56 +1,75 @@
 package com.vietqr.org.dto.terminal;
 
+import javax.validation.constraints.*;
+
 public class TerminalInsertDTO {
+    @NotNull
+    @NotBlank
+    @NotEmpty
+    @Size(min = 1, max = 100)
     private String name;
 
+    @NotNull
+    @NotBlank
+    @NotEmpty
+    @Size(min = 1, max = 200)
     private String address;
 
+    @NotNull
+    @NotBlank
+    @NotEmpty
     private String mid;
 
-    private String rawCode;
+    @NotBlank
+    @NotEmpty
+    @Size(min = 1, max = 15)
+    private String code;
 
+    @NotNull
+    @NotBlank
+    @NotEmpty
     private String bankId;
 
     public TerminalInsertDTO() {
     }
 
-    public String getName() {
+    public @NotNull @NotBlank @NotEmpty @Size(min = 1, max = 100) String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NotNull @NotBlank @NotEmpty @Size(min = 1, max = 100) String name) {
         this.name = name;
     }
 
-    public String getAddress() {
+    public @NotNull @NotBlank @NotEmpty @Size(min = 1, max = 200) String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(@NotNull @NotBlank @NotEmpty @Size(min = 1, max = 200) String address) {
         this.address = address;
     }
 
-    public String getMid() {
+    public @NotNull @NotBlank @NotEmpty String getMid() {
         return mid;
     }
 
-    public void setMid(String mid) {
+    public void setMid(@NotNull @NotBlank @NotEmpty String mid) {
         this.mid = mid;
     }
 
-    public String getRawCode() {
-        return rawCode;
+    public @NotBlank @NotEmpty @Size(min = 1, max = 15) String getCode() {
+        return code;
     }
 
-    public void setRawCode(String rawCode) {
-        this.rawCode = rawCode;
+    public void setCode(@NotBlank @NotEmpty @Size(min = 1, max = 15) String code) {
+        this.code = code;
     }
 
-    public String getBankId() {
+    public @NotNull @NotBlank @NotEmpty String getBankId() {
         return bankId;
     }
 
-    public void setBankId(String bankId) {
+    public void setBankId(@NotNull @NotBlank @NotEmpty String bankId) {
         this.bankId = bankId;
     }
 }

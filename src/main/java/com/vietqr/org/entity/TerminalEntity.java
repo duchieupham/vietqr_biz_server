@@ -32,10 +32,6 @@ public class TerminalEntity implements Serializable {
     @Column(name = "code")
     private String code;
 
-    /* code of the terminal created by owner */
-    @Column(name = "raw_code")
-    private String rawCode;
-
     /* id of terminal when owner use api-service */
     @Column(name = "public_id")
     private String publicId;
@@ -65,8 +61,7 @@ public class TerminalEntity implements Serializable {
     /* status of the terminal is true if it is active else is fault if it is deleted */
     @Column(name = "status")
     private boolean status;
-
-    /* status of the terminal is true if it is active else is fault if it is deleted */
+    
     @Column(name = "num_of_staff")
     private int numOfStaff;
 
@@ -80,7 +75,6 @@ public class TerminalEntity implements Serializable {
         this.name = name.trim();
         this.address = address.trim();
         this.mid = mid.trim();
-        this.rawCode = rawCode.trim();
         this.bankId = bankId.trim();
     }
 
@@ -122,14 +116,6 @@ public class TerminalEntity implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getRawCode() {
-        return rawCode;
-    }
-
-    public void setRawCode(String rawCode) {
-        this.rawCode = rawCode;
     }
 
     public String getPublicId() {

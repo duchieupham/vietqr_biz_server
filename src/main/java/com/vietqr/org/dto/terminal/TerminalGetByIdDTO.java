@@ -2,31 +2,31 @@ package com.vietqr.org.dto.terminal;
 
 import javax.validation.constraints.*;
 
-public class TerminalGetListDTO {
+public class TerminalGetByIdDTO {
     @NotNull
     @NotBlank
     @NotEmpty
-    private String mid;
+    private String id;
 
     @NotNull
     @NotBlank
     @NotEmpty
     private String userId;
 
-    public TerminalGetListDTO() {
+    public TerminalGetByIdDTO() {
     }
 
-    public TerminalGetListDTO(String mid, String userId) {
-        this.mid = mid;
+    public TerminalGetByIdDTO(String id, String userId) {
+        this.id = id;
         this.userId = userId;
     }
 
-    public @NotNull @NotBlank @NotEmpty String getMid() {
-        return mid;
+    public @NotNull @NotBlank @NotEmpty String getId() {
+        return id;
     }
 
-    public void setMid(@NotNull @NotBlank @NotEmpty String mid) {
-        this.mid = mid;
+    public void setId(@NotNull @NotBlank @NotEmpty String id) {
+        this.id = id;
     }
 
     public @NotNull @NotBlank @NotEmpty String getUserId() {
