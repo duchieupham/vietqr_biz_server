@@ -5,6 +5,7 @@ import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.terminal.TerminalFindDTO;
 import com.vietqr.org.dto.terminal.TerminalGetListDTO;
 import com.vietqr.org.dto.terminal.TerminalInsertDTO;
+import com.vietqr.org.dto.terminal.TerminalUpdateDTO;
 import com.vietqr.org.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,5 +54,14 @@ public class TerminalController {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseMessageDTO> updateTerminalById(@Validated @RequestBody TerminalUpdateDTO dto){
+        ResponseMessageDTO result = terminalService.updateTerminal(dto);
+        if(Status.SUCCESS.equals(result.getStatus())){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 }

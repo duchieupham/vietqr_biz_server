@@ -1,11 +1,7 @@
 package com.vietqr.org.entity;
 
-import com.vietqr.org.utils.DateTimeUtil;
-import com.vietqr.org.utils.StringUtil;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Entity
 @Table(name = "terminal", uniqueConstraints = {
@@ -72,7 +68,7 @@ public class TerminalEntity implements Serializable {
 
     /* status of the terminal is true if it is active else is fault if it is deleted */
     @Column(name = "num_of_staff")
-    private byte numOfStaff;
+    private int numOfStaff;
 
     @Column(name = "time_created")
     private long timeCreated;
@@ -86,11 +82,6 @@ public class TerminalEntity implements Serializable {
         this.mid = mid.trim();
         this.rawCode = rawCode.trim();
         this.bankId = bankId.trim();
-        this.code = StringUtil.generateTerminalCode(name);
-        UUID uuid = UUID.randomUUID();
-        this.id = uuid.toString();
-        this.numOfStaff = 0;
-        this.timeCreated = DateTimeUtil.getNowUTC();
     }
 
     public String getId() {
@@ -213,11 +204,11 @@ public class TerminalEntity implements Serializable {
         this.status = status;
     }
 
-    public byte getNumOfStaff() {
+    public int getNumOfStaff() {
         return numOfStaff;
     }
 
-    public void setNumOfStaff(byte numOfStaff) {
+    public void setNumOfStaff(int numOfStaff) {
         this.numOfStaff = numOfStaff;
     }
 
