@@ -11,7 +11,6 @@ public class DateTimeUtil {
         ZonedDateTime nowUtc = now.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC);
         return nowUtc.toEpochSecond();
     }
-
     static public long getTimeUTCNMonthsAgo(int numOfMonths){
         LocalDateTime nMonthsAgo = LocalDateTime.now().minusMonths(numOfMonths);
         ZonedDateTime nMonthsAgoUtc = nMonthsAgo.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC);
