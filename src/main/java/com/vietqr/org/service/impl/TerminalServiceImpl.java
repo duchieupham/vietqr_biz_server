@@ -145,7 +145,7 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public ResponseMessageDTO updateTerminal(TerminalUpdateDTO dto) {
+    public ResponseMessageDTO updateTerminal(String id, TerminalUpdateDTO dto) {
         ResponseMessageDTO result = null;
         /*
          * TODO: Implement re-generate VietQR Code if update code (when connect gRPC)
@@ -153,21 +153,21 @@ public class TerminalServiceImpl implements TerminalService {
          * */
 
         try {
-            TerminalEntity entity = repo.findTerminalById(dto.getId());
+            TerminalEntity entity = repo.findTerminalById(id);
             if (entity.getName().equals(dto.getName().trim()) && entity.getAddress().equals(dto.getAddress().trim()) && entity.getCode().equals(dto.getCode().trim()) && entity.getBankId().equals(dto.getBankId().trim())) {
-                result = new ResponseMessageDTO(Status.FAILED, "E46");
+                result = new ResponseMessageDTO(Status.FAILED, "E187");
                 logger.error("updateTerminal: Invalid request body at: " + System.currentTimeMillis());
             } else {
-                if (!entity.getName().equals(dto.getName().trim())) {
+                if (!entity.getName().equals(dto.getName().trim()) && !dto.getName().isEmpty()) {
                     entity.setName(dto.getName().trim());
                 }
-                if (!entity.getAddress().equals(dto.getAddress().trim())) {
+                if (!entity.getAddress().equals(dto.getAddress().trim()) && !dto.getAddress().isEmpty()) {
                     entity.setAddress(dto.getAddress().trim());
                 }
-                if (!entity.getCode().equals(dto.getCode().trim())) {
+                if (!entity.getCode().equals(dto.getCode().trim()) && !dto.getCode().isEmpty()) {
                     entity.setCode(dto.getCode().trim());
                 }
-                if (!entity.getBankId().equals(dto.getBankId().trim())) {
+                if (!entity.getBankId().equals(dto.getBankId().trim()) && !dto.getBankId().isEmpty()) {
                     entity.setBankId(dto.getBankId().trim());
                 }
                 repo.updateTerminal(entity.getId(), entity.getName(), entity.getAddress(), entity.getCode(), entity.getBankId());
@@ -179,18 +179,6 @@ public class TerminalServiceImpl implements TerminalService {
             logger.error("updateTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
-        return result;
-    }
-
-    @Override
-    public boolean isTerminalCodeExist(String code) {
-        boolean result = true;
-        if (code != null && !code.isEmpty()) {
-            int count = repo.countTerminalByCode(code);
-            if (count == 0) {
-                result = false;
-            }
-        }
         return result;
     }
 

@@ -54,8 +54,8 @@ public class TerminalController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseMessageDTO> updateTerminalById(@Validated @RequestBody TerminalUpdateDTO dto){
-        ResponseMessageDTO result = terminalService.updateTerminal(dto);
+    public ResponseEntity<ResponseMessageDTO> updateTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody TerminalUpdateDTO dto){
+        ResponseMessageDTO result = terminalService.updateTerminal(id, dto);
         if(Status.SUCCESS.equals(result.getStatus())){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
