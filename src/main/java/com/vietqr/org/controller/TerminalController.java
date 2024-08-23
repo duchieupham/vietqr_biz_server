@@ -18,49 +18,49 @@ public class TerminalController {
 
     @PostMapping("/insert")
     public ResponseEntity<ResponseMessageDTO> insertTerminal(@Validated @RequestBody TerminalInsertDTO dto){
-        ResponseMessageDTO responseMessageDTO = terminalService.insertTerminal(dto);
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponse.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = terminalService.insertTerminal(dto);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
     @GetMapping("/")
     public ResponseEntity<Object> getListOfTerminal(@Validated @RequestBody TerminalGetListDTO dto){
-        Object responseObjectDTO = terminalService.getListOfTerminal(dto);
-        return new ResponseEntity<>(responseObjectDTO, CheckStatusResponse.checkStatusResponseObjectDTO(responseObjectDTO));
+        Object response = terminalService.getListOfTerminal(dto);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseObjectDTO(response));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
-        Object responseObjectDTO = terminalService.getTerminalById(new TerminalAuthDTO(id,userId));
-        return new ResponseEntity<>(responseObjectDTO, CheckStatusResponse.checkStatusResponseObjectDTO(responseObjectDTO));
+        Object response = terminalService.getTerminalById(new TerminalAuthDTO(id,userId));
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseObjectDTO(response));
     }
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchTerminals(@Validated @RequestBody TerminalFindDTO dto){
-        Object responseObjectDTO = terminalService.searchTerminals(dto);
-        return new ResponseEntity<>(responseObjectDTO, CheckStatusResponse.checkStatusResponseObjectDTO(responseObjectDTO));
+        Object response = terminalService.searchTerminals(dto);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseObjectDTO(response));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseMessageDTO> updateTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody TerminalUpdateDTO dto){
-        ResponseMessageDTO responseMessageDTO = terminalService.updateTerminal(id, dto);
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponse.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = terminalService.updateTerminal(id, dto);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
     @PutMapping("/{id}/delete")
     public ResponseEntity<ResponseMessageDTO> deleteTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
-        ResponseMessageDTO responseMessageDTO = terminalService.deleteTerminalById(new TerminalAuthDTO(id,userId));
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponse.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = terminalService.deleteTerminalById(new TerminalAuthDTO(id,userId));
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
     @GetMapping("/deleted")
     public ResponseEntity<Object> getListOfTerminalDeleted(@Validated @RequestBody TerminalGetListDTO dto){
-        Object responseObjectDTO = terminalService.getListOfTerminalDeleted(dto);
-        return new ResponseEntity<>(responseObjectDTO, CheckStatusResponse.checkStatusResponseObjectDTO(responseObjectDTO));
+        Object response = terminalService.getListOfTerminalDeleted(dto);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseObjectDTO(response));
     }
 
     @PutMapping("/{id}/recover")
     public ResponseEntity<ResponseMessageDTO> recoverTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
-        ResponseMessageDTO responseMessageDTO = terminalService.recoverTerminalById(new TerminalAuthDTO(id,userId));
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponse.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = terminalService.recoverTerminalById(new TerminalAuthDTO(id,userId));
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 }

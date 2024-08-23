@@ -6,9 +6,9 @@ import com.vietqr.org.dto.merchant.MerchantRequestDTO;
 
 public interface MerchantService {
     ResponseMessageDTO insertMerchant(MerchantRequestDTO merchantRequestDTO);
-    ResponseObjectDTO merchantInfo(String id);
+    Object merchantInfo(String id);
     ResponseMessageDTO updateMerchant(String id, MerchantRequestDTO merchantRequestDTO);
     ResponseMessageDTO deleteMerchant(String id);
-    ResponseObjectDTO getListDeleteMerchant();
+    Object getListDeleteMerchant();
     ResponseMessageDTO recoverMerchant(String id);
 }
