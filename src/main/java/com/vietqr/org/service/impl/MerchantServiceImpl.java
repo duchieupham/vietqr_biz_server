@@ -1,5 +1,6 @@
 package com.vietqr.org.service.impl;
 
+import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.merchant.MerchantRequestDTO;
@@ -42,13 +43,13 @@ public class MerchantServiceImpl implements MerchantService {
             } else if (merchantRepository.existsByName(shortName) == 0){
                 merchantEntity.setName(merchantRequestDTO.getName());
             } else {
-                return new ResponseMessageDTO("FAILED", "E05");
+                return new ResponseMessageDTO(Status.FAILED, "E05");
             }
             merchantEntity.setFullName(merchantRequestDTO.getFullName());
             merchantEntity.setAddress(merchantRequestDTO.getAddress());
             int nationalIdCount = merchantRepository.existsByNationalId(merchantRequestDTO.getNationalId());
             if (nationalIdCount > 0) {
-                return new ResponseMessageDTO("FAILED", "E05");
+                return new ResponseMessageDTO(Status.FAILED, "E05");
             }
             merchantEntity.setNationalId(merchantRequestDTO.getNationalId());
             merchantEntity.setBusinessSector(merchantRequestDTO.getBusinessSector());
@@ -61,10 +62,10 @@ public class MerchantServiceImpl implements MerchantService {
             merchantEntity.setMaster(false);
             merchantEntity.setRefId("");
             merchantRepository.save(merchantEntity);
-            result = new ResponseMessageDTO("SUCCESS", "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("insertMerchant ERROR: " + e.getMessage());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -84,10 +85,10 @@ public class MerchantServiceImpl implements MerchantService {
                 merchantResponseDTO.setBusinessType(merchantEntity.getBusinessType());
                 merchantResponseDTO.setServiceType(merchantEntity.getServiceType());
             }
-            result = new ResponseObjectDTO("SUCCESS", merchantResponseDTO);
+            result = new ResponseObjectDTO(Status.SUCCESS, merchantResponseDTO);
         } catch (Exception e) {
             logger.error("merchantInfo ERROR: " + e.getMessage());
-            result = new ResponseObjectDTO("FAILED", null);
+            result = new ResponseObjectDTO(Status.FAILED, null);
         }
         return result;
     }
@@ -101,10 +102,10 @@ public class MerchantServiceImpl implements MerchantService {
                 MerchantEntity merchantEntity = merchantEntityOptional.get();
                 merchantRepository.save(updateMerchantFields(merchantEntity, merchantRequestDTO));
             }
-            result = new ResponseMessageDTO("SUCCESS", "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("updateMerchant ERROR: " + e.getMessage());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -120,10 +121,10 @@ public class MerchantServiceImpl implements MerchantService {
                 merchantEntity.setTimeUpdatedStatus(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
                 merchantRepository.save(merchantEntity);
             }
-            result = new ResponseMessageDTO("SUCCESS", "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("deleteMerchant ERROR" + e.getMessage());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -144,10 +145,10 @@ public class MerchantServiceImpl implements MerchantService {
                 merchantResponseDTO.setBusinessType(merchantEntity.getBusinessType());
                 return merchantResponseDTO;
             }).collect(Collectors.toList());
-            result = new ResponseObjectDTO("SUCCESS", merchantResponseDTOList);
+            result = new ResponseObjectDTO(Status.SUCCESS, merchantResponseDTOList);
         } catch (Exception e) {
             logger.error("getListDeleteMerchant ERROR: " + e.getMessage());
-            result = new ResponseObjectDTO("FAILED", null);
+            result = new ResponseObjectDTO(Status.FAILED, null);
         }
         return result;
     }
@@ -163,10 +164,10 @@ public class MerchantServiceImpl implements MerchantService {
                 merchantEntity.setStatus(true);
                 merchantRepository.save(merchantEntity);
             }
-            result = new ResponseMessageDTO("SUCCESS", "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("restoreMerchant ERROR: " + e.getMessage());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
