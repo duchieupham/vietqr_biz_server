@@ -53,7 +53,7 @@ public class TerminalServiceImpl implements TerminalService {
     @Override
     public Object getListOfTerminal(TerminalGetListDTO dto) {
         /*
-         * TODO: Check user is belong to the merchant (when connect gRPC)
+         * TODO: Check user is belong to the merchant
          *  Handle role of user: Admin, staff of merchant or terminal
          * */
         Object result = null;
@@ -76,7 +76,7 @@ public class TerminalServiceImpl implements TerminalService {
     @Override
     public Object getTerminalById(TerminalAuthDTO dto) {
         /*
-         * TODO: Check user is belong to the merchant (when connect gRPC)
+         * TODO: Check user is belong to the merchant
          * */
         Object result = null;
         try {
@@ -98,8 +98,8 @@ public class TerminalServiceImpl implements TerminalService {
     @Override
     public Object searchTerminals(TerminalFindDTO dto) {
         /*
-         * TODO: Check user is belong to the merchant (when connect gRPC)
-         *  Get bank detail consist of bank_account, bank_short_name, img_id
+         * TODO: Check user is belong to the merchant
+         *  Get bank detail consist of bank_account, bank_short_name, img_id (when connect gRPC)
          * */
         Object result = null;
         try {
@@ -194,22 +194,27 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public ResponseMessageDTO deleteTerminal(TerminalAuthDTO dto) {
+    public ResponseMessageDTO deleteTerminalById(TerminalAuthDTO dto) {
         /*
-         * TODO: Check user is belong to the merchant (when connect gRPC)
-         *  Update info when update the status
+         * TODO: Update info when update the status
          * */
         ResponseMessageDTO result = null;
 
         try {
-            TerminalEntity entity = repo.findTerminalById(dto.getId());
-            if (entity != null && entity.getStatus()) {
-                repo.deleteTerminal(dto.getId());
-                result = new ResponseMessageDTO(Status.SUCCESS, "");
+            if (isTerminalAuthorized(dto.getId(), dto.getUserId())) {
+                TerminalEntity entity = repo.findTerminalById(dto.getId());
+                if (entity.getStatus()) {
+                    repo.deleteTerminal(dto.getId(), dto.getUserId());
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                } else {
+                    result = new ResponseMessageDTO(Status.FAILED, "E05");
+                    logger.error("deleteTerminal: Terminal was deleted at: " + System.currentTimeMillis());
+                }
             } else {
-                result = new ResponseMessageDTO(Status.FAILED, "E05");
-                logger.error("deleteTerminal: Terminal is null at: " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E115");
+                logger.error("deleteTerminal: User don't have the permission to do this action at: " + System.currentTimeMillis());
             }
+
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("deleteTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
@@ -233,5 +238,9 @@ public class TerminalServiceImpl implements TerminalService {
 
     private String generatePublicId() {
         return "TER" + StringUtil.generateRandomString(8);
+    }
+
+    private boolean isTerminalAuthorized(String id, String userId) {
+        return repo.countTerminalByAuth(id, userId) == 1;
     }
 }

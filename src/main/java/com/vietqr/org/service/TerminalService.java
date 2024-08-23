@@ -12,5 +12,5 @@ public interface TerminalService {
     public Object searchTerminals(TerminalFindDTO dto);
     public ResponseMessageDTO updateTerminal(TerminalUpdateDTO dto);
     public boolean isTerminalCodeExist(String code);
-    public ResponseMessageDTO deleteTerminal(TerminalAuthDTO dto);
+    public ResponseMessageDTO deleteTerminalById(TerminalAuthDTO dto);
 }
