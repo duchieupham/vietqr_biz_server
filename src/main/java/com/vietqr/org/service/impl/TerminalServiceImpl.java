@@ -100,6 +100,7 @@ public class TerminalServiceImpl implements TerminalService {
         /*
          * TODO: Check user is belong to the merchant
          *  Get bank detail consist of bank_account, bank_short_name, img_id (when connect gRPC)
+         *  Must be improve search
          * */
         Object result = null;
         try {
@@ -201,23 +202,50 @@ public class TerminalServiceImpl implements TerminalService {
         ResponseMessageDTO result = null;
 
         try {
-            if (isTerminalAuthorized(dto.getId(), dto.getUserId())) {
-                TerminalEntity entity = repo.findTerminalById(dto.getId());
+            if (isTerminalAuthorized(dto.getId().trim(), dto.getUserId().trim())) {
+                TerminalEntity entity = repo.findTerminalById(dto.getId().trim());
                 if (entity.getStatus()) {
-                    deleteTerminalById(dto.getId());
+                    deleteTerminalById(dto.getId().trim());
                     result = new ResponseMessageDTO(Status.SUCCESS, "");
                 } else {
                     result = new ResponseMessageDTO(Status.FAILED, "E05");
-                    logger.error("deleteTerminal: Terminal was deleted at: " + System.currentTimeMillis());
+                    logger.error("deleteTerminalById: Terminal was deleted at: " + System.currentTimeMillis());
                 }
             } else {
                 result = new ResponseMessageDTO(Status.FAILED, "E115");
-                logger.error("deleteTerminal: User don't have the permission to do this action at: " + System.currentTimeMillis());
+                logger.error("deleteTerminalById: User don't have the permission to do this action at: " + System.currentTimeMillis());
             }
 
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
-            logger.error("deleteTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            logger.error("deleteTerminalById: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO recoverTerminalById(TerminalAuthDTO dto) {
+        ResponseMessageDTO result = null;
+
+        try {
+            if (isTerminalAuthorized(dto.getId(), dto.getUserId())) {
+                TerminalEntity entity = repo.findTerminalById(dto.getId());
+                if (!entity.getStatus() && entity.getTimeUpdatedStatus() < DateTimeUtil.getTimeUTCNMonthsAgo(6)) {
+                    recoverTerminalById(dto.getId());
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                } else {
+                    result = new ResponseMessageDTO(Status.FAILED, "E05");
+                    logger.error("recoverTerminalById: Terminal is active or was deleted more than 6 months at: " + System.currentTimeMillis());
+                }
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E115");
+                logger.error("recoverTerminalById: User don't have the permission to do this action at: " + System.currentTimeMillis());
+            }
+
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("recoverTerminalById: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;

@@ -27,40 +27,40 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
 
     @Query(value = "SELECT name, address, bank_id AS bankId, num_of_staff AS numOfStaff"
             + " FROM terminal WHERE mid = :mid"
-            + " AND ( name LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR address LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR code LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR public_id LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR ref_id LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR bank_id LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR qr_box_id LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR data1 LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR data2 LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR trace_transfer LIKE CONCAT('%', :searchTerm, '%'))"
+            + " AND ( LOWER(name) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(address) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(code) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(public_id) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(ref_id) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(bank_id) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(qr_box_id) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(data1) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(data2) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(trace_transfer) LIKE CONCAT('%', :searchTerm, '%'))"
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> findTerminals(@Param(value = "mid") String mid, @Param(value = "searchTerm") String searchTerm);
 
     @Query(value = "SELECT name, address, bank_id AS bankId, num_of_staff AS numOfStaff"
             + " FROM terminal WHERE mid = :mid"
-            + " AND name LIKE CONCAT('%', :name, '%')"
+            + " AND LOWER(name) LIKE CONCAT('%', :name, '%')"
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> findTerminalsByName(@Param(value = "mid") String mid, @Param(value = "name") String name);
 
     @Query(value = "SELECT name, address, bank_id AS bankId, num_of_staff AS numOfStaff"
             + " FROM terminal WHERE mid = :mid"
-            + " AND code LIKE CONCAT('%', :code, '%')"
+            + " AND LOWER(code) LIKE CONCAT('%', :code, '%')"
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> findTerminalsByCode(@Param(value = "mid") String mid, @Param(value = "code") String code);
 
     @Query(value = "SELECT name, address, bank_id AS bankId, num_of_staff AS numOfStaff"
             + " FROM terminal WHERE mid = :mid"
-            + " AND bank_id LIKE CONCAT('%', :bankId, '%')"
+            + " AND LOWER(bank_id) LIKE CONCAT('%', :bankId, '%')"
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> findTerminalsByBankId(@Param(value = "mid") String mid, @Param(value = "bankId") String bankId);
 
     @Query(value = "SELECT name, address, bank_id AS bankId, num_of_staff AS numOfStaff"
             + " FROM terminal WHERE mid = :mid"
-            + " AND address LIKE CONCAT('%', :address, '%')"
+            + " AND LOWER(address) LIKE CONCAT('%', :address, '%')"
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> findTerminalsByAddress(@Param(value = "mid") String mid, @Param(value = "address") String address);
 

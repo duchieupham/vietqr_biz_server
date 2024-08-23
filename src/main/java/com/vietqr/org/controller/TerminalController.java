@@ -79,4 +79,13 @@ public class TerminalController {
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}/recover")
+    public ResponseEntity<ResponseMessageDTO> recoverTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
+        ResponseMessageDTO result = terminalService.recoverTerminalById(new TerminalAuthDTO(id,userId));
+        if(Status.SUCCESS.equals(result.getStatus())){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
 }
