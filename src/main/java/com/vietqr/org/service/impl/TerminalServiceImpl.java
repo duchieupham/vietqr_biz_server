@@ -204,7 +204,7 @@ public class TerminalServiceImpl implements TerminalService {
             if (isTerminalAuthorized(dto.getId(), dto.getUserId())) {
                 TerminalEntity entity = repo.findTerminalById(dto.getId());
                 if (entity.getStatus()) {
-                    repo.deleteTerminal(dto.getId(), dto.getUserId());
+                    deleteTerminalById(dto.getId());
                     result = new ResponseMessageDTO(Status.SUCCESS, "");
                 } else {
                     result = new ResponseMessageDTO(Status.FAILED, "E05");
@@ -218,6 +218,25 @@ public class TerminalServiceImpl implements TerminalService {
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("deleteTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
+    @Override
+    public Object getListOfTerminalDeleted(TerminalGetListDTO dto) {
+        Object result = null;
+        try {
+            List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminalDeleted(dto.getUserId(), dto.getMid(), DateTimeUtil.getTimeUTCNMonthsAgo(6));
+            if (entities != null) {
+                result = new ResponseObjectDTO(Status.SUCCESS, entities);
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E185");
+                logger.error("getListOfTerminalDeleted: List of terminal deleted is null at: " + System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+            result = new ResponseObjectDTO(Status.FAILED, "E05");
+            logger.error("getListOfTerminalDeleted: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;
@@ -242,5 +261,13 @@ public class TerminalServiceImpl implements TerminalService {
 
     private boolean isTerminalAuthorized(String id, String userId) {
         return repo.countTerminalByAuth(id, userId) == 1;
+    }
+
+    private void deleteTerminalById(String id) {
+        repo.updateTerminalStatusById(id, false, DateTimeUtil.getNowUTC());
+    }
+
+    private void recoverTerminalById(String id) {
+        repo.updateTerminalStatusById(id, true, DateTimeUtil.getNowUTC());
     }
 }

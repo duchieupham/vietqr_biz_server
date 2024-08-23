@@ -65,6 +65,10 @@ public class TerminalEntity implements Serializable {
     @Column(name = "num_of_staff")
     private int numOfStaff;
 
+    /* the time of update status UTC */
+    @Column(name = "time_updated_status")
+    private long timeUpdatedStatus;
+
     @Column(name = "time_created")
     private long timeCreated;
 
@@ -196,6 +200,14 @@ public class TerminalEntity implements Serializable {
 
     public void setNumOfStaff(int numOfStaff) {
         this.numOfStaff = numOfStaff;
+    }
+
+    public long getTimeUpdatedStatus() {
+        return timeUpdatedStatus;
+    }
+
+    public void setTimeUpdatedStatus(long timeUpdatedStatus) {
+        this.timeUpdatedStatus = timeUpdatedStatus;
     }
 
     public long getTimeCreated() {

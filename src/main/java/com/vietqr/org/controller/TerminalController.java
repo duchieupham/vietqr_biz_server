@@ -70,4 +70,13 @@ public class TerminalController {
         }
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping("/deleted")
+    public ResponseEntity<Object> getListOfTerminalDeleted(@Validated @RequestBody TerminalGetListDTO dto){
+        Object result = terminalService.getListOfTerminalDeleted(dto);
+        if(result instanceof ResponseMessageDTO){
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

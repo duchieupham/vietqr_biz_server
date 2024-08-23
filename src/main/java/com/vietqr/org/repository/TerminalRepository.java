@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface TerminalRepository extends JpaRepository<TerminalEntity, String> {
-    @Query(value = "SELECT  name, address, bank_id AS bankId, num_of_staff AS numOfStaff"
+    @Query(value = "SELECT name, address, bank_id AS bankId, num_of_staff AS numOfStaff"
             + " FROM terminal"
             + " WHERE mid = :mid"
             , nativeQuery = true)
@@ -86,9 +86,20 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
     @Transactional
     @Modifying
     @Query(value = "UPDATE terminal"
-            + " SET status = false"
+            + " SET status = :status, time_update_status = :timeUpdatedStatus"
             + " WHERE id = :id"
-            + " AND user_id = :userId"
             , nativeQuery = true)
-    void deleteTerminal(@Param("id") String id, @Param("userId") String userId);
+    void updateTerminalStatusById(@Param("id") String id,
+                                  @Param("status") boolean status,
+                                  @Param("timeUpdatedStatus") long timeUpdatedStatus);
+
+    @Query(value = "SELECT t.name, t.address, t.bank_id AS bankId, t.num_of_staff AS numOfStaff FROM terminal t"
+            + " INNER JOIN merchant m ON m.id = t.mid"
+            + " WHERE t.mid = :mid"
+            + " AND m.user_id > :userId"
+            + " AND t.time_update_status > :timeLine"
+            , nativeQuery = true)
+    List<ITerminalResultOfFindDTO> getListOfTerminalDeleted(@Param(value = "mid") String mid,
+                                                            @Param(value = "userId") String userId,
+                                                            @Param("timeLine") long timeLine);
 }
