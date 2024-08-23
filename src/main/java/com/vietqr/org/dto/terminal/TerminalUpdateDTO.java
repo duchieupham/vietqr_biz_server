@@ -3,28 +3,23 @@ package com.vietqr.org.dto.terminal;
 import javax.validation.constraints.*;
 
 public class TerminalUpdateDTO {
+    @NotBlank
     @NotNull
-    @NotBlank
-    @NotEmpty
-    private String id;
-
-    @NotBlank
-    @NotEmpty
-    @Size(min = 1, max = 100)
+    @Size(min = 0, max = 100)
     private String name;
 
     @NotBlank
-    @NotEmpty
-    @Size(min = 1, max = 200)
+    @NotNull
+    @Size(min = 0, max = 200)
     private String address;
 
     @NotBlank
-    @NotEmpty
-    @Size(min = 1, max = 15)
+    @NotNull
+    @Size(min = 0, max = 15)
     private String code;
 
     @NotBlank
-    @NotEmpty
+    @NotNull
     private String bankId;
 
     @NotNull
@@ -33,14 +28,6 @@ public class TerminalUpdateDTO {
     private String userId;
 
     public TerminalUpdateDTO() {
-    }
-
-    public @NotNull @NotBlank @NotEmpty String getId() {
-        return id;
-    }
-
-    public void setId(@NotNull @NotBlank @NotEmpty String id) {
-        this.id = id;
     }
 
     public @NotBlank @NotEmpty @Size(min = 1, max = 100) String getName() {

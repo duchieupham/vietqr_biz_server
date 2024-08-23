@@ -54,8 +54,8 @@ public class TerminalController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseMessageDTO> updateTerminalById(@Validated @RequestBody TerminalUpdateDTO dto){
-        ResponseMessageDTO result = terminalService.updateTerminal(dto);
+    public ResponseEntity<ResponseMessageDTO> updateTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody TerminalUpdateDTO dto){
+        ResponseMessageDTO result = terminalService.updateTerminal(id, dto);
         if(Status.SUCCESS.equals(result.getStatus())){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
@@ -65,6 +65,24 @@ public class TerminalController {
     @PutMapping("/{id}/delete")
     public ResponseEntity<ResponseMessageDTO> deleteTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
         ResponseMessageDTO result = terminalService.deleteTerminalById(new TerminalAuthDTO(id,userId));
+        if(Status.SUCCESS.equals(result.getStatus())){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/deleted")
+    public ResponseEntity<Object> getListOfTerminalDeleted(@Validated @RequestBody TerminalGetListDTO dto){
+        Object result = terminalService.getListOfTerminalDeleted(dto);
+        if(result instanceof ResponseMessageDTO){
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/recover")
+    public ResponseEntity<ResponseMessageDTO> recoverTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
+        ResponseMessageDTO result = terminalService.recoverTerminalById(new TerminalAuthDTO(id,userId));
         if(Status.SUCCESS.equals(result.getStatus())){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }

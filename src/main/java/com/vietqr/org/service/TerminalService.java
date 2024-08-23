@@ -10,7 +10,8 @@ public interface TerminalService {
     public Object getListOfTerminal(TerminalGetListDTO dto);
     public Object getTerminalById(TerminalAuthDTO dto);
     public Object searchTerminals(TerminalFindDTO dto);
-    public ResponseMessageDTO updateTerminal(TerminalUpdateDTO dto);
-    public boolean isTerminalCodeExist(String code);
-    public ResponseMessageDTO deleteTerminal(TerminalAuthDTO dto);
+    public ResponseMessageDTO updateTerminal(String id, TerminalUpdateDTO dto);
+    public ResponseMessageDTO deleteTerminalById(TerminalAuthDTO dto);
+    public ResponseMessageDTO recoverTerminalById(TerminalAuthDTO dto);
+    public Object getListOfTerminalDeleted(TerminalGetListDTO dto);
 }
