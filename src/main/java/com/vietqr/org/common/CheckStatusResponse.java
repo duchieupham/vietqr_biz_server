@@ -5,7 +5,7 @@ import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
 import org.springframework.http.HttpStatus;
 
-public class CheckStatusResponseUtil {
+public class CheckStatusResponse {
     public static HttpStatus checkStatusResponseMessageDTO(ResponseMessageDTO responseMessageDTO) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         if (Status.SUCCESS.equals(responseMessageDTO.getStatus())) {
