@@ -12,6 +12,9 @@ public class DateTimeUtil {
         return nowUtc.toEpochSecond();
     }
 
+    /*
+    * If the value of numOfMonths is negative, getTimeUTCNMonthsAgo will calculate a time in the future
+    * */
     static public long getTimeUTCNMonthsAgo(int numOfMonths){
         LocalDateTime nMonthsAgo = LocalDateTime.now().minusMonths(numOfMonths);
         ZonedDateTime nMonthsAgoUtc = nMonthsAgo.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC);
