@@ -1,20 +1,11 @@
 package com.vietqr.org.controller;
 
+import com.vietqr.org.common.CheckStatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.merchant.MerchantRequestDTO;
 import com.vietqr.org.service.MerchantService;
-import com.vietqr.org.common.CheckStatusResponseUtil;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/merchants")
@@ -28,38 +19,38 @@ public class MerchantController {
 
     @PostMapping
     public ResponseEntity<ResponseMessageDTO> saveMerchant(@RequestBody MerchantRequestDTO merchantRequestDTO) {
-        ResponseMessageDTO responseMessageDTO = merchantService.insertMerchant(merchantRequestDTO);
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponseUtil.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = merchantService.insertMerchant(merchantRequestDTO);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
     @GetMapping
-    public ResponseEntity<ResponseObjectDTO> getAllMerchant(@RequestParam String id) {
-        ResponseObjectDTO responseObjectDTO = merchantService.merchantInfo(id);
-        return new ResponseEntity<>(responseObjectDTO, CheckStatusResponseUtil.checkStatusResponseObjectDTO(responseObjectDTO));
+    public ResponseEntity<Object> getAllMerchant(@RequestParam String id) {
+        Object response = merchantService.merchantInfo(id);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseObjectDTO(response));
     }
 
     @PutMapping
     public ResponseEntity<ResponseMessageDTO> updateMerchant(@RequestParam String id,
                                                              @RequestBody MerchantRequestDTO merchantRequestDTO) {
-        ResponseMessageDTO responseMessageDTO = merchantService.updateMerchant(id, merchantRequestDTO);
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponseUtil.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = merchantService.updateMerchant(id, merchantRequestDTO);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
     @DeleteMapping
     public ResponseEntity<ResponseMessageDTO> deleteMerchant(@RequestParam String id) {
-        ResponseMessageDTO responseMessageDTO = merchantService.deleteMerchant(id);
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponseUtil.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = merchantService.deleteMerchant(id);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
     @GetMapping("/list-delete")
-    public ResponseEntity<ResponseObjectDTO> getListDeleteMerchant() {
-        ResponseObjectDTO responseObjectDTO = merchantService.getListDeleteMerchant();
-        return new ResponseEntity<>(responseObjectDTO, CheckStatusResponseUtil.checkStatusResponseObjectDTO(responseObjectDTO));
+    public ResponseEntity<Object> getListDeleteMerchant() {
+        Object response = merchantService.getListDeleteMerchant();
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseObjectDTO(response));
     }
 
     @PatchMapping
     public ResponseEntity<ResponseMessageDTO> restoreMerchant(@RequestParam String id) {
-        ResponseMessageDTO responseMessageDTO = merchantService.recoverMerchant(id);
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponseUtil.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = merchantService.recoverMerchant(id);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 }

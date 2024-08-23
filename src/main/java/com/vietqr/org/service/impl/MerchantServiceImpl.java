@@ -71,8 +71,8 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    public ResponseObjectDTO merchantInfo(String id) {
-        ResponseObjectDTO result;
+    public Object merchantInfo(String id) {
+        Object result;
         MerchantResponseDTO merchantResponseDTO = new MerchantResponseDTO();
         try {
             Optional<MerchantEntity> merchantEntityOptional = merchantRepository.findMerchantById(id);
@@ -130,8 +130,8 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    public ResponseObjectDTO getListDeleteMerchant() {
-        ResponseObjectDTO result;
+    public Object getListDeleteMerchant() {
+        Object result;
         try {
             List<MerchantEntity> merchantEntityList = merchantRepository.findDeletedMerchants(DateTimeUtil.getTimeUTCNMonthsAgo(6));
             List<MerchantResponseDTO> merchantResponseDTOList = merchantEntityList.stream().map(merchantEntity -> {
