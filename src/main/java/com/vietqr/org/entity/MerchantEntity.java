@@ -30,6 +30,8 @@ public class MerchantEntity implements Serializable {
     private String serviceType;
     @Column(name = "status")
     private boolean status;
+    @Column(name = "timeUpdatedStatus")
+    private long timeUpdatedStatus;
     @Column(name = "userId")
     private String userId;
     @Column(name = "timeCreate")
@@ -50,7 +52,7 @@ public class MerchantEntity implements Serializable {
     public MerchantEntity() {
     }
 
-    public MerchantEntity(String id, String name, String fullName, String address, int nationalId, String vso, String email, String serviceType, boolean status, String userId, long timeCreate, String publishId, boolean master, String refId, String qrBoxId, String businessSector, int businessType) {
+    public MerchantEntity(String id, String name, String fullName, String address, int nationalId, String vso, String email, String serviceType, boolean status, long timeUpdatedStatus, String userId, long timeCreate, String publishId, boolean master, String refId, String qrBoxId, String businessSector, int businessType) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
@@ -60,6 +62,7 @@ public class MerchantEntity implements Serializable {
         this.email = email;
         this.serviceType = serviceType;
         this.status = status;
+        this.timeUpdatedStatus = timeUpdatedStatus;
         this.userId = userId;
         this.timeCreate = timeCreate;
         this.publishId = publishId;
@@ -156,6 +159,14 @@ public class MerchantEntity implements Serializable {
 
     public void setTimeCreate(long timeCreate) {
         this.timeCreate = timeCreate;
+    }
+
+    public long getTimeUpdatedStatus() {
+        return timeUpdatedStatus;
+    }
+
+    public void setTimeUpdatedStatus(long timeUpdatedStatus) {
+        this.timeUpdatedStatus = timeUpdatedStatus;
     }
 
     public String getPublishId() {

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +48,18 @@ public class MerchantController {
     @DeleteMapping
     public ResponseEntity<ResponseMessageDTO> deleteMerchant(@RequestParam String id) {
         ResponseMessageDTO responseMessageDTO = merchantService.deleteMerchant(id);
+        return new ResponseEntity<>(responseMessageDTO, checkStatusResponseMessageDTO(responseMessageDTO));
+    }
+
+    @GetMapping("/list-delete")
+    public ResponseEntity<ResponseObjectDTO> getListDeleteMerchant() {
+        ResponseObjectDTO responseObjectDTO = merchantService.getListDeleteMerchant();
+        return new ResponseEntity<>(responseObjectDTO, checkStatusResponseObjectDTO(responseObjectDTO));
+    }
+
+    @PatchMapping
+    public ResponseEntity<ResponseMessageDTO> restoreMerchant(@RequestParam String id) {
+        ResponseMessageDTO responseMessageDTO = merchantService.recoverMerchant(id);
         return new ResponseEntity<>(responseMessageDTO, checkStatusResponseMessageDTO(responseMessageDTO));
     }
 

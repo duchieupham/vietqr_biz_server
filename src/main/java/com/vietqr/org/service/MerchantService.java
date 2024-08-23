@@ -9,4 +9,6 @@ public interface MerchantService {
     ResponseObjectDTO merchantInfo(String id);
     ResponseMessageDTO updateMerchant(String id, MerchantRequestDTO merchantRequestDTO);
     ResponseMessageDTO deleteMerchant(String id);
+    ResponseObjectDTO getListDeleteMerchant();
+    ResponseMessageDTO recoverMerchant(String id);
 }
