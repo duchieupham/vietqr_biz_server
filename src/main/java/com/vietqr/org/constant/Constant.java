@@ -1,24 +1,27 @@
 package com.vietqr.org.constant;
 
 public class Constant {
-    public static final String[] TERMINAL_HEADERS = new String[] {
+    public static final String[] TERMINAL_HEADERS = new String[]{
             "STT",
             "id",
+            "name",
             "address",
-            "bank_id",
+            "mid",
             "code",
+            "publicId",
+            "refId",
+            "bankId",
+            "qrBoxId",
+            "sub",
             "data1",
             "data2",
-            "mid",
-            "name",
-            "num_of_staff",
-            "public_id",
-            "qr_box_id",
-            "ref_id",
+            "traceTransfer",
             "status",
-            "sub",
-            "time_created",
-            "trace_transfer",
-            "time_updated_status"
+            "numOfStaff",
+            "timeUpdatedStatus",
+            "timeCreated"
     };
+
+    public static String TERMINAL_TITLE = "Terminals";
+    public static String TERMINAL_SHEET_NAME = "terminals";
 }

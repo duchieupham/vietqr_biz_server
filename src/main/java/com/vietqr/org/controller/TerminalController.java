@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 
 @RestController
 @CrossOrigin
@@ -76,5 +77,11 @@ public class TerminalController {
     public ResponseEntity<ResponseMessageDTO> exportTerminalsByMid(@Validated @RequestBody String mid, HttpServletResponse httpServletResponse){
         ResponseMessageDTO response = terminalService.exportTerminalsByMid(httpServletResponse, mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
+
+    @PostMapping("/import")
+    public ResponseEntity<Object> importTerminals(InputStream is){
+        Object response = terminalService.importTerminals(is);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 }
