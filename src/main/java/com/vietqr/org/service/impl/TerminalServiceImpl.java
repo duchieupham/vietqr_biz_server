@@ -1,6 +1,6 @@
 package com.vietqr.org.service.impl;
 
-import com.vietqr.org.constant.Contant;
+import com.vietqr.org.constant.Constant;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
@@ -13,10 +13,8 @@ import com.vietqr.org.utils.ExcelGeneratorUtil;
 import com.vietqr.org.utils.GeneratorUtil;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -280,7 +278,7 @@ public class TerminalServiceImpl implements TerminalService {
             if (entity != null) {
                 XSSFSheet sheet = workbook.createSheet("terminal");
                 // header
-                String[] headers = Contant.TERMINAL_HEADERS;
+                String[] headers = Constant.TERMINAL_HEADERS;
                 Row row = sheet.createRow(0);
                 CellStyle styleHeader = ExcelGeneratorUtil.getStyleHeader(workbook);
                 CellStyle styleTitle = ExcelGeneratorUtil.getStyleTitle(workbook);

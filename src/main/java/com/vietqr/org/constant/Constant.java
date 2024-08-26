@@ -1,6 +1,6 @@
 package com.vietqr.org.constant;
 
-public class Contant {
+public class Constant {
     public static final String[] TERMINAL_HEADERS = new String[] {
             "STT",
             "id",
