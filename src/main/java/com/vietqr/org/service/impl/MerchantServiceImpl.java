@@ -10,8 +10,20 @@ import com.vietqr.org.repository.MerchantRepository;
 import com.vietqr.org.service.MerchantService;
 import com.vietqr.org.utils.DateTimeUtil;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -168,6 +180,77 @@ public class MerchantServiceImpl implements MerchantService {
         } catch (Exception e) {
             logger.error("restoreMerchant ERROR: " + e.getMessage());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO exportMerchantToExcel(String id) {
+        ResponseMessageDTO result;
+        Workbook workbook;
+        Sheet sheet;
+        MerchantEntity merchantEntity;
+        Optional<MerchantEntity> merchantEntityOptional = merchantRepository.findMerchantById(id);
+        if (merchantEntityOptional.isPresent()) {
+            merchantEntity = merchantEntityOptional.get();
+        } else {
+            return new ResponseMessageDTO("FAILED", "E05");
+        }
+        try (FileInputStream fileInputStream = new FileInputStream("merchant_data.xlsx")) {
+            workbook = new XSSFWorkbook(fileInputStream);
+            sheet = workbook.getSheetAt(0);
+        } catch (IOException e) {
+            workbook = new XSSFWorkbook();
+            sheet = workbook.createSheet("Merchant Data");
+
+            CellStyle cellStyle = workbook.createCellStyle();
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+            Row headerRow = sheet.createRow(1);
+            String[] columns = {"STT", "Name", "FullName", "Address", "NationalId", "Vso", "Email", "ServiceType", "UserId", "TimeCreate", "PublishId", "QrBoxId", "BusinessSector", "BusinessType"};
+            for (int i = 0; i < columns.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(columns[i]);
+                cell.setCellStyle(cellStyle);
+            }
+
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("Merchant");
+            titleCell.setCellStyle(cellStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.length));
+        }
+
+        int rowNum = sheet.getLastRowNum() + 1;
+        Row dataRow = sheet.createRow(rowNum);
+        dataRow.createCell(0).setCellValue(rowNum - 1);
+        dataRow.createCell(1).setCellValue(merchantEntity.getName());
+        dataRow.createCell(2).setCellValue(merchantEntity.getFullName());
+        dataRow.createCell(3).setCellValue(merchantEntity.getAddress());
+        dataRow.createCell(4).setCellValue(merchantEntity.getNationalId());
+        dataRow.createCell(5).setCellValue(merchantEntity.getVso());
+        dataRow.createCell(6).setCellValue(merchantEntity.getEmail());
+        dataRow.createCell(7).setCellValue(merchantEntity.getServiceType());
+        dataRow.createCell(8).setCellValue(merchantEntity.getUserId());
+        dataRow.createCell(9).setCellValue(merchantEntity.getTimeCreate());
+        dataRow.createCell(10).setCellValue(merchantEntity.getPublishId());
+        dataRow.createCell(11).setCellValue(merchantEntity.getQrBoxId());
+        dataRow.createCell(12).setCellValue(merchantEntity.getBusinessSector());
+        dataRow.createCell(13).setCellValue(merchantEntity.getBusinessType());
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream("merchant_data.xlsx")) {
+            workbook.write(fileOutputStream);
+            result = new ResponseMessageDTO("SUCCESS", "");
+        } catch (IOException e) {
+            logger.error("exportMerchantToExcel ERROR: " + e.getMessage());
+            result = new ResponseMessageDTO("FAILED", "E05");
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                logger.error("exportMerchantToExcel ERROR: " + e.getMessage());
+            }
         }
         return result;
     }
