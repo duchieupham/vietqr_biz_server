@@ -8,18 +8,18 @@ public class Constant {
             "address",
             "mid",
             "code",
-            "publicId",
-            "refId",
-            "bankId",
-            "qrBoxId",
+            "public_id",
+            "ref_id",
+            "bank_id",
+            "qr_box_id",
             "sub",
             "data1",
             "data2",
-            "traceTransfer",
+            "trace_transfer",
             "status",
-            "numOfStaff",
-            "timeUpdatedStatus",
-            "timeCreated"
+            "num_of_staff",
+            "time_updated_status",
+            "time_created"
     };
 
     public static String TERMINAL_TITLE = "Terminals";
