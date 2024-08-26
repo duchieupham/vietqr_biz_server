@@ -1,6 +1,5 @@
 package com.vietqr.org.service.impl;
 
-import com.vietqr.org.utils.GeneratorUtil;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
@@ -9,10 +8,20 @@ import com.vietqr.org.entity.TerminalEntity;
 import com.vietqr.org.repository.TerminalRepository;
 import com.vietqr.org.service.TerminalService;
 import com.vietqr.org.utils.DateTimeUtil;
+import com.vietqr.org.utils.ExcelGeneratorUtil;
+import com.vietqr.org.utils.GeneratorUtil;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.UUID;
@@ -184,7 +193,7 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public ResponseMessageDTO deleteTerminalById(HttpServletResponse response, TerminalAuthDTO dto) {
+    public ResponseMessageDTO deleteTerminalById(TerminalAuthDTO dto) {
         /*
          * TODO: Update info when update the status
          * */
@@ -253,6 +262,87 @@ public class TerminalServiceImpl implements TerminalService {
         } catch (Exception e) {
             result = new ResponseObjectDTO(Status.FAILED, "E05");
             logger.error("getListOfTerminalDeleted: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO exportTerminalById(HttpServletResponse httpServletResponse, String id) {
+        /*
+         * TODO: Update a headers
+         * */
+        ResponseMessageDTO result = null;
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook();) {
+            TerminalEntity entity = repo.findTerminalById(id.trim());
+            if (entity != null) {
+                XSSFSheet sheet = workbook.createSheet("terminal");
+                // header
+                String[] headers = {
+                        "STT",
+                        "id",
+                        "address",
+                        "bank_id",
+                        "code",
+                        "data1",
+                        "data2",
+                        "mid",
+                        "name",
+                        "num_of_staff",
+                        "public_id",
+                        "qr_box_id",
+                        "ref_id",
+                        "status",
+                        "sub",
+                        "time_created",
+                        "trace_transfer",
+                        "time_updated_status"
+                };
+                Row row = sheet.createRow(0);
+                CellStyle styleHeader = ExcelGeneratorUtil.getStyleHeader(workbook);
+                CellStyle styleTitle = ExcelGeneratorUtil.getStyleTitle(workbook);
+                CellStyle styleContent = ExcelGeneratorUtil.getStyleContent(workbook);
+                sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.length - 1));
+                // title
+                ExcelGeneratorUtil.createCell(sheet, row, 0, "Terminal", styleTitle);
+                row = sheet.createRow(1);
+                for (int i = 0; i < headers.length; i++) {
+                    ExcelGeneratorUtil.createCell(sheet, row, i, headers[i], styleHeader);
+                }
+                // content
+                Row rowContent = sheet.createRow(2);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 0, 1, styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 1, entity.getId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 2, entity.getName(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 3, entity.getBankId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 4, entity.getCode(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 5, entity.getData1(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 6, entity.getData2(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 7, entity.getMid(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 8, entity.getName(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 9, entity.getNumOfStaff(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 10, entity.getPublicId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 11, entity.getQrBoxId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 12, entity.getRefId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 13, entity.getStatus(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 14, entity.getSub(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 15, entity.getTimeCreated(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 16, entity.getTraceTransfer(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, 17, entity.getTimeUpdatedStatus(), styleContent);
+
+                ExcelGeneratorUtil.initResponseForExport(httpServletResponse);
+                ServletOutputStream outputStream = httpServletResponse.getOutputStream();
+                workbook.write(outputStream);
+                workbook.close();
+                outputStream.close();
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E186");
+                logger.error("exportTerminalById: The terminal not found at: " + System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("exportTerminalById: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;

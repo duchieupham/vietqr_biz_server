@@ -13,7 +13,8 @@ public interface TerminalService {
     public Object getTerminalById(TerminalAuthDTO dto);
     public Object searchTerminals(TerminalFindDTO dto);
     public ResponseMessageDTO updateTerminal(String id, TerminalUpdateDTO dto);
-    public ResponseMessageDTO deleteTerminalById(HttpServletResponse response, TerminalAuthDTO dto);
+    public ResponseMessageDTO deleteTerminalById(TerminalAuthDTO dto);
     public ResponseMessageDTO recoverTerminalById(TerminalAuthDTO dto);
     public Object getListOfTerminalDeleted(TerminalGetListDTO dto);
+    public ResponseMessageDTO exportTerminalById(HttpServletResponse httpServletResponse, String id);
 }

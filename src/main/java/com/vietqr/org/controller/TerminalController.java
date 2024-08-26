@@ -48,9 +48,9 @@ public class TerminalController {
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @PutMapping("/{id}/delete")
-    public ResponseEntity<ResponseMessageDTO> deleteTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId, HttpServletResponse httpServletResponseresponse){
-        ResponseMessageDTO response = terminalService.deleteTerminalById(httpServletResponseresponse, new TerminalAuthDTO(id,userId));
+    @PatchMapping("/{id}/delete")
+    public ResponseEntity<ResponseMessageDTO> deleteTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
+        ResponseMessageDTO response = terminalService.deleteTerminalById(new TerminalAuthDTO(id,userId));
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
@@ -60,9 +60,15 @@ public class TerminalController {
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
-    @PutMapping("/{id}/recover")
+    @PatchMapping("/{id}/recover")
     public ResponseEntity<ResponseMessageDTO> recoverTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
         ResponseMessageDTO response = terminalService.recoverTerminalById(new TerminalAuthDTO(id,userId));
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
+
+    @GetMapping("/{id}/export")
+    public ResponseEntity<ResponseMessageDTO> exportTerminalById(@Validated @PathVariable(value = "id") String id, HttpServletResponse httpServletResponse){
+        ResponseMessageDTO response = terminalService.exportTerminalById(httpServletResponse, id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 }
