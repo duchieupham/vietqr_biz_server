@@ -19,6 +19,9 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> getListOfTerminal(@Param(value = "mid") String mid);
 
+    @Query(value = "SELECT * FROM terminal WHERE mid = :mid", nativeQuery = true)
+    List<TerminalEntity> findTerminalsByMid(@Param(value = "mid") String mid);
+
     @Query(value = "SELECT COUNT(*) FROM terminal WHERE code = :code", nativeQuery = true)
     byte countTerminalByCode(@Param(value = "code") String code);
 

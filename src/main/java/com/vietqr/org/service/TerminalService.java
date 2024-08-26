@@ -17,4 +17,5 @@ public interface TerminalService {
     public ResponseMessageDTO recoverTerminalById(TerminalAuthDTO dto);
     public Object getListOfTerminalDeleted(TerminalGetListDTO dto);
     public ResponseMessageDTO exportTerminalById(HttpServletResponse httpServletResponse, String id);
+    public ResponseMessageDTO exportTerminalsByMid(HttpServletResponse httpServletResponse, String mid);
 }
