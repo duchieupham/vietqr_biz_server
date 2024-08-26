@@ -19,8 +19,8 @@ public class MerchantController {
 
     @PostMapping
     public ResponseEntity<ResponseMessageDTO> saveMerchant(@RequestBody MerchantRequestDTO merchantRequestDTO) {
-        ResponseMessageDTO responseMessageDTO = merchantService.insertMerchant(merchantRequestDTO);
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponse.checkStatusResponseMessageDTO(responseMessageDTO));
+        ResponseMessageDTO response = merchantService.insertMerchant(merchantRequestDTO);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
     @GetMapping
@@ -36,10 +36,10 @@ public class MerchantController {
         return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
-    @DeleteMapping
-    public ResponseEntity<ResponseMessageDTO> deleteMerchant(@RequestParam String id) {
-        ResponseMessageDTO responseMessageDTO = merchantService.deleteMerchant(id);
-        return new ResponseEntity<>(responseMessageDTO, CheckStatusResponse.checkStatusResponseMessageDTO(responseMessageDTO));
+    @PatchMapping("/{id}")
+    public ResponseEntity<ResponseMessageDTO> deleteMerchant(@PathVariable String id) {
+        ResponseMessageDTO response = merchantService.deleteMerchant(id);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 
     @GetMapping("/list-delete")
@@ -49,8 +49,14 @@ public class MerchantController {
     }
 
     @PatchMapping
-    public ResponseEntity<ResponseMessageDTO> restoreMerchant(@RequestParam String id) {
+    public ResponseEntity<ResponseMessageDTO> recoverMerchant(@RequestParam String id) {
         ResponseMessageDTO response = merchantService.recoverMerchant(id);
+        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
+    }
+
+    @GetMapping("/export/{id}")
+    public ResponseEntity<ResponseMessageDTO> exportMerchant(@PathVariable String id) {
+        ResponseMessageDTO response = merchantService.exportMerchantToExcel(id);
         return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
     }
 }
