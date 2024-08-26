@@ -4,6 +4,8 @@ import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.terminal.*;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Service
 public interface TerminalService {
     public ResponseMessageDTO insertTerminal(TerminalInsertDTO dto);
@@ -11,7 +13,7 @@ public interface TerminalService {
     public Object getTerminalById(TerminalAuthDTO dto);
     public Object searchTerminals(TerminalFindDTO dto);
     public ResponseMessageDTO updateTerminal(String id, TerminalUpdateDTO dto);
-    public ResponseMessageDTO deleteTerminalById(TerminalAuthDTO dto);
+    public ResponseMessageDTO deleteTerminalById(HttpServletResponse response, TerminalAuthDTO dto);
     public ResponseMessageDTO recoverTerminalById(TerminalAuthDTO dto);
     public Object getListOfTerminalDeleted(TerminalGetListDTO dto);
 }

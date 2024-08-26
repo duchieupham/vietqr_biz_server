@@ -86,7 +86,7 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
     @Transactional
     @Modifying
     @Query(value = "UPDATE terminal"
-            + " SET status = :status, time_update_status = :timeUpdatedStatus"
+            + " SET status = :status, time_updated_status = :timeUpdatedStatus"
             + " WHERE id = :id"
             , nativeQuery = true)
     void updateTerminalStatusById(@Param("id") String id,
@@ -97,7 +97,7 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
             + " INNER JOIN merchant m ON m.id = t.mid"
             + " WHERE t.mid = :mid"
             + " AND m.user_id > :userId"
-            + " AND t.time_update_status > :timeLine"
+            + " AND t.time_updated_status > :timeLine"
             , nativeQuery = true)
     List<ITerminalResultOfFindDTO> getListOfTerminalDeleted(@Param(value = "mid") String mid,
                                                             @Param(value = "userId") String userId,

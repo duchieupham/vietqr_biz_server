@@ -1,5 +1,6 @@
 package com.vietqr.org.service.impl;
 
+import com.vietqr.org.utils.GeneratorUtil;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
@@ -8,11 +9,11 @@ import com.vietqr.org.entity.TerminalEntity;
 import com.vietqr.org.repository.TerminalRepository;
 import com.vietqr.org.service.TerminalService;
 import com.vietqr.org.utils.DateTimeUtil;
-import com.vietqr.org.utils.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,13 +32,13 @@ public class TerminalServiceImpl implements TerminalService {
          *  Check user is belong to the merchant
          * */
         try {
-            TerminalEntity entity = new TerminalEntity(dto.getName(), dto.getAddress(), dto.getMid(), dto.getCode(), dto.getBankId());
-            entity.setCode(generateTerminalCode(entity.getName()));
+            TerminalEntity entity = new TerminalEntity(dto.getName().trim(), dto.getAddress().trim(), dto.getMid().trim(), dto.getCode().trim(), dto.getBankId().trim());
+            entity.setCode(GeneratorUtil.generateTerminalCode(entity.getName()));
             UUID uuid = UUID.randomUUID();
             entity.setId(uuid.toString());
             entity.setNumOfStaff(0);
             entity.setTimeCreated(DateTimeUtil.getNowUTC());
-            entity.setPublicId(generatePublicId());
+            entity.setPublicId(GeneratorUtil.generatePublicId("TER"));
             entity.setStatus(true);
             entity.setSub(false);
             repo.save(entity);
@@ -106,27 +107,27 @@ public class TerminalServiceImpl implements TerminalService {
         try {
             switch (dto.getType()) {
                 case 0: {
-                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByName(dto.getMid(), dto.getSearchTerm());
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByName(dto.getMid().trim(), dto.getSearchTerm().trim());
                     result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
                     break;
                 }
                 case 1: {
-                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByCode(dto.getMid(), dto.getSearchTerm());
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByCode(dto.getMid().trim(), dto.getSearchTerm().trim());
                     result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
                     break;
                 }
                 case 2: {
-                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByAddress(dto.getMid(), dto.getSearchTerm());
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByAddress(dto.getMid().trim(), dto.getSearchTerm().trim());
                     result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
                     break;
                 }
                 case 3: {
-                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByBankId(dto.getMid(), dto.getSearchTerm());
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminalsByBankId(dto.getMid().trim(), dto.getSearchTerm().trim());
                     result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
                     break;
                 }
                 case 4: {
-                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminals(dto.getMid(), dto.getSearchTerm());
+                    List<ITerminalResultOfFindDTO> findDTO = repo.findTerminals(dto.getMid().trim(), dto.getSearchTerm().trim());
                     result = new ResponseObjectDTO(Status.SUCCESS, findDTO);
                     break;
                 }
@@ -183,7 +184,7 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public ResponseMessageDTO deleteTerminalById(TerminalAuthDTO dto) {
+    public ResponseMessageDTO deleteTerminalById(HttpServletResponse response, TerminalAuthDTO dto) {
         /*
          * TODO: Update info when update the status
          * */
@@ -193,7 +194,7 @@ public class TerminalServiceImpl implements TerminalService {
             if (isTerminalAuthorized(dto.getId().trim(), dto.getUserId().trim())) {
                 TerminalEntity entity = repo.findTerminalById(dto.getId().trim());
                 if (entity.getStatus()) {
-                    deleteTerminalById(dto.getId().trim());
+                    repo.updateTerminalStatusById(dto.getId().trim(), false, DateTimeUtil.getNowUTC());
                     result = new ResponseMessageDTO(Status.SUCCESS, "");
                 } else {
                     result = new ResponseMessageDTO(Status.FAILED, "E05");
@@ -203,7 +204,6 @@ public class TerminalServiceImpl implements TerminalService {
                 result = new ResponseMessageDTO(Status.FAILED, "E115");
                 logger.error("deleteTerminalById: User don't have the permission to do this action at: " + System.currentTimeMillis());
             }
-
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("deleteTerminalById: " + e.getMessage() + " at: " + System.currentTimeMillis());
@@ -217,10 +217,10 @@ public class TerminalServiceImpl implements TerminalService {
         ResponseMessageDTO result = null;
 
         try {
-            if (isTerminalAuthorized(dto.getId(), dto.getUserId())) {
-                TerminalEntity entity = repo.findTerminalById(dto.getId());
+            if (isTerminalAuthorized(dto.getId().trim(), dto.getUserId().trim())) {
+                TerminalEntity entity = repo.findTerminalById(dto.getId().trim());
                 if (!entity.getStatus() && entity.getTimeUpdatedStatus() < DateTimeUtil.getTimeUTCNMonthsAgo(6)) {
-                    recoverTerminalById(dto.getId());
+                    repo.updateTerminalStatusById(dto.getId().trim(), true, DateTimeUtil.getNowUTC());
                     result = new ResponseMessageDTO(Status.SUCCESS, "");
                 } else {
                     result = new ResponseMessageDTO(Status.FAILED, "E05");
@@ -243,7 +243,7 @@ public class TerminalServiceImpl implements TerminalService {
     public Object getListOfTerminalDeleted(TerminalGetListDTO dto) {
         Object result = null;
         try {
-            List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminalDeleted(dto.getUserId(), dto.getMid(), DateTimeUtil.getTimeUTCNMonthsAgo(6));
+            List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminalDeleted(dto.getUserId().trim(), dto.getMid().trim(), DateTimeUtil.getTimeUTCNMonthsAgo(6));
             if (entities != null) {
                 result = new ResponseObjectDTO(Status.SUCCESS, entities);
             } else {
@@ -258,32 +258,7 @@ public class TerminalServiceImpl implements TerminalService {
         return result;
     }
 
-    private String generateTerminalCode(String name) {
-        final byte LENGTH = 15;
-        final byte CONST_LENGTH = 10;
-
-        String result = name.toLowerCase().replaceAll("\\s+", "");
-        if (result.length() > CONST_LENGTH) {
-            String firstPart = result.substring(0, CONST_LENGTH);
-            String randomString = StringUtil.generateRandomString(LENGTH - CONST_LENGTH);
-            return firstPart + randomString;
-        }
-        return result + StringUtil.generateRandomString(LENGTH - result.length());
-    }
-
-    private String generatePublicId() {
-        return "TER" + StringUtil.generateRandomString(8);
-    }
-
     private boolean isTerminalAuthorized(String id, String userId) {
         return repo.countTerminalByAuth(id, userId) == 1;
-    }
-
-    private void deleteTerminalById(String id) {
-        repo.updateTerminalStatusById(id, false, DateTimeUtil.getNowUTC());
-    }
-
-    private void recoverTerminalById(String id) {
-        repo.updateTerminalStatusById(id, true, DateTimeUtil.getNowUTC());
     }
 }

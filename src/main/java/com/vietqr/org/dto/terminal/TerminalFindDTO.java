@@ -25,7 +25,7 @@ public class TerminalFindDTO {
     * 3: bank id
     * 4: other
     * */
-    private byte type;
+    private int type;
 
     @NotNull
     @NotEmpty
@@ -58,11 +58,11 @@ public class TerminalFindDTO {
         this.userId = userId;
     }
 
-    public byte getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(byte type) {
+    public void setType(int type) {
         this.type = type;
     }
 
