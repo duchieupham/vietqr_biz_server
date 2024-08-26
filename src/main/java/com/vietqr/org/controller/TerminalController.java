@@ -71,4 +71,10 @@ public class TerminalController {
         ResponseMessageDTO response = terminalService.exportTerminalById(httpServletResponse, id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
+
+    @GetMapping("/export")
+    public ResponseEntity<ResponseMessageDTO> exportTerminalsByMid(@Validated @RequestBody String mid, HttpServletResponse httpServletResponse){
+        ResponseMessageDTO response = terminalService.exportTerminalsByMid(httpServletResponse, mid);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
 }

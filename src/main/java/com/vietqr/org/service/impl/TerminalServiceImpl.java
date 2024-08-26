@@ -22,12 +22,14 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class TerminalServiceImpl implements TerminalService {
     private static final Logger logger = Logger.getLogger(TerminalServiceImpl.class);
+    private final String[] headers = Constant.TERMINAL_HEADERS;
 
     @Autowired
     private TerminalRepository repo;
@@ -278,40 +280,21 @@ public class TerminalServiceImpl implements TerminalService {
             if (entity != null) {
                 XSSFSheet sheet = workbook.createSheet("terminal");
                 // header
-                String[] headers = Constant.TERMINAL_HEADERS;
-                Row row = sheet.createRow(0);
+                int rownum = 0;
+                Row row = sheet.createRow(rownum++);
                 CellStyle styleHeader = ExcelGeneratorUtil.getStyleHeader(workbook);
                 CellStyle styleTitle = ExcelGeneratorUtil.getStyleTitle(workbook);
                 CellStyle styleContent = ExcelGeneratorUtil.getStyleContent(workbook);
                 sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.length - 1));
                 // title
                 ExcelGeneratorUtil.createCell(sheet, row, 0, "Terminal", styleTitle);
-                row = sheet.createRow(1);
+                row = sheet.createRow(rownum++);
                 for (int i = 0; i < headers.length; i++) {
                     ExcelGeneratorUtil.createCell(sheet, row, i, headers[i], styleHeader);
                 }
                 // content
-                Row rowContent = sheet.createRow(2);
-                int columnCount = 0;
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, 1, styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getName(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getBankId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getCode(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData1(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData2(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getMid(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getName(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getNumOfStaff(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getPublicId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getQrBoxId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getRefId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getStatus(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getSub(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTimeCreated(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTraceTransfer(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount, entity.getTimeUpdatedStatus(), styleContent);
-
+                Row rowContent = sheet.createRow(rownum++);
+                writeContent(sheet, rowContent, rownum, entity, styleContent);
                 ExcelGeneratorUtil.initResponseForExport(httpServletResponse);
                 ServletOutputStream outputStream = httpServletResponse.getOutputStream();
                 workbook.write(outputStream);
@@ -327,6 +310,72 @@ public class TerminalServiceImpl implements TerminalService {
         }
 
         return result;
+    }
+
+    @Override
+    public ResponseMessageDTO exportTerminalsByMid(HttpServletResponse httpServletResponse, String mid) {
+        /*
+         * TODO: Update a headers
+         * */
+        ResponseMessageDTO result = null;
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook();) {
+            List<TerminalEntity> entities = repo.findTerminalsByMid(mid.trim());
+
+            XSSFSheet sheet = workbook.createSheet("terminals");
+            int rownum = 0;
+            // header
+            Row row = sheet.createRow(rownum++);
+            CellStyle styleHeader = ExcelGeneratorUtil.getStyleHeader(workbook);
+            CellStyle styleTitle = ExcelGeneratorUtil.getStyleTitle(workbook);
+            CellStyle styleContent = ExcelGeneratorUtil.getStyleContent(workbook);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.length - 1));
+            // title
+            ExcelGeneratorUtil.createCell(sheet, row, 0, "Terminals", styleTitle);
+            row = sheet.createRow(rownum++);
+            for (int i = 0; i < headers.length; i++) {
+                ExcelGeneratorUtil.createCell(sheet, row, i, headers[i], styleHeader);
+            }
+            // content
+            if (entities != null && !entities.isEmpty()) {
+                for (TerminalEntity entity : entities) {
+                    Row rowContent = sheet.createRow(rownum++);
+                    writeContent(sheet, rowContent, rownum, entity, styleContent);
+                }
+            }
+            ExcelGeneratorUtil.initResponseForExport(httpServletResponse);
+            ServletOutputStream outputStream = httpServletResponse.getOutputStream();
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("exportTerminalsByMid: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
+    private void writeContent(XSSFSheet sheet, Row rowContent, int rownum, TerminalEntity entity, CellStyle style) {
+        int columnCount = 0;
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, rownum - 2, style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getName(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getBankId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getCode(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData1(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData2(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getMid(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getName(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getNumOfStaff(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getPublicId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getQrBoxId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getRefId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getStatus(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getSub(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTimeCreated(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTraceTransfer(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount, entity.getTimeUpdatedStatus(), style);
     }
 
     private boolean isTerminalAuthorized(String id, String userId) {
