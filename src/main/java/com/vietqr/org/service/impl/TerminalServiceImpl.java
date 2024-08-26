@@ -1,5 +1,6 @@
 package com.vietqr.org.service.impl;
 
+import com.vietqr.org.constant.Contant;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
@@ -279,26 +280,7 @@ public class TerminalServiceImpl implements TerminalService {
             if (entity != null) {
                 XSSFSheet sheet = workbook.createSheet("terminal");
                 // header
-                String[] headers = {
-                        "STT",
-                        "id",
-                        "address",
-                        "bank_id",
-                        "code",
-                        "data1",
-                        "data2",
-                        "mid",
-                        "name",
-                        "num_of_staff",
-                        "public_id",
-                        "qr_box_id",
-                        "ref_id",
-                        "status",
-                        "sub",
-                        "time_created",
-                        "trace_transfer",
-                        "time_updated_status"
-                };
+                String[] headers = Contant.TERMINAL_HEADERS;
                 Row row = sheet.createRow(0);
                 CellStyle styleHeader = ExcelGeneratorUtil.getStyleHeader(workbook);
                 CellStyle styleTitle = ExcelGeneratorUtil.getStyleTitle(workbook);
@@ -312,24 +294,25 @@ public class TerminalServiceImpl implements TerminalService {
                 }
                 // content
                 Row rowContent = sheet.createRow(2);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 0, 1, styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 1, entity.getId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 2, entity.getName(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 3, entity.getBankId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 4, entity.getCode(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 5, entity.getData1(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 6, entity.getData2(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 7, entity.getMid(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 8, entity.getName(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 9, entity.getNumOfStaff(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 10, entity.getPublicId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 11, entity.getQrBoxId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 12, entity.getRefId(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 13, entity.getStatus(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 14, entity.getSub(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 15, entity.getTimeCreated(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 16, entity.getTraceTransfer(), styleContent);
-                ExcelGeneratorUtil.createCell(sheet, rowContent, 17, entity.getTimeUpdatedStatus(), styleContent);
+                int columnCount = 0;
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, 1, styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getName(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getBankId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getCode(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData1(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData2(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getMid(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getName(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getNumOfStaff(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getPublicId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getQrBoxId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getRefId(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getStatus(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getSub(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTimeCreated(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTraceTransfer(), styleContent);
+                ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount, entity.getTimeUpdatedStatus(), styleContent);
 
                 ExcelGeneratorUtil.initResponseForExport(httpServletResponse);
                 ServletOutputStream outputStream = httpServletResponse.getOutputStream();
