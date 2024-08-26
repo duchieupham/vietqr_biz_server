@@ -57,6 +57,6 @@ public class MerchantController {
     @GetMapping("/export/{id}")
     public ResponseEntity<ResponseMessageDTO> exportMerchant(@PathVariable String id) {
         ResponseMessageDTO response = merchantService.exportMerchantToExcel(id);
-        return new ResponseEntity<>(response, CheckStatusResponse.checkStatusResponseMessageDTO(response));
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 }
