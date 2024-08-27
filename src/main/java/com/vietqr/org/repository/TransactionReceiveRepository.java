@@ -1,6 +1,5 @@
 package com.vietqr.org.repository;
 
-import com.vietqr.org.entity.TerminalEntity;
 import com.vietqr.org.entity.TransactionReceiveEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface TransactionReceiveRepository extends JpaRepository<TerminalEntity, String> {
+public interface TransactionReceiveRepository extends JpaRepository<TransactionReceiveEntity, String> {
     @Query(value = "SELECT * FROM transaction_receive"
             + " WHERE terminal_code = :terminalCode"
             , nativeQuery = true)
