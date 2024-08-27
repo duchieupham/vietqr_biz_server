@@ -6,11 +6,13 @@ import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.merchant.MerchantRequestDTO;
 import com.vietqr.org.dto.merchant.MerchantResponseDTO;
 import com.vietqr.org.entity.MerchantEntity;
+import com.vietqr.org.entity.TerminalEntity;
 import com.vietqr.org.repository.MerchantRepository;
 import com.vietqr.org.repository.TerminalRepository;
 import com.vietqr.org.service.MerchantService;
 import com.vietqr.org.utils.DateTimeUtil;
 import com.vietqr.org.utils.ExcelGeneratorUtil;
+import com.vietqr.org.utils.GeneratorUtil;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -99,7 +101,7 @@ public class MerchantServiceImpl implements MerchantService {
             result = new ResponseObjectDTO(Status.SUCCESS, merchantResponseDTO);
         } catch (Exception e) {
             logger.error("merchantInfo ERROR: " + e.getMessage());
-            result = new ResponseObjectDTO(Status.FAILED, null);
+            result = new ResponseMessageDTO(Status.FAILED, "E188");
         }
         return result;
     }
@@ -116,7 +118,7 @@ public class MerchantServiceImpl implements MerchantService {
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("updateMerchant ERROR: " + e.getMessage());
-            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E189");
         }
         return result;
     }
@@ -159,7 +161,7 @@ public class MerchantServiceImpl implements MerchantService {
             result = new ResponseObjectDTO(Status.SUCCESS, merchantResponseDTOList);
         } catch (Exception e) {
             logger.error("getListDeleteMerchant ERROR: " + e.getMessage());
-            result = new ResponseObjectDTO(Status.FAILED, null);
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -190,7 +192,7 @@ public class MerchantServiceImpl implements MerchantService {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             Optional<MerchantEntity> merchantEntityOptional = merchantRepository.findMerchantById(id);
             if (!merchantEntityOptional.isPresent()) {
-                return new ResponseMessageDTO("FAILED", "E05");
+                return new ResponseMessageDTO(Status.FAILED, "E05");
             }
             MerchantEntity merchantEntity = merchantEntityOptional.get();
 
@@ -233,12 +235,47 @@ public class MerchantServiceImpl implements MerchantService {
             workbook.close();
             outputStream.close();
 
-            result = new ResponseMessageDTO("SUCCESS", "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("exportMerchantToExcel ERROR: " + e.getMessage());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
 
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO merchantDataTransfer(String oldMid, String newMid) {
+        ResponseMessageDTO result;
+        try {
+            List<TerminalEntity> terminalEntities = terminalRepository.findTerminalsByMid(oldMid);
+            for (TerminalEntity terminalEntity: terminalEntities) {
+                TerminalEntity newTerminal = new TerminalEntity();
+                UUID uuid = UUID.randomUUID();
+                newTerminal.setId(uuid.toString());
+                newTerminal.setName(terminalEntity.getName());
+                newTerminal.setAddress(terminalEntity.getAddress());
+                newTerminal.setMid(newMid);
+                newTerminal.setCode(GeneratorUtil.generateTerminalCode(terminalEntity.getName()));
+                newTerminal.setPublicId(GeneratorUtil.generatePublicId("TER"));
+                newTerminal.setRefId(terminalEntity.getRefId());
+                newTerminal.setBankId(terminalEntity.getBankId());
+                newTerminal.setQrBoxId(terminalEntity.getQrBoxId());
+                newTerminal.setSub(terminalEntity.getSub());
+                newTerminal.setData1(terminalEntity.getData1());
+                newTerminal.setData2(terminalEntity.getData2());
+                newTerminal.setTraceTransfer(terminalEntity.getTraceTransfer());
+                newTerminal.setStatus(terminalEntity.getStatus());
+                newTerminal.setNumOfStaff(terminalEntity.getNumOfStaff());
+                newTerminal.setTimeUpdatedStatus(terminalEntity.getTimeUpdatedStatus());
+                newTerminal.setTimeCreated(terminalEntity.getTimeCreated());
+                terminalRepository.save(newTerminal);
+            }
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
+        } catch (Exception e) {
+            logger.error("merchantDataTransfer ERROR: " + e.getMessage());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
         return result;
     }
 
