@@ -112,6 +112,6 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
     @Query(value = "SELECT COUNT(*) FROM terminal WHERE public_id = :publicId", nativeQuery = true)
     int countTerminalByPublicId(@Param(value = "publicId") String publicId);
 
-    @Query(value = "SELECT COUNT(*) FROM terminal WHERE id = :d", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM terminal WHERE id = :id", nativeQuery = true)
     int countTerminalById(@Param(value = "id") String id);
 }
