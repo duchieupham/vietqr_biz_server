@@ -6,6 +6,7 @@ import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.customer.CustomerInfoDTO;
 import com.vietqr.org.dto.customer.CustomerInsertDTO;
+import com.vietqr.org.dto.customer.CustomerUpdateDTO;
 import com.vietqr.org.entity.CustomerEntity;
 import com.vietqr.org.repository.CustomerRepository;
 import com.vietqr.org.service.CustomerService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -59,5 +61,62 @@ public class CustomerServiceImpl implements CustomerService {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
+    }
+
+    @Override
+    public ResponseMessageDTO updateCustomer(String id, CustomerUpdateDTO customerUpdateDTO) {
+        ResponseMessageDTO result;
+        try {
+            Optional<CustomerEntity> optionalCustomer = customerRepository.findCustomerById(id);
+            if (optionalCustomer.isPresent()) {
+                CustomerEntity customerEntity = optionalCustomer.get();
+                customerRepository.save(updateCustomerField(customerEntity, customerUpdateDTO));
+            }
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
+        } catch (Exception e) {
+            logger.error("updateCustomer ERROR: " + e.getMessage());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO removeCustomer(String id) {
+        ResponseMessageDTO result;
+        try {
+            Optional<CustomerEntity> optionalCustomer = customerRepository.findCustomerById(id);
+            if (optionalCustomer.isPresent()) {
+                CustomerEntity customerEntity = optionalCustomer.get();
+                customerEntity.setStatus(false);
+                customerRepository.save(customerEntity);
+            }
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
+        } catch (Exception e) {
+            logger.error("removeCustomer ERROR: " + e.getMessage());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
+        return result;
+    }
+
+    private CustomerEntity updateCustomerField(CustomerEntity customerEntity, CustomerUpdateDTO customerUpdateDTO) {
+        if (customerUpdateDTO.getPhoneNo() != null) {
+            customerEntity.setPhoneNo(customerUpdateDTO.getPhoneNo());
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        CustomerInfoDTO customerInfoDTO;
+        try {
+            customerInfoDTO = objectMapper.readValue(customerEntity.getData(), CustomerInfoDTO.class);
+            if (customerUpdateDTO.getName() != null) {
+                customerInfoDTO.setName(customerUpdateDTO.getName());
+            }
+            if (customerUpdateDTO.getAddress() != null) {
+                customerInfoDTO.setAddress(customerUpdateDTO.getAddress());
+            }
+            String jsonData = objectMapper.writeValueAsString(customerInfoDTO);
+            customerEntity.setData(jsonData);
+        } catch (Exception e) {
+            logger.error("updateCustomerField ERROR: " + e.getMessage());
+        }
+        return customerEntity;
     }
 }
