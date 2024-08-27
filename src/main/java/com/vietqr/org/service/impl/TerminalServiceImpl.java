@@ -366,7 +366,7 @@ public class TerminalServiceImpl implements TerminalService {
          * */
         Object result = null;
 
-        try(Workbook workbook = new XSSFWorkbook(is)) {
+        try (Workbook workbook = new XSSFWorkbook(is)) {
             Sheet sheet = workbook.getSheet(sheetName);
             Iterator<Row> rows = sheet.iterator();
             List<TerminalEntity> list = new ArrayList<>();
@@ -452,6 +452,21 @@ public class TerminalServiceImpl implements TerminalService {
         return result;
     }
 
+    @Override
+    public ResponseMessageDTO transferTerminals(TerminalTransferDTO dto) {
+        /*
+         * TODO: Transfer data transaction and staff
+         * */
+        ResponseMessageDTO result = null;
+        try {
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("exportTerminalsByMid: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+        return result;
+    }
+
     private void writeContent(XSSFSheet sheet, Row rowContent, int rownum, TerminalEntity entity, CellStyle style) {
         int columnCount = 0;
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, rownum - 2, style);
@@ -476,5 +491,17 @@ public class TerminalServiceImpl implements TerminalService {
 
     private boolean isTerminalAuthorized(String id, String userId) {
         return repo.countTerminalByAuth(id, userId) == 1;
+    }
+
+    private boolean isTerminalIdNotExists(String id) {
+        return repo.countTerminalById(id) > 0;
+    }
+
+    private boolean isTerminalCodeNotExists(String code) {
+        return repo.countTerminalByCode(code) > 0;
+    }
+
+    private boolean isTerminalPublicIdNotExists(String publicId) {
+        return repo.countTerminalByCode(publicId) > 0;
     }
 }

@@ -84,4 +84,10 @@ public class TerminalController {
         Object response = terminalService.importTerminals(is);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<ResponseMessageDTO> transferTerminals(@Validated @RequestBody TerminalTransferDTO dto){
+        ResponseMessageDTO response = terminalService.transferTerminals(dto);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
 }

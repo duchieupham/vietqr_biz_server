@@ -20,4 +20,5 @@ public interface TerminalService {
     public ResponseMessageDTO exportTerminalById(HttpServletResponse httpServletResponse, String id);
     public ResponseMessageDTO exportTerminalsByMid(HttpServletResponse httpServletResponse, String mid);
     public Object importTerminals(InputStream is);
+    public ResponseMessageDTO transferTerminals(TerminalTransferDTO dto);
 }
