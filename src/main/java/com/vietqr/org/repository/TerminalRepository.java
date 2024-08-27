@@ -23,7 +23,7 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
     List<TerminalEntity> findTerminalsByMid(@Param(value = "mid") String mid);
 
     @Query(value = "SELECT COUNT(*) FROM terminal WHERE code = :code", nativeQuery = true)
-    byte countTerminalByCode(@Param(value = "code") String code);
+    int countTerminalByCode(@Param(value = "code") String code);
 
     @Query(value = "SELECT * FROM terminal WHERE id = :id LIMIT 1", nativeQuery = true)
     TerminalEntity findTerminalById(@Param(value = "id") String id);
@@ -108,4 +108,10 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
 
     @Query(value = "SELECT COUNT(*) FROM terminal WHERE mid = :mid", nativeQuery = true)
     int countTerminalsByMid(@Param("mid") String mid);
+
+    @Query(value = "SELECT COUNT(*) FROM terminal WHERE public_id = :publicId", nativeQuery = true)
+    int countTerminalByPublicId(@Param(value = "publicId") String publicId);
+
+    @Query(value = "SELECT COUNT(*) FROM terminal WHERE id = :d", nativeQuery = true)
+    int countTerminalById(@Param(value = "id") String id);
 }
