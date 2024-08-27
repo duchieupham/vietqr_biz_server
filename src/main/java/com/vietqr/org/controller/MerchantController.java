@@ -5,7 +5,17 @@ import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.merchant.MerchantRequestDTO;
 import com.vietqr.org.service.MerchantService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/merchants")
@@ -55,8 +65,8 @@ public class MerchantController {
     }
 
     @GetMapping("/export/{id}")
-    public ResponseEntity<ResponseMessageDTO> exportMerchant(@PathVariable String id) {
-        ResponseMessageDTO response = merchantService.exportMerchantToExcel(id);
+    public ResponseEntity<ResponseMessageDTO> exportMerchant(@PathVariable String id, HttpServletResponse httpServletResponse) {
+        ResponseMessageDTO response = merchantService.exportMerchantToExcel(httpServletResponse, id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 }

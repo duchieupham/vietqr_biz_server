@@ -105,4 +105,7 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
     List<ITerminalResultOfFindDTO> getListOfTerminalDeleted(@Param(value = "mid") String mid,
                                                             @Param(value = "userId") String userId,
                                                             @Param("timeLine") long timeLine);
+
+    @Query(value = "SELECT COUNT(*) FROM terminal WHERE mid = :mid", nativeQuery = true)
+    int countTerminalsByMid(@Param("mid") String mid);
 }
