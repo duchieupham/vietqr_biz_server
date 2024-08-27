@@ -462,7 +462,7 @@ public class TerminalServiceImpl implements TerminalService {
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
-            logger.error("exportTerminalsByMid: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            logger.error("transferTerminals: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
         return result;
     }
@@ -493,15 +493,15 @@ public class TerminalServiceImpl implements TerminalService {
         return repo.countTerminalByAuth(id, userId) == 1;
     }
 
-    private boolean isTerminalIdNotExists(String id) {
-        return repo.countTerminalById(id) > 0;
+    private boolean isTerminalIdExists(String id) {
+        return repo.countTerminalById(id) != 0;
     }
 
-    private boolean isTerminalCodeNotExists(String code) {
-        return repo.countTerminalByCode(code) > 0;
+    private boolean isTerminalCodeExists(String code) {
+        return repo.countTerminalByCode(code) != 0;
     }
 
-    private boolean isTerminalPublicIdNotExists(String publicId) {
-        return repo.countTerminalByCode(publicId) > 0;
+    private boolean isTerminalPublicIdExists(String publicId) {
+        return repo.countTerminalByCode(publicId) != 0;
     }
 }
