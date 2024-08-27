@@ -69,4 +69,10 @@ public class MerchantController {
         ResponseMessageDTO response = merchantService.exportMerchantToExcel(httpServletResponse, id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<ResponseMessageDTO> merchantDataTransfer(@RequestParam String oldMid, @RequestParam String newMid) {
+        ResponseMessageDTO response = merchantService.merchantDataTransfer(oldMid, newMid);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
 }

@@ -13,4 +13,5 @@ public interface MerchantService {
     Object getListDeleteMerchant();
     ResponseMessageDTO recoverMerchant(String id);
     ResponseMessageDTO exportMerchantToExcel(HttpServletResponse httpServletResponse, String id);
+    ResponseMessageDTO merchantDataTransfer(String oldMid, String newMid);
 }
