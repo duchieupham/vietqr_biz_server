@@ -5,6 +5,7 @@ import com.vietqr.org.dto.terminal.*;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 
 @Service
 public interface TerminalService {
@@ -18,4 +19,5 @@ public interface TerminalService {
     public Object getListOfTerminalDeleted(TerminalGetListDTO dto);
     public ResponseMessageDTO exportTerminalById(HttpServletResponse httpServletResponse, String id);
     public ResponseMessageDTO exportTerminalsByMid(HttpServletResponse httpServletResponse, String mid);
+    public Object importTerminals(InputStream is);
 }

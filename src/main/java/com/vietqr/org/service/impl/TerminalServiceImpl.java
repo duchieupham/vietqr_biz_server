@@ -12,8 +12,7 @@ import com.vietqr.org.utils.DateTimeUtil;
 import com.vietqr.org.utils.ExcelGeneratorUtil;
 import com.vietqr.org.utils.GeneratorUtil;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -23,6 +22,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,8 @@ import java.util.UUID;
 public class TerminalServiceImpl implements TerminalService {
     private static final Logger logger = Logger.getLogger(TerminalServiceImpl.class);
     private final String[] headers = Constant.TERMINAL_HEADERS;
+    private final String sheetName = Constant.TERMINAL_SHEET_NAME;
+    private final String sheetTitle = Constant.TERMINAL_TITLE;
 
     @Autowired
     private TerminalRepository repo;
@@ -77,7 +80,7 @@ public class TerminalServiceImpl implements TerminalService {
                 logger.error("getListOfTerminal: List of terminal is null at: " + System.currentTimeMillis());
             }
         } catch (Exception e) {
-            result = new ResponseObjectDTO(Status.FAILED, "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("getListOfTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
@@ -261,7 +264,7 @@ public class TerminalServiceImpl implements TerminalService {
                 logger.error("getListOfTerminalDeleted: List of terminal deleted is null at: " + System.currentTimeMillis());
             }
         } catch (Exception e) {
-            result = new ResponseObjectDTO(Status.FAILED, "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("getListOfTerminalDeleted: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
@@ -278,7 +281,7 @@ public class TerminalServiceImpl implements TerminalService {
         try (XSSFWorkbook workbook = new XSSFWorkbook();) {
             TerminalEntity entity = repo.findTerminalById(id.trim());
             if (entity != null) {
-                XSSFSheet sheet = workbook.createSheet("terminal");
+                XSSFSheet sheet = workbook.createSheet(sheetName);
                 // header
                 int rownum = 0;
                 Row row = sheet.createRow(rownum++);
@@ -287,7 +290,7 @@ public class TerminalServiceImpl implements TerminalService {
                 CellStyle styleContent = ExcelGeneratorUtil.getStyleContent(workbook);
                 sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.length - 1));
                 // title
-                ExcelGeneratorUtil.createCell(sheet, row, 0, "Terminal", styleTitle);
+                ExcelGeneratorUtil.createCell(sheet, row, 0, sheetTitle, styleTitle);
                 row = sheet.createRow(rownum++);
                 for (int i = 0; i < headers.length; i++) {
                     ExcelGeneratorUtil.createCell(sheet, row, i, headers[i], styleHeader);
@@ -319,10 +322,10 @@ public class TerminalServiceImpl implements TerminalService {
          * */
         ResponseMessageDTO result = null;
 
-        try (XSSFWorkbook workbook = new XSSFWorkbook();) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             List<TerminalEntity> entities = repo.findTerminalsByMid(mid.trim());
 
-            XSSFSheet sheet = workbook.createSheet("terminals");
+            XSSFSheet sheet = workbook.createSheet(sheetName);
             int rownum = 0;
             // header
             Row row = sheet.createRow(rownum++);
@@ -331,7 +334,7 @@ public class TerminalServiceImpl implements TerminalService {
             CellStyle styleContent = ExcelGeneratorUtil.getStyleContent(workbook);
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.length - 1));
             // title
-            ExcelGeneratorUtil.createCell(sheet, row, 0, "Terminals", styleTitle);
+            ExcelGeneratorUtil.createCell(sheet, row, 0, sheetTitle, styleTitle);
             row = sheet.createRow(rownum++);
             for (int i = 0; i < headers.length; i++) {
                 ExcelGeneratorUtil.createCell(sheet, row, i, headers[i], styleHeader);
@@ -356,26 +359,119 @@ public class TerminalServiceImpl implements TerminalService {
         return result;
     }
 
+    @Override
+    public Object importTerminals(InputStream is) {
+        /*
+         * TODO: Insert terminal without id and more
+         * */
+        Object result = null;
+
+        try(Workbook workbook = new XSSFWorkbook(is)) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            Iterator<Row> rows = sheet.iterator();
+            List<TerminalEntity> list = new ArrayList<>();
+            int rowNumber = 0;
+            while (rows.hasNext()) {
+                Row currentRow = rows.next();
+                // skip header and title
+                if (rowNumber == 0 || rowNumber == 1) {
+                    rowNumber++;
+                    continue;
+                }
+                Iterator<Cell> cellsInRow = currentRow.iterator();
+                TerminalEntity terminal = new TerminalEntity();
+                int cellIndex = 0;
+                while (cellsInRow.hasNext()) {
+                    Cell currentCell = cellsInRow.next();
+                    switch (cellIndex) {
+                        case 1:
+                            terminal.setId(currentCell.getStringCellValue());
+                            break;
+                        case 2:
+                            terminal.setName(currentCell.getStringCellValue());
+                            break;
+                        case 3:
+                            terminal.setAddress(currentCell.getStringCellValue());
+                            break;
+                        case 4:
+                            terminal.setMid(currentCell.getStringCellValue());
+                            break;
+                        case 5:
+                            terminal.setCode(currentCell.getStringCellValue());
+                            break;
+                        case 6:
+                            terminal.setPublicId(currentCell.getStringCellValue());
+                            break;
+                        case 7:
+                            terminal.setRefId(currentCell.getStringCellValue());
+                            break;
+                        case 8:
+                            terminal.setBankId(currentCell.getStringCellValue());
+                            break;
+                        case 9:
+                            terminal.setQrBoxId(currentCell.getStringCellValue());
+                            break;
+                        case 10:
+                            terminal.setSub(currentCell.getBooleanCellValue());
+                            break;
+                        case 11:
+                            terminal.setData1(currentCell.getStringCellValue());
+                            break;
+                        case 12:
+                            terminal.setData2(currentCell.getStringCellValue());
+                            break;
+                        case 13:
+                            terminal.setTraceTransfer(currentCell.getStringCellValue());
+                            break;
+                        case 14:
+                            terminal.setStatus(currentCell.getBooleanCellValue());
+                            break;
+                        case 15:
+                            terminal.setNumOfStaff((int) currentCell.getNumericCellValue());
+                            break;
+                        case 16:
+                            terminal.setTimeUpdatedStatus((long) currentCell.getNumericCellValue());
+                            break;
+                        case 17:
+                            terminal.setTimeCreated((long) currentCell.getNumericCellValue());
+                            break;
+                        default:
+                            break;
+                    }
+                    cellIndex++;
+                }
+                list.add(terminal);
+            }
+            workbook.close();
+            result = new ResponseObjectDTO(Status.SUCCESS, list);
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("importTerminals: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
     private void writeContent(XSSFSheet sheet, Row rowContent, int rownum, TerminalEntity entity, CellStyle style) {
         int columnCount = 0;
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, rownum - 2, style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getId(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getName(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getBankId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getAddress(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getMid(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getCode(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getPublicId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getRefId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getBankId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getQrBoxId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getSub(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData1(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData2(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getMid(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getName(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getNumOfStaff(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getPublicId(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getQrBoxId(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getRefId(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getStatus(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getSub(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTimeCreated(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTraceTransfer(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount, entity.getTimeUpdatedStatus(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getStatus(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getNumOfStaff(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTimeUpdatedStatus(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount, entity.getTimeCreated(), style);
     }
 
     private boolean isTerminalAuthorized(String id, String userId) {
