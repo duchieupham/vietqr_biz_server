@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DataDTO {
+public class CustomerDataDTO {
     @JsonProperty(value = "name")
     private String name;
     @JsonProperty(value = "address")
     private String address;
 
-    public DataDTO() {
+    public CustomerDataDTO() {
         this.name = "";
         this.address = "";
     }
 
-    public DataDTO(String name, String address) {
+    public CustomerDataDTO(String name, String address) {
         this.name = name;
         this.address = address;
     }

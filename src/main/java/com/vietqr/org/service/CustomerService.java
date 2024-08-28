@@ -8,4 +8,5 @@ public interface CustomerService {
     ResponseMessageDTO saveCustomer(CustomerInsertDTO customerInsertDTO);
     ResponseMessageDTO updateCustomer(String id, CustomerUpdateDTO customerUpdateDTO);
     ResponseMessageDTO removeCustomer(String id);
+    Object customerInfo(String id);
 }
