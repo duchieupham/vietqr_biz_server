@@ -30,7 +30,7 @@ public class MerchantRoleServiceImpl implements MerchantRoleService {
             MerchantRoleEntity entity = new MerchantRoleEntity(dto.getName().trim(), dto.getDescription().trim(), permissionGroupId);
             do {
                 UUID uuid = UUID.randomUUID();
-                if (repo.existsById(uuid.toString())) {
+                if (!repo.existsById(uuid.toString())) {
                     entity.setId(uuid.toString());
                 }
             } while (entity.getId().isEmpty());

@@ -27,7 +27,7 @@ public class PermissionServiceImpl implements PermissionService {
             PermissionEntity entity = new PermissionEntity(dto.getName().trim(), dto.getDescription().trim(), dto.getCategory(), dto.getColor().trim());
             do {
                 UUID uuid = UUID.randomUUID();
-                if(repo.existsById(uuid.toString())){
+                if(!repo.existsById(uuid.toString())){
                     entity.setId(uuid.toString());
                 }
             }while (entity.getId().isEmpty());
