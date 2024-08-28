@@ -494,14 +494,14 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     private boolean isTerminalIdExists(String id) {
-        return repo.countTerminalById(id) != 0;
+        return repo.isTerminalIdExists(id) == 1;
     }
 
     private boolean isTerminalCodeExists(String code) {
-        return repo.countTerminalByCode(code) != 0;
+        return repo.isTerminalCodeExists(code) == 1;
     }
 
     private boolean isTerminalPublicIdExists(String publicId) {
-        return repo.countTerminalByCode(publicId) != 0;
+        return repo.isTerminalPublicIdExists(publicId) == 1;
     }
 }

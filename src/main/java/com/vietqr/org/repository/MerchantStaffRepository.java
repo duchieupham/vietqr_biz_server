@@ -23,8 +23,6 @@ public interface MerchantStaffRepository extends JpaRepository<MerchantStaffEnti
             , nativeQuery = true)
     List<MerchantStaffEntity> findAllMerchantStaffByTid(@Param(value = "tid") String tid);
 
-    @Query(value = "SELECT COUNT(*) FROM merchant_staff"
-            + " WHERE id = :id"
-            , nativeQuery = true)
-    int countMerchantStaffById(@Param(value = "id") String id);
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM merchant_staff WHERE id = :id LIMIT 1)", nativeQuery = true)
+    int isMerchantStaffIdExists(@Param(value = "id") String id);
 }
