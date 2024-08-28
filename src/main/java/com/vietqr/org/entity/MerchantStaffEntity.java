@@ -42,6 +42,7 @@ public class MerchantStaffEntity implements Serializable {
     private String staffRoleName;
 
     public MerchantStaffEntity() {
+        this.id = "";
     }
 
     public MerchantStaffEntity(String mid, String tid, String userId, String data, String permissionGroupId, String merchantStaffRoleId, String staffRoleName) {

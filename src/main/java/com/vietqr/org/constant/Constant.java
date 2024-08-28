@@ -24,4 +24,13 @@ public class Constant {
 
     public static String TERMINAL_TITLE = "Terminals";
     public static String TERMINAL_SHEET_NAME = "terminals";
+
+    public static final String[] MERCHANT_STAFF_HEADERS = new String[]{
+            "STT",
+            "Name",
+            "Phone Number",
+            "Permissions",
+    };
+    public static String MERCHANT_STAFF_TITLE = "Staff";
+    public static String MERCHANT_STAFF_SHEET_NAME = "staff";
 }
