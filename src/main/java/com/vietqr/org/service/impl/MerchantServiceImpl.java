@@ -77,7 +77,7 @@ public class MerchantServiceImpl implements MerchantService {
             merchantRepository.save(merchantEntity);
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error("insertMerchant ERROR: " + e.getMessage());
+            logger.error("insertMerchant ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
@@ -100,7 +100,7 @@ public class MerchantServiceImpl implements MerchantService {
             }
             result = new ResponseObjectDTO(Status.SUCCESS, merchantResponseDTO);
         } catch (Exception e) {
-            logger.error("merchantInfo ERROR: " + e.getMessage());
+            logger.error("merchantInfo ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E188");
         }
         return result;
@@ -117,7 +117,7 @@ public class MerchantServiceImpl implements MerchantService {
             }
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error("updateMerchant ERROR: " + e.getMessage());
+            logger.error("updateMerchant ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E189");
         }
         return result;
@@ -136,8 +136,8 @@ public class MerchantServiceImpl implements MerchantService {
             }
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error("deleteMerchant ERROR" + e.getMessage());
-            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("deleteMerchant ERROR" + e.getMessage() + " at: " + System.currentTimeMillis());
+            result = new ResponseMessageDTO(Status.FAILED, "E188");
         }
         return result;
     }
@@ -160,8 +160,8 @@ public class MerchantServiceImpl implements MerchantService {
             }).collect(Collectors.toList());
             result = new ResponseObjectDTO(Status.SUCCESS, merchantResponseDTOList);
         } catch (Exception e) {
-            logger.error("getListDeleteMerchant ERROR: " + e.getMessage());
-            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("getListDeleteMerchant ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            result = new ResponseMessageDTO(Status.FAILED, "E190");
         }
         return result;
     }
@@ -179,7 +179,7 @@ public class MerchantServiceImpl implements MerchantService {
             }
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error("restoreMerchant ERROR: " + e.getMessage());
+            logger.error("restoreMerchant ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
@@ -237,7 +237,7 @@ public class MerchantServiceImpl implements MerchantService {
 
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error("exportMerchantToExcel ERROR: " + e.getMessage());
+            logger.error("exportMerchantToExcel ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
 
@@ -273,7 +273,7 @@ public class MerchantServiceImpl implements MerchantService {
             }
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error("merchantDataTransfer ERROR: " + e.getMessage());
+            logger.error("merchantDataTransfer ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;

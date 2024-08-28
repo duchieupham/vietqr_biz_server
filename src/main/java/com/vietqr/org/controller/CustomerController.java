@@ -6,6 +6,7 @@ import com.vietqr.org.dto.customer.CustomerInsertDTO;
 import com.vietqr.org.dto.customer.CustomerUpdateDTO;
 import com.vietqr.org.service.CustomerService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,5 +41,11 @@ public class CustomerController {
     public ResponseEntity<ResponseMessageDTO> deleteCustomer(@PathVariable String id) {
         ResponseMessageDTO response = customerService.removeCustomer(id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> customerDetail(@PathVariable String id) {
+        Object response = customerService.customerInfo(id);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 }
