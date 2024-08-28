@@ -48,4 +48,10 @@ public class CustomerController {
         Object response = customerService.customerInfo(id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
+
+    @GetMapping
+    public ResponseEntity<Object> listCustomer() {
+        Object response = customerService.listCustomer();
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
+    }
 }

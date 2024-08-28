@@ -1,7 +1,5 @@
 package com.vietqr.org.entity;
 
-import net.bytebuddy.implementation.bind.annotation.Default;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,8 +7,8 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "customer")
-public class CustomerEntity implements Serializable {
+@Table(name = "merchantCustomer")
+public class MerchantCustomerEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -33,10 +31,10 @@ public class CustomerEntity implements Serializable {
     @Column(name = "data", nullable = false)
     private String data;
 
-    public CustomerEntity() {
+    public MerchantCustomerEntity() {
     }
 
-    public CustomerEntity(String id, String mid, String tid, String userId, String phoneNo, String staffId, boolean status, long timeCreate, String data) {
+    public MerchantCustomerEntity(String id, String mid, String tid, String userId, String phoneNo, String staffId, boolean status, long timeCreate, String data) {
         this.id = id;
         this.mid = mid;
         this.tid = tid;
