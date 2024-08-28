@@ -1,10 +1,13 @@
 package com.vietqr.org.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "permission")
-public class PermissionEntity {
+public class PermissionEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     private String id;
 
@@ -21,6 +24,7 @@ public class PermissionEntity {
     private String color;
 
     public PermissionEntity() {
+        this.id = "";
     }
 
     public PermissionEntity(String name, String description, int category, String color) {
