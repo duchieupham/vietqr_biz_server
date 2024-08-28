@@ -2,8 +2,8 @@ package com.vietqr.org.controller;
 
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.permission.PermissionInsertDTO;
-import com.vietqr.org.service.PermissionService;
+import com.vietqr.org.dto.merchantrole.MerchantRoleInsertDTO;
+import com.vietqr.org.service.MerchantRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/permission")
-public class PermissionController {
+@RequestMapping("api/merchant-role")
+public class MerchantRoleController {
     @Autowired
-    private PermissionService permissionService;
+    private MerchantRoleService merchantRoleService;
 
     @PostMapping("/insert")
-    public ResponseEntity<ResponseMessageDTO> insertPermission(@Validated @RequestBody PermissionInsertDTO dto){
-        ResponseMessageDTO response = permissionService.insertPermission(dto);
+    ResponseEntity<ResponseMessageDTO> insertMerchantRole(@Validated @RequestBody MerchantRoleInsertDTO dto){
+        ResponseMessageDTO response = merchantRoleService.insertMerchantRole(dto);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getPermissionById(@Validated @PathVariable String id){
-        Object response = permissionService.getPermissionById(id);
+    ResponseEntity<Object> getMerchantRoleById(@Validated @PathVariable String id){
+        Object response = merchantRoleService.getMerchantRoleById(id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 }
