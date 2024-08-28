@@ -114,4 +114,9 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM terminal WHERE id = :id LIMIT 1)", nativeQuery = true)
     int isTerminalIdExists(@Param(value = "id") String id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE terminal SET qr_box_id = :boxDevice WHERE id = :id", nativeQuery = true)
+    void updateTerminalBoxDeviceById(@Param("id") String id, @Param("boxDevice") String boxDevice);
 }
