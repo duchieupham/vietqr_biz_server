@@ -2,9 +2,9 @@ package com.vietqr.org.controller;
 
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.customer.CustomerInsertDTO;
-import com.vietqr.org.dto.customer.CustomerUpdateDTO;
-import com.vietqr.org.service.CustomerService;
+import com.vietqr.org.dto.customer.MerchantCustomerInsertDTO;
+import com.vietqr.org.dto.customer.MerchantCustomerUpdateDTO;
+import com.vietqr.org.service.MerchantCustomerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,22 +18,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/customers")
-public class CustomerController {
-    private final CustomerService customerService;
+public class MerchantCustomerController {
+    private final MerchantCustomerService customerService;
 
-    public CustomerController(CustomerService customerService) {
+    public MerchantCustomerController(MerchantCustomerService customerService) {
         this.customerService = customerService;
     }
 
     @PostMapping
-    public ResponseEntity<ResponseMessageDTO> insertCustomer(@RequestBody CustomerInsertDTO customerInsertDTO) {
-        ResponseMessageDTO response = customerService.saveCustomer(customerInsertDTO);
+    public ResponseEntity<ResponseMessageDTO> insertCustomer(@RequestBody MerchantCustomerInsertDTO merchantCustomerInsertDTO) {
+        ResponseMessageDTO response = customerService.saveCustomer(merchantCustomerInsertDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @PutMapping
-    public ResponseEntity<ResponseMessageDTO> updateCustomer(@RequestParam String id, @RequestBody CustomerUpdateDTO customerUpdateDTO) {
-        ResponseMessageDTO response = customerService.updateCustomer(id, customerUpdateDTO);
+    public ResponseEntity<ResponseMessageDTO> updateCustomer(@RequestParam String id, @RequestBody MerchantCustomerUpdateDTO merchantCustomerUpdateDTO) {
+        ResponseMessageDTO response = customerService.updateCustomer(id, merchantCustomerUpdateDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 

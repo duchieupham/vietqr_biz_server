@@ -1,6 +1,6 @@
 package com.vietqr.org.dto.customer;
 
-public class CustomerDetailDTO {
+public class MerchantCustomerDetailDTO {
     private String mid;
     private String tid;
     private String userId;
@@ -9,10 +9,10 @@ public class CustomerDetailDTO {
     private long timeCreate;
     private String data;
 
-    public CustomerDetailDTO() {
+    public MerchantCustomerDetailDTO() {
     }
 
-    public CustomerDetailDTO(String mid, String tid, String userId, String phoneNo, String staffId, long timeCreate, String data) {
+    public MerchantCustomerDetailDTO(String mid, String tid, String userId, String phoneNo, String staffId, long timeCreate, String data) {
         this.mid = mid;
         this.tid = tid;
         this.userId = userId;

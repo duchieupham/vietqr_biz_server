@@ -1,23 +1,25 @@
 package com.vietqr.org.dto.customer;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerDataDTO {
-    @JsonProperty(value = "name")
+public class MerchantCustomerUpdateDTO {
+    private String phoneNo;
     private String name;
-    @JsonProperty(value = "address")
     private String address;
 
-    public CustomerDataDTO() {
-        this.name = "";
-        this.address = "";
+    public MerchantCustomerUpdateDTO() {
     }
 
-    public CustomerDataDTO(String name, String address) {
+    public MerchantCustomerUpdateDTO(String phoneNo, String name, String address) {
+        this.phoneNo = phoneNo;
         this.name = name;
         this.address = address;
+    }
+
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
     }
 
     public String getName() {

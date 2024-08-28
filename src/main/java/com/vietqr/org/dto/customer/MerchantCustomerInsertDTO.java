@@ -1,6 +1,6 @@
 package com.vietqr.org.dto.customer;
 
-public class CustomerInsertDTO {
+public class MerchantCustomerInsertDTO {
     private String mid;
     private String tid;
     private String userId;
@@ -9,10 +9,10 @@ public class CustomerInsertDTO {
     private String name;
     private String address;
 
-    public CustomerInsertDTO() {
+    public MerchantCustomerInsertDTO() {
     }
 
-    public CustomerInsertDTO(String mid, String tid, String userId, String phoneNo, String staffId, String name, String address) {
+    public MerchantCustomerInsertDTO(String mid, String tid, String userId, String phoneNo, String staffId, String name, String address) {
         this.mid = mid;
         this.tid = tid;
         this.userId = userId;

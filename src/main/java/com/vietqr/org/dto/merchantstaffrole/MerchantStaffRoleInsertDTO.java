@@ -1,53 +1,23 @@
-package com.vietqr.org.entity;
+package com.vietqr.org.dto.merchantstaffrole;
 
-import javax.persistence.*;
-import java.io.Serializable;
-
-@Entity
-@Table(name = "merchant_staff_role")
-public class MerchantStaffRoleEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    private String id;
-
-    @Column(nullable = false)
+public class MerchantStaffRoleInsertDTO {
     private String mid;
-
-    @Column(nullable = false)
     private String tid;
-
-    @Column(name = "staff_role_name", nullable = false)
     private String staffRoleName;
-
-    @Column(name = "is_default", nullable = false)
     private boolean isDefault;
-
-    @Column(name = "merchant_role_id", nullable = false)
     private String merchantRoleId;
-
-    @Column(name = "permission_group_id", columnDefinition = "JSON", nullable = false)
     private String permissionGroupId;
 
-    public MerchantStaffRoleEntity() {
+    public MerchantStaffRoleInsertDTO() {
     }
 
-    public MerchantStaffRoleEntity(String id, String mid, String tid, String staffRoleName, boolean isDefault, String merchantRoleId, String permissionGroupId) {
-        this.id = id;
+    public MerchantStaffRoleInsertDTO(String mid, String tid, String staffRoleName, boolean isDefault, String merchantRoleId, String permissionGroupId) {
         this.mid = mid;
         this.tid = tid;
         this.staffRoleName = staffRoleName;
         this.isDefault = isDefault;
         this.merchantRoleId = merchantRoleId;
         this.permissionGroupId = permissionGroupId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getMid() {
