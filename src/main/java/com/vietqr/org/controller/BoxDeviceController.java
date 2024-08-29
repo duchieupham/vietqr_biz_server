@@ -1,6 +1,7 @@
 package com.vietqr.org.controller;
 
 import com.vietqr.org.common.StatusResponse;
+import com.vietqr.org.dto.boxdevice.BoxDeviceFindMidDTO;
 import com.vietqr.org.dto.boxdevice.BoxDeviceInsertDTO;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.service.BoxDeviceService;
@@ -20,5 +21,11 @@ public class BoxDeviceController {
     ResponseEntity<ResponseMessageDTO> insertBoxDevice(@Validated @RequestBody BoxDeviceInsertDTO dto){
         ResponseMessageDTO response = boxDeviceService.insertBoxDevice(dto);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
+
+    @GetMapping("/list")
+    ResponseEntity<Object> getBoxDeviceByMid(@Validated @RequestBody BoxDeviceFindMidDTO dto){
+        Object response = boxDeviceService.findBoxDeviceByMid(dto);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 }
