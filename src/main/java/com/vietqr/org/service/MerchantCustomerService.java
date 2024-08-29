@@ -1,8 +1,8 @@
 package com.vietqr.org.service;
 
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.customer.MerchantCustomerInsertDTO;
-import com.vietqr.org.dto.customer.MerchantCustomerUpdateDTO;
+import com.vietqr.org.dto.merchantcustomer.MerchantCustomerInsertDTO;
+import com.vietqr.org.dto.merchantcustomer.MerchantCustomerUpdateDTO;
 
 public interface MerchantCustomerService {
     ResponseMessageDTO saveCustomer(MerchantCustomerInsertDTO merchantCustomerInsertDTO);
@@ -10,4 +10,5 @@ public interface MerchantCustomerService {
     ResponseMessageDTO removeCustomer(String id);
     Object customerInfo(String id);
     Object listCustomer();
+    ResponseMessageDTO customersPayForOrders(String terminalOderId, String customerId);
 }

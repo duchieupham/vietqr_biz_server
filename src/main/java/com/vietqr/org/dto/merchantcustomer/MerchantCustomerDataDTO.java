@@ -1,4 +1,4 @@
-package com.vietqr.org.dto.customer;
+package com.vietqr.org.dto.merchantcustomer;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

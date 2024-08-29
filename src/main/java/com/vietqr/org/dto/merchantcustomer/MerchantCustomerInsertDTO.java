@@ -1,25 +1,25 @@
-package com.vietqr.org.dto.customer;
+package com.vietqr.org.dto.merchantcustomer;
 
-public class MerchantCustomerDetailDTO {
+public class MerchantCustomerInsertDTO {
     private String mid;
     private String tid;
     private String userId;
     private String phoneNo;
     private String staffId;
-    private long timeCreate;
-    private String data;
+    private String name;
+    private String address;
 
-    public MerchantCustomerDetailDTO() {
+    public MerchantCustomerInsertDTO() {
     }
 
-    public MerchantCustomerDetailDTO(String mid, String tid, String userId, String phoneNo, String staffId, long timeCreate, String data) {
+    public MerchantCustomerInsertDTO(String mid, String tid, String userId, String phoneNo, String staffId, String name, String address) {
         this.mid = mid;
         this.tid = tid;
         this.userId = userId;
         this.phoneNo = phoneNo;
         this.staffId = staffId;
-        this.timeCreate = timeCreate;
-        this.data = data;
+        this.name = name;
+        this.address = address;
     }
 
     public String getMid() {
@@ -62,19 +62,19 @@ public class MerchantCustomerDetailDTO {
         this.staffId = staffId;
     }
 
-    public long getTimeCreate() {
-        return timeCreate;
+    public String getName() {
+        return name;
     }
 
-    public void setTimeCreate(long timeCreate) {
-        this.timeCreate = timeCreate;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getData() {
-        return data;
+    public String getAddress() {
+        return address;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

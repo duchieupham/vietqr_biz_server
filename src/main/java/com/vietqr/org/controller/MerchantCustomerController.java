@@ -2,8 +2,8 @@ package com.vietqr.org.controller;
 
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.customer.MerchantCustomerInsertDTO;
-import com.vietqr.org.dto.customer.MerchantCustomerUpdateDTO;
+import com.vietqr.org.dto.merchantcustomer.MerchantCustomerInsertDTO;
+import com.vietqr.org.dto.merchantcustomer.MerchantCustomerUpdateDTO;
 import com.vietqr.org.service.MerchantCustomerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,5 +53,11 @@ public class MerchantCustomerController {
     public ResponseEntity<Object> listCustomer() {
         Object response = customerService.listCustomer();
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
+    }
+
+    @PatchMapping("/customer-order")
+    public ResponseEntity<ResponseMessageDTO> customerPayForOrder(@RequestParam String terminalOderId, String customerId) {
+        ResponseMessageDTO response = customerService.customersPayForOrders(terminalOderId, customerId);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 }

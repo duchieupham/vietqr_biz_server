@@ -1,4 +1,4 @@
-package com.vietqr.org.dto.customer;
+package com.vietqr.org.dto.merchantcustomer;
 
 public class MerchantCustomerUpdateDTO {
     private String phoneNo;
