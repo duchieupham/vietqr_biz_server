@@ -8,7 +8,7 @@ public interface MerchantCustomerService {
     ResponseMessageDTO saveCustomer(MerchantCustomerInsertDTO merchantCustomerInsertDTO);
     ResponseMessageDTO updateCustomer(String id, MerchantCustomerUpdateDTO merchantCustomerUpdateDTO);
     ResponseMessageDTO removeCustomer(String id);
-    Object customerInfo(String id);
+    Object getCustomerInfo(String id);
     Object listCustomer();
     ResponseMessageDTO customersPayForOrders(String terminalOderId, String customerId);
 }

@@ -45,7 +45,7 @@ public class MerchantCustomerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> customerDetail(@PathVariable String id) {
-        Object response = customerService.customerInfo(id);
+        Object response = customerService.getCustomerInfo(id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
