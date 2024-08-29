@@ -74,10 +74,10 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
                 MerchantCustomerEntity merchantCustomerEntity = optionalCustomer.get();
                 merchantCustomerRepository.save(updateCustomerField(merchantCustomerEntity, merchantCustomerUpdateDTO));
             }
-            result = new ResponseMessageDTO(Status.SUCCESS, "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "E191");
         } catch (Exception e) {
             logger.error("updateCustomer ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
-            result = new ResponseMessageDTO(Status.FAILED, "E191");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -91,17 +91,19 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
                 MerchantCustomerEntity merchantCustomerEntity = optionalCustomer.get();
                 merchantCustomerEntity.setStatus(false);
                 merchantCustomerRepository.save(merchantCustomerEntity);
+                result = new ResponseMessageDTO(Status.SUCCESS, "");
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E191");
             }
-            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("removeCustomer ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
-            result = new ResponseMessageDTO(Status.FAILED, "E191");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
 
     @Override
-    public Object customerInfo(String id) {
+    public Object getCustomerInfo(String id) {
         Object result;
         MerchantCustomerDetailDTO merchantCustomerDetailDTO = new MerchantCustomerDetailDTO();
         try {
@@ -109,11 +111,13 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
             if (customerEntityOptional.isPresent()) {
                 MerchantCustomerEntity merchantCustomerEntity = customerEntityOptional.get();
                 converterCustomerEntityToCustomerDetailDTO(merchantCustomerEntity, merchantCustomerDetailDTO);
+                result = new ResponseObjectDTO(Status.SUCCESS, merchantCustomerDetailDTO);
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E191");
             }
-            result = new ResponseObjectDTO(Status.SUCCESS, merchantCustomerDetailDTO);
         } catch (Exception e) {
             logger.error("customerInfo ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
-            result = new ResponseMessageDTO(Status.FAILED, "E191");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -144,8 +148,10 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
                 TerminalOrderEntity terminalOrderEntity = terminalOderEntityOptional.get();
                 terminalOrderEntity.setCustomerId(customerId);
                 terminalOrderRepository.save(terminalOrderEntity);
+                result = new ResponseMessageDTO(Status.SUCCESS, "");
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E05");
             }
-            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("customersPayForOrders ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
