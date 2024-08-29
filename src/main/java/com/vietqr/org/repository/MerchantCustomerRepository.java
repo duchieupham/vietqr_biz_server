@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<MerchantCustomerEntity, Long> {
+public interface MerchantCustomerRepository extends JpaRepository<MerchantCustomerEntity, Long> {
     @Query(value = "SELECT * FROM merchant_customer WHERE id = :id LIMIT 1", nativeQuery = true)
     Optional<MerchantCustomerEntity> findCustomerById(@Param("id") String id);
     @Query(value = "SELECT * FROM merchant_customer", nativeQuery = true)

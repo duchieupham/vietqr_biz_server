@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
-import com.vietqr.org.dto.customer.MerchantCustomerDataDTO;
-import com.vietqr.org.dto.customer.MerchantCustomerDetailDTO;
-import com.vietqr.org.dto.customer.MerchantCustomerInsertDTO;
-import com.vietqr.org.dto.customer.MerchantCustomerUpdateDTO;
+import com.vietqr.org.dto.merchantcustomer.MerchantCustomerDataDTO;
+import com.vietqr.org.dto.merchantcustomer.MerchantCustomerDetailDTO;
+import com.vietqr.org.dto.merchantcustomer.MerchantCustomerInsertDTO;
+import com.vietqr.org.dto.merchantcustomer.MerchantCustomerUpdateDTO;
 import com.vietqr.org.entity.MerchantCustomerEntity;
-import com.vietqr.org.repository.CustomerRepository;
+import com.vietqr.org.entity.TerminalOrderEntity;
+import com.vietqr.org.repository.MerchantCustomerRepository;
+import com.vietqr.org.repository.TerminalOrderRepository;
 import com.vietqr.org.service.MerchantCustomerService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -24,10 +26,12 @@ import java.util.stream.Collectors;
 @Service
 public class MerchantCustomerServiceImpl implements MerchantCustomerService {
     private static final Logger logger = Logger.getLogger(MerchantCustomerServiceImpl.class);
-    private final CustomerRepository customerRepository;
+    private final MerchantCustomerRepository merchantCustomerRepository;
+    private final TerminalOrderRepository terminalOrderRepository;
 
-    public MerchantCustomerServiceImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public MerchantCustomerServiceImpl(MerchantCustomerRepository merchantCustomerRepository, TerminalOrderRepository terminalOrderRepository) {
+        this.merchantCustomerRepository = merchantCustomerRepository;
+        this.terminalOrderRepository = terminalOrderRepository;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonData = objectMapper.writeValueAsString(merchantCustomerDataDTO);
             merchantCustomerEntity.setData(jsonData);
-            customerRepository.save(merchantCustomerEntity);
+            merchantCustomerRepository.save(merchantCustomerEntity);
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("saveCustomer ERROR: " + e.getMessage() + " at: " + System.currentTimeMillis());
@@ -65,10 +69,10 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
     public ResponseMessageDTO updateCustomer(String id, MerchantCustomerUpdateDTO merchantCustomerUpdateDTO) {
         ResponseMessageDTO result;
         try {
-            Optional<MerchantCustomerEntity> optionalCustomer = customerRepository.findCustomerById(id);
+            Optional<MerchantCustomerEntity> optionalCustomer = merchantCustomerRepository.findCustomerById(id);
             if (optionalCustomer.isPresent()) {
                 MerchantCustomerEntity merchantCustomerEntity = optionalCustomer.get();
-                customerRepository.save(updateCustomerField(merchantCustomerEntity, merchantCustomerUpdateDTO));
+                merchantCustomerRepository.save(updateCustomerField(merchantCustomerEntity, merchantCustomerUpdateDTO));
             }
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
@@ -82,11 +86,11 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
     public ResponseMessageDTO removeCustomer(String id) {
         ResponseMessageDTO result;
         try {
-            Optional<MerchantCustomerEntity> optionalCustomer = customerRepository.findCustomerById(id);
+            Optional<MerchantCustomerEntity> optionalCustomer = merchantCustomerRepository.findCustomerById(id);
             if (optionalCustomer.isPresent()) {
                 MerchantCustomerEntity merchantCustomerEntity = optionalCustomer.get();
                 merchantCustomerEntity.setStatus(false);
-                customerRepository.save(merchantCustomerEntity);
+                merchantCustomerRepository.save(merchantCustomerEntity);
             }
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
@@ -101,7 +105,7 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
         Object result;
         MerchantCustomerDetailDTO merchantCustomerDetailDTO = new MerchantCustomerDetailDTO();
         try {
-            Optional<MerchantCustomerEntity> customerEntityOptional = customerRepository.findCustomerById(id);
+            Optional<MerchantCustomerEntity> customerEntityOptional = merchantCustomerRepository.findCustomerById(id);
             if (customerEntityOptional.isPresent()) {
                 MerchantCustomerEntity merchantCustomerEntity = customerEntityOptional.get();
                 converterCustomerEntityToCustomerDetailDTO(merchantCustomerEntity, merchantCustomerDetailDTO);
@@ -118,7 +122,7 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
     public Object listCustomer() {
         Object result;
         try {
-            List<MerchantCustomerEntity> customerEntities = customerRepository.findAllCustomer();
+            List<MerchantCustomerEntity> customerEntities = merchantCustomerRepository.findAllCustomer();
             List<MerchantCustomerDetailDTO> merchantCustomerDetailDTOS = customerEntities.stream().map(merchantCustomerEntity -> {
                 MerchantCustomerDetailDTO merchantCustomerDetailDTO = new MerchantCustomerDetailDTO();
                 return converterCustomerEntityToCustomerDetailDTO(merchantCustomerEntity, merchantCustomerDetailDTO);
@@ -126,6 +130,24 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
             result = new ResponseObjectDTO(Status.SUCCESS, merchantCustomerDetailDTOS);
         } catch (Exception e) {
             logger.error("listCustomer ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO customersPayForOrders(String terminalOderId, String customerId) {
+        ResponseMessageDTO result;
+        try {
+            Optional<TerminalOrderEntity> terminalOderEntityOptional = terminalOrderRepository.findTerminalOderEntityById(terminalOderId);
+            if (terminalOderEntityOptional.isPresent()) {
+                TerminalOrderEntity terminalOrderEntity = terminalOderEntityOptional.get();
+                terminalOrderEntity.setCustomerId(customerId);
+                terminalOrderRepository.save(terminalOrderEntity);
+            }
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
+        } catch (Exception e) {
+            logger.error("customersPayForOrders ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
