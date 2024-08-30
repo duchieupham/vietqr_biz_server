@@ -210,7 +210,7 @@ public class MerchantServiceImpl implements MerchantService {
             Row titleRow = sheet.createRow(rownum++);
             CellStyle styleTitle = ExcelGeneratorUtil.getStyleTitle(workbook);
             ExcelGeneratorUtil.createCell(sheet, titleRow, 0, "Merchant", styleTitle);
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 14));
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 13));
 
             Row headerRow = sheet.createRow(rownum++);
             CellStyle styleHeader = ExcelGeneratorUtil.getStyleHeader(workbook);
@@ -232,10 +232,9 @@ public class MerchantServiceImpl implements MerchantService {
             ExcelGeneratorUtil.createCell(sheet, dataRow, 8, merchantEntity.getUserId(), styleContent);
             ExcelGeneratorUtil.createCell(sheet, dataRow, 9, merchantEntity.getTimeCreate(), styleContent);
             ExcelGeneratorUtil.createCell(sheet, dataRow, 10, merchantEntity.getPublishId(), styleContent);
-            ExcelGeneratorUtil.createCell(sheet, dataRow, 11, merchantEntity.getQrBoxId(), styleContent);
-            ExcelGeneratorUtil.createCell(sheet, dataRow, 12, merchantEntity.getBusinessSector(), styleContent);
-            ExcelGeneratorUtil.createCell(sheet, dataRow, 13, merchantEntity.getBusinessType(), styleContent);
-            ExcelGeneratorUtil.createCell(sheet, dataRow, 14, numberOfTerminal, styleContent);
+            ExcelGeneratorUtil.createCell(sheet, dataRow, 11, merchantEntity.getBusinessSector(), styleContent);
+            ExcelGeneratorUtil.createCell(sheet, dataRow, 12, merchantEntity.getBusinessType(), styleContent);
+            ExcelGeneratorUtil.createCell(sheet, dataRow, 13, numberOfTerminal, styleContent);
 
             ExcelGeneratorUtil.initResponseForExport(httpServletResponse);
             ServletOutputStream outputStream = httpServletResponse.getOutputStream();

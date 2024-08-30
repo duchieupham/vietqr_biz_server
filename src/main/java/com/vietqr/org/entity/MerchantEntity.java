@@ -42,8 +42,6 @@ public class MerchantEntity implements Serializable {
     private boolean master;
     @Column(name = "refId")
     private String refId;
-    @Column(name = "qrBoxId")
-    private String qrBoxId;
     @Column(name = "businessSector")
     private String businessSector;
     @Column(name = "businessType")
@@ -52,7 +50,7 @@ public class MerchantEntity implements Serializable {
     public MerchantEntity() {
     }
 
-    public MerchantEntity(String id, String name, String fullName, String address, int nationalId, String vso, String email, String serviceType, boolean status, long timeUpdatedStatus, String userId, long timeCreate, String publishId, boolean master, String refId, String qrBoxId, String businessSector, int businessType) {
+    public MerchantEntity(String id, String name, String fullName, String address, int nationalId, String vso, String email, String serviceType, boolean status, long timeUpdatedStatus, String userId, long timeCreate, String publishId, boolean master, String refId, String businessSector, int businessType) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
@@ -68,7 +66,6 @@ public class MerchantEntity implements Serializable {
         this.publishId = publishId;
         this.master = master;
         this.refId = refId;
-        this.qrBoxId = qrBoxId;
         this.businessSector = businessSector;
         this.businessType = businessType;
     }
@@ -191,14 +188,6 @@ public class MerchantEntity implements Serializable {
 
     public void setRefId(String refId) {
         this.refId = refId;
-    }
-
-    public String getQrBoxId() {
-        return qrBoxId;
-    }
-
-    public void setQrBoxId(String qrBoxId) {
-        this.qrBoxId = qrBoxId;
     }
 
     public String getBusinessSector() {
