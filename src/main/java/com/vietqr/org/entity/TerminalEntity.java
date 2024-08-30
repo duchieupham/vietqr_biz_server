@@ -43,8 +43,8 @@ public class TerminalEntity implements Serializable {
     @Column(name = "bank_id")
     private String bankId;
 
-    @Column(name = "qr_box_id")
-    private String qrBoxId;
+    @Column(name = "box_device_id")
+    private String boxDeviceId;
 
     @Column(name = "sub")
     private boolean sub;
@@ -146,12 +146,12 @@ public class TerminalEntity implements Serializable {
         this.bankId = bankId;
     }
 
-    public String getQrBoxId() {
-        return qrBoxId;
+    public String getBoxDeviceId() {
+        return boxDeviceId;
     }
 
-    public void setQrBoxId(String qrBoxId) {
-        this.qrBoxId = qrBoxId;
+    public void setBoxDeviceId(String boxDeviceId) {
+        this.boxDeviceId = boxDeviceId;
     }
 
     public boolean getSub() {

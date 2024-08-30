@@ -2,6 +2,7 @@ package com.vietqr.org.controller;
 
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.boxdevice.BoxDeviceFindMidDTO;
+import com.vietqr.org.dto.boxdevice.BoxDeviceStatusDTO;
 import com.vietqr.org.dto.boxdevice.BoxDeviceInsertDTO;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.service.BoxDeviceService;
@@ -18,14 +19,32 @@ public class BoxDeviceController {
     private BoxDeviceService boxDeviceService;
 
     @PostMapping("/insert")
-    ResponseEntity<ResponseMessageDTO> insertBoxDevice(@Validated @RequestBody BoxDeviceInsertDTO dto){
+    ResponseEntity<ResponseMessageDTO> insertBoxDevice(@Validated @RequestBody BoxDeviceInsertDTO dto) {
         ResponseMessageDTO response = boxDeviceService.insertBoxDevice(dto);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @GetMapping("/list")
-    ResponseEntity<Object> getBoxDeviceByMid(@Validated @RequestBody BoxDeviceFindMidDTO dto){
+    @GetMapping("/mid")
+    ResponseEntity<Object> getBoxDeviceByMid(@Validated @RequestBody BoxDeviceFindMidDTO dto) {
         Object response = boxDeviceService.findBoxDeviceByMid(dto);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
+    }
+
+    @PatchMapping("/active")
+    ResponseEntity<ResponseMessageDTO> activeBoxDeviceById(@Validated @RequestBody BoxDeviceStatusDTO dto) {
+        ResponseMessageDTO response = boxDeviceService.activeBoxDeviceById(dto);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
+
+    @PatchMapping("/inactive")
+    ResponseEntity<ResponseMessageDTO> inactiveBoxDeviceById(@Validated @RequestBody BoxDeviceStatusDTO dto) {
+        ResponseMessageDTO response = boxDeviceService.inactiveBoxDeviceById(dto);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
+
+    @PatchMapping("/delete")
+    ResponseEntity<ResponseMessageDTO> deleteBoxDeviceById(@Validated @RequestBody BoxDeviceStatusDTO dto) {
+        ResponseMessageDTO response = boxDeviceService.deleteBoxDeviceById(dto);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 }

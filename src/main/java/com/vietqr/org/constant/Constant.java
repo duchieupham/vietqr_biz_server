@@ -11,7 +11,7 @@ public class Constant {
             "public_id",
             "ref_id",
             "bank_id",
-            "qr_box_id",
+            "box_device_id",
             "sub",
             "data1",
             "data2",
