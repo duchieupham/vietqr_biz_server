@@ -409,7 +409,7 @@ public class TerminalServiceImpl implements TerminalService {
                             terminal.setBankId(currentCell.getStringCellValue());
                             break;
                         case 9:
-                            terminal.setQrBoxId(currentCell.getStringCellValue());
+                            terminal.setBoxDeviceId(currentCell.getStringCellValue());
                             break;
                         case 10:
                             terminal.setSub(currentCell.getBooleanCellValue());
@@ -478,7 +478,7 @@ public class TerminalServiceImpl implements TerminalService {
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getPublicId(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getRefId(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getBankId(), style);
-        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getQrBoxId(), style);
+        ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getBoxDeviceId(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getSub(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData1(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getData2(), style);

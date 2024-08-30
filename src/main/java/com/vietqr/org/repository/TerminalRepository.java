@@ -36,7 +36,7 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
             + " OR LOWER(public_id) LIKE CONCAT('%', :searchTerm, '%')"
             + " OR LOWER(ref_id) LIKE CONCAT('%', :searchTerm, '%')"
             + " OR LOWER(bank_id) LIKE CONCAT('%', :searchTerm, '%')"
-            + " OR LOWER(qr_box_id) LIKE CONCAT('%', :searchTerm, '%')"
+            + " OR LOWER(box_device_id) LIKE CONCAT('%', :searchTerm, '%')"
             + " OR LOWER(data1) LIKE CONCAT('%', :searchTerm, '%')"
             + " OR LOWER(data2) LIKE CONCAT('%', :searchTerm, '%')"
             + " OR LOWER(trace_transfer) LIKE CONCAT('%', :searchTerm, '%'))"
@@ -117,6 +117,14 @@ public interface TerminalRepository extends JpaRepository<TerminalEntity, String
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE terminal SET qr_box_id = :boxDevice WHERE id = :id", nativeQuery = true)
-    void updateTerminalBoxDeviceById(@Param("id") String id, @Param("boxDevice") String boxDevice);
+    @Query(value = "UPDATE terminal SET box_device_id = :boxDeviceId WHERE id = :id", nativeQuery = true)
+    void updateTerminalBDIdById(@Param(value = "id") String id, @Param(value = "boxDeviceId") String boxDeviceId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE terminal SET box_device_id = '' WHERE id = :id", nativeQuery = true)
+    void removeTerminalBDIdById(@Param(value = "id") String id);
+
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM terminal WHERE id = :id AND box_device_id = '' LIMIT 1)", nativeQuery = true)
+    int isTerminalDisconnectBoxDevice(@Param(value = "id") String id);
 }
