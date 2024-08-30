@@ -158,8 +158,7 @@ public class BoxDeviceServiceImpl implements BoxDeviceService {
                         break;
                     case 1:
                         repo.updateBoxDeviceStatusById(dto.getBoxDeviceId().trim(), 2);
-                        terminalRepo.findTerminalById(dto.getTid().trim());
-                        terminalRepo.updateTerminalBDIdById(dto.getTid().trim(), "");
+                        terminalRepo.removeTerminalBDIdById(dto.getTid().trim());
                         result = new ResponseMessageDTO(Status.SUCCESS, "");
                         break;
                     default:
