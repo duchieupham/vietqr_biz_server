@@ -150,7 +150,7 @@ public class MerchantCustomerServiceImpl implements MerchantCustomerService {
                 terminalOrderRepository.save(terminalOrderEntity);
                 result = new ResponseMessageDTO(Status.SUCCESS, "");
             } else {
-                result = new ResponseMessageDTO(Status.FAILED, "E05");
+                result = new ResponseMessageDTO(Status.FAILED, "E186");
             }
         } catch (Exception e) {
             logger.error("customersPayForOrders ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
