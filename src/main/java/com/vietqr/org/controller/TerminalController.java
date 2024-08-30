@@ -3,6 +3,7 @@ package com.vietqr.org.controller;
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.terminal.*;
+import com.vietqr.org.security.Auth;
 import com.vietqr.org.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class TerminalController {
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
+    @Auth("asd")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
         Object response = terminalService.getTerminalById(new TerminalAuthDTO(id,userId));
