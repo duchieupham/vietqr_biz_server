@@ -267,7 +267,7 @@ public class MerchantServiceImpl implements MerchantService {
                 newTerminal.setPublicId(GeneratorUtil.generatePublicId("TER"));
                 newTerminal.setRefId(terminalEntity.getRefId());
                 newTerminal.setBankId(terminalEntity.getBankId());
-                newTerminal.setQrBoxId(terminalEntity.getQrBoxId());
+                newTerminal.setBoxDeviceId(terminalEntity.getBoxDeviceId());
                 newTerminal.setSub(terminalEntity.getSub());
                 newTerminal.setData1(terminalEntity.getData1());
                 newTerminal.setData2(terminalEntity.getData2());

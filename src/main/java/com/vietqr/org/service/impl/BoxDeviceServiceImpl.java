@@ -3,6 +3,7 @@ package com.vietqr.org.service.impl;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.constant.UniqueError;
 import com.vietqr.org.dto.boxdevice.BoxDeviceFindMidDTO;
+import com.vietqr.org.dto.boxdevice.BoxDeviceStatusDTO;
 import com.vietqr.org.dto.boxdevice.BoxDeviceInsertDTO;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
@@ -48,7 +49,7 @@ public class BoxDeviceServiceImpl implements BoxDeviceService {
             }
             entity.setCertificate(dto.getCertificate().trim());
             repo.save(entity);
-            terminalRepo.updateTerminalBoxDeviceById(dto.getTid().trim(), entity.getId());
+            terminalRepo.updateTerminalBDIdById(dto.getTid().trim(), entity.getId());
 
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (DataIntegrityViolationException e) {
@@ -85,6 +86,93 @@ public class BoxDeviceServiceImpl implements BoxDeviceService {
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("findBoxDeviceByMid: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO activeBoxDeviceById(BoxDeviceStatusDTO dto) {
+        ResponseMessageDTO result = null;
+        try {
+            Optional<BoxDeviceEntity> entity = repo.findBoxDeviceById(dto.getBoxDeviceId().trim());
+            if (entity.isPresent()) {
+                if (entity.get().getStatus() == 0) {
+                    repo.updateBoxDeviceStatusById(dto.getBoxDeviceId().trim(), 1);
+                    if (terminalRepo.isTerminalDisconnectBoxDevice(dto.getTid().trim()) == 0) {
+                        terminalRepo.updateTerminalBDIdById(dto.getTid().trim(), dto.getBoxDeviceId().trim());
+                    }
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                } else {
+                    result = new ResponseMessageDTO(Status.FAILED, "E197");
+                    logger.error("activeBoxDeviceById: Status of the box device is not inactive at: " + System.currentTimeMillis());
+                }
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E05");
+                logger.error("activeBoxDeviceById: Box device not found at: " + System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("activeBoxDeviceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO inactiveBoxDeviceById(BoxDeviceStatusDTO dto) {
+        ResponseMessageDTO result = null;
+        try {
+            Optional<BoxDeviceEntity> entity = repo.findBoxDeviceById(dto.getBoxDeviceId().trim());
+            if (entity.isPresent()) {
+                if (entity.get().getStatus() == 1) {
+                    repo.updateBoxDeviceStatusById(dto.getBoxDeviceId().trim(), 0);
+                    terminalRepo.removeTerminalBDIdById(dto.getTid().trim());
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                } else {
+                    result = new ResponseMessageDTO(Status.FAILED, "E196");
+                    logger.error("inactiveBoxDeviceById: Status of the box device is not active at: " + System.currentTimeMillis());
+                }
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E05");
+                logger.error("inactiveBoxDeviceById: Box device not found at: " + System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+            logger.error("inactiveBoxDeviceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO deleteBoxDeviceById(BoxDeviceStatusDTO dto) {
+        ResponseMessageDTO result = null;
+        try {
+            Optional<BoxDeviceEntity> entity = repo.findBoxDeviceById(dto.getBoxDeviceId().trim());
+            if (entity.isPresent()) {
+                switch (entity.get().getStatus()) {
+                    case 0:
+                        repo.updateBoxDeviceStatusById(dto.getBoxDeviceId().trim(), 2);
+                        result = new ResponseMessageDTO(Status.SUCCESS, "");
+                        break;
+                    case 1:
+                        repo.updateBoxDeviceStatusById(dto.getBoxDeviceId().trim(), 2);
+                        terminalRepo.removeTerminalBDIdById(dto.getTid().trim());
+                        result = new ResponseMessageDTO(Status.SUCCESS, "");
+                        break;
+                    default:
+                        result = new ResponseMessageDTO(Status.FAILED, "E198");
+                        logger.error("deleteBoxDeviceById: Status of the box device is deleted at: " + System.currentTimeMillis());
+                        break;
+                }
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E051");
+                logger.error("deleteBoxDeviceById: Box device not found at: " + System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+            result = new ResponseMessageDTO(Status.FAILED,  e.getMessage());
+            logger.error("deleteBoxDeviceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;
