@@ -3,6 +3,7 @@ package com.vietqr.org.exception;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
+import io.jsonwebtoken.SignatureException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,12 @@ public class ApplicationExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     ResponseEntity<ResponseMessageDTO> handleConstraintViolationException(ConstraintViolationException ex) {
+        return responseEntity;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(SignatureException.class)
+    ResponseEntity<ResponseMessageDTO> handleSignatureException(SignatureException ex) {
         return responseEntity;
     }
 

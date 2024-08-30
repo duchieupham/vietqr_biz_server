@@ -32,7 +32,7 @@ public class TerminalController {
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
-    @Auth("asd")
+    @Auth()
     @GetMapping("/{id}")
     public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId){
         Object response = terminalService.getTerminalById(new TerminalAuthDTO(id,userId));

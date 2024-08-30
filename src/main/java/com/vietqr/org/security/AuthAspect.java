@@ -5,17 +5,26 @@ import io.jsonwebtoken.*;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 
 @Aspect
 @Component
 public class AuthAspect {
-    @Around("@annotation(com.vietqr.org.security.Auth) && args(authDTO)")
-    public Object Authorized(ProceedingJoinPoint joinPoint, AuthDTO authDTO) throws Throwable {
+    @Around("@annotation(com.vietqr.org.security.Auth)")
+    public Object Authorized(ProceedingJoinPoint joinPoint) {
+//        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+//        Method method = signature.getMethod();
+//        Auth auth = method.getAnnotation(Auth.class);
+//        String permissionId = auth.value();
+
+//        System.out.println("permissionId hg: " + permissionId);
+
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
         System.out.println("token hg: " + token);
@@ -37,6 +46,7 @@ public class AuthAspect {
             } catch (SignatureException ex) {
                 // Signature không hợp lệ
                 System.out.println("Invalid signature");
+                throw ex;
             } catch (MalformedJwtException ex) {
                 // Token có định dạng không hợp lệ
                 System.out.println("Invalid JWT token");
@@ -46,6 +56,8 @@ public class AuthAspect {
             } catch (IllegalArgumentException ex) {
                 // Token rỗng hoặc null
                 System.out.println("Token is null or empty");
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
             }
         }
         return "Missing authorization token";
