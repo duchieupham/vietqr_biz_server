@@ -29,7 +29,7 @@ public class AuthorizedAspect {
      * 0: tid
      * 1: mid
      * */
-    @Around("@annotation(com.vietqr.org.security.Authorized) && args(id, type)")
+    @Around(value = "@annotation(com.vietqr.org.security.Authorized) && args(id, type, ..)", argNames = "joinPoint,id,type")
     public Object Authorized(ProceedingJoinPoint joinPoint, String id, int type) throws Throwable {
         String HEADER = "Authorization";
         String PREFIX = "Bearer ";

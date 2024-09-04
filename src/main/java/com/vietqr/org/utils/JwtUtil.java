@@ -6,6 +6,9 @@ import io.jsonwebtoken.Jwts;
 public class JwtUtil {
     private final static String SECRET = "mySecretKey";
 
+    /*
+    * New version of jjwt
+    *
     public static Claims parse(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET.getBytes())
@@ -13,5 +16,16 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
-}
 
+}
+    */
+
+    public static Claims parse(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET.getBytes())
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims;
+    }
+}
