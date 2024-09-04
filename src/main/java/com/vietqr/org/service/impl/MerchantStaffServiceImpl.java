@@ -1,5 +1,6 @@
 package com.vietqr.org.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vietqr.org.constant.Constant;
 import com.vietqr.org.constant.Status;
@@ -14,6 +15,7 @@ import com.vietqr.org.repository.TerminalRepository;
 import com.vietqr.org.service.MerchantStaffService;
 import com.vietqr.org.utils.DateTimeUtil;
 import com.vietqr.org.utils.ExcelGeneratorUtil;
+import javassist.NotFoundException;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -44,13 +46,19 @@ public class MerchantStaffServiceImpl implements MerchantStaffService {
     public ResponseMessageDTO insertMerchantStaffByForm(MerchantStaffInsertDTO dto) {
         ResponseMessageDTO result = null;
         try {
-            MerchantStaffEntity entity = new MerchantStaffEntity(dto.getMid().trim(), dto.getTid().trim(), dto.getUserId().trim(), dto.getData().trim(), dto.getPermissionGroupId().trim(), dto.getMerchantStaffRoleId().trim(), dto.getStaffRoleName().trim());
+            MerchantStaffEntity entity = new MerchantStaffEntity(dto.getMid().trim(), dto.getTid().trim(), dto.getUserId().trim(), dto.getMerchantStaffRoleId().trim(), dto.getStaffRoleName().trim());
             do {
                 UUID uuid = UUID.randomUUID();
                 if (!isMerchantStaffIdExists(uuid.toString())) {
                     entity.setId(uuid.toString());
                 }
             } while (entity.getId().isEmpty());
+            MerchantStaffDataDTO merchantStaffDataDTO = new MerchantStaffDataDTO(dto.getPhoneNo().trim(), dto.getName().trim());
+            ObjectMapper mapper = new ObjectMapper();
+            String data = mapper.writeValueAsString(merchantStaffDataDTO);
+            entity.setData(data);
+            String permissions = mapper.writeValueAsString(dto.getPermissionGroupId());
+            entity.setPermissionGroupId(permissions);
             entity.setStatus(false);
             entity.setTimeCreated(DateTimeUtil.getNowUTC());
             entity.setTimeUpdated(DateTimeUtil.getNowUTC());
@@ -174,6 +182,37 @@ public class MerchantStaffServiceImpl implements MerchantStaffService {
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("getExampleMerchantStaffExcel: " + e.getMessage() + " at: " + System.currentTimeMillis());
+        }
+
+        return result;
+    }
+
+    @Override
+    public boolean isAuthorized(String userId, String permissionId, String id, int type) {
+        boolean result = false;
+        try {
+            Optional<String> permission = Optional.empty();
+            if (type == 0) {
+                permission = repo.findMerchantStaffPermissionByTid(userId, id);
+            } else if (type == 1) {
+                permission = repo.findMerchantStaffPermissionByMid(userId, id);
+            } else {
+                logger.error("isAuthorized: Invalid type provided at: " + System.currentTimeMillis());
+                throw new IllegalArgumentException();
+            }
+
+            if (permission.isPresent()) {
+                ObjectMapper mapper = new ObjectMapper();
+                List<String> listPermission = mapper.readValue(permission.get(), new TypeReference<List<String>>() {
+                });
+                if (listPermission.contains(permissionId)) {
+                    result = true;
+                }
+            } else {
+                throw new NotFoundException("No permission found for user with id: " + userId + " and id: " + id);
+            }
+        } catch (Exception e) {
+            logger.error("isAuthorized: " + e.getMessage() + " at: " + System.currentTimeMillis());
         }
 
         return result;

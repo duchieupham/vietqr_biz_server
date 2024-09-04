@@ -3,6 +3,7 @@ package com.vietqr.org.controller;
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.terminal.*;
+import com.vietqr.org.security.Authorized;
 import com.vietqr.org.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class TerminalController {
     @Autowired
     TerminalService terminalService;
 
+    @Authorized("6c31c106-d8fd-4910-8148-aaafde33bbec")
     @PostMapping("/insert")
     public ResponseEntity<ResponseMessageDTO> insertTerminal(@Validated @RequestBody TerminalInsertDTO dto){
         ResponseMessageDTO response = terminalService.insertTerminal(dto);
