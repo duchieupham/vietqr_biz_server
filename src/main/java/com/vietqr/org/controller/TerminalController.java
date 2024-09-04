@@ -30,7 +30,6 @@ public class TerminalController {
             @Validated @RequestParam int type,
             @Validated @RequestBody TerminalInsertDTO dto
     ) {
-        System.out.println("TerminalController.insertTerminal");
         ResponseMessageDTO response = terminalService.insertTerminal(dto);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
