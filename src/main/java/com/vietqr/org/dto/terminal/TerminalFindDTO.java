@@ -12,11 +12,6 @@ public class TerminalFindDTO {
     @NotEmpty
     private String mid;
 
-    @NotNull
-    @NotBlank
-    @NotEmpty
-    private String userId;
-
     /*
     * Type
     * 0: name
@@ -35,9 +30,8 @@ public class TerminalFindDTO {
     public TerminalFindDTO() {
     }
 
-    public TerminalFindDTO(String mid, String userId, byte type, String searchTerm) {
+    public TerminalFindDTO(String mid, byte type, String searchTerm) {
         this.mid = mid;
-        this.userId = userId;
         this.type = type;
         this.searchTerm = searchTerm;
     }
@@ -47,15 +41,7 @@ public class TerminalFindDTO {
     }
 
     public void setMid(@NotNull @NotBlank @NotEmpty String mid) {
-        this.mid = mid;
-    }
-
-    public @NotNull @NotBlank @NotEmpty String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(@NotNull @NotBlank @NotEmpty String userId) {
-        this.userId = userId;
+        this.mid = mid.trim();
     }
 
     public int getType() {
@@ -71,6 +57,6 @@ public class TerminalFindDTO {
     }
 
     public void setSearchTerm(@NotNull @NotEmpty @Size(min = 1, max = 100) String searchTerm) {
-        this.searchTerm = searchTerm;
+        this.searchTerm = searchTerm.trim();
     }
 }

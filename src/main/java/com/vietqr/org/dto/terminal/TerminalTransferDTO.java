@@ -25,11 +25,10 @@ public class TerminalTransferDTO {
     @NotEmpty
     private String to;
 
-    public TerminalTransferDTO(String mid, String userId, String from, String to) {
-        this.mid = mid;
-        this.userId = userId;
-        this.from = from;
-        this.to = to;
+    public TerminalTransferDTO(String mid, String from, String to) {
+        this.mid = mid.trim();
+        this.from = from.trim();
+        this.to = to.trim();
     }
 
     public @NotNull @NotBlank @NotEmpty String getMid() {
@@ -37,15 +36,7 @@ public class TerminalTransferDTO {
     }
 
     public void setMid(@NotNull @NotBlank @NotEmpty String mid) {
-        this.mid = mid;
-    }
-
-    public @NotNull @NotBlank @NotEmpty String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(@NotNull @NotBlank @NotEmpty String userId) {
-        this.userId = userId;
+        this.mid = mid.trim();
     }
 
     public @NotNull @NotBlank @NotEmpty String getFrom() {
@@ -53,7 +44,7 @@ public class TerminalTransferDTO {
     }
 
     public void setFrom(@NotNull @NotBlank @NotEmpty String from) {
-        this.from = from;
+        this.from = from.trim();
     }
 
     public @NotNull @NotBlank @NotEmpty String getTo() {
@@ -61,6 +52,6 @@ public class TerminalTransferDTO {
     }
 
     public void setTo(@NotNull @NotBlank @NotEmpty String to) {
-        this.to = to;
+        this.to = to.trim();
     }
 }

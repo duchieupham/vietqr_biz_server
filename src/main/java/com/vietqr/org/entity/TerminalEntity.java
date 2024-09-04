@@ -1,5 +1,7 @@
 package com.vietqr.org.entity;
 
+import com.vietqr.org.utils.DateTimeUtil;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -58,9 +60,9 @@ public class TerminalEntity implements Serializable {
     @Column(name = "trace_transfer")
     private String traceTransfer;
 
-    /* status of the terminal is true if it is active else is fault if it is deleted */
+    /* status of the terminal is 1 if it is active else is 0 if it is deleted */
     @Column(name = "status")
-    private boolean status;
+    private int status;
 
     @Column(name = "num_of_staff")
     private int numOfStaff;
@@ -75,11 +77,24 @@ public class TerminalEntity implements Serializable {
     public TerminalEntity() {
     }
 
-    public TerminalEntity(String name, String address, String mid, String rawCode, String bankId) {
+    public TerminalEntity(String name, String address, String mid, String code, String bankId) {
+        this.id = "";
         this.name = name.trim();
         this.address = address.trim();
         this.mid = mid.trim();
+        this.code = code.trim();
         this.bankId = bankId.trim();
+        this.publicId = "";
+        this.boxDeviceId = "";
+        this.sub = false;
+        this.data1 = "";
+        this.data2 = "";
+        this.traceTransfer = "";
+        this.refId = "";
+        this.status = 1;
+        this.numOfStaff = 0;
+        this.timeCreated = DateTimeUtil.getNowUTC();
+        this.timeUpdatedStatus = DateTimeUtil.getNowUTC();
     }
 
     public String getId() {
@@ -87,7 +102,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = id.trim();
     }
 
     public String getName() {
@@ -95,7 +110,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public String getAddress() {
@@ -103,7 +118,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setAddress(String address) {
-        this.address = address;
+        this.address = address.trim();
     }
 
     public String getMid() {
@@ -111,7 +126,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setMid(String mid) {
-        this.mid = mid;
+        this.mid = mid.trim();
     }
 
     public String getCode() {
@@ -119,7 +134,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setCode(String code) {
-        this.code = code;
+        this.code = code.trim();
     }
 
     public String getPublicId() {
@@ -127,7 +142,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setPublicId(String publicId) {
-        this.publicId = publicId;
+        this.publicId = publicId.trim();
     }
 
     public String getRefId() {
@@ -135,7 +150,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setRefId(String refId) {
-        this.refId = refId;
+        this.refId = refId.trim();
     }
 
     public String getBankId() {
@@ -143,7 +158,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setBankId(String bankId) {
-        this.bankId = bankId;
+        this.bankId = bankId.trim();
     }
 
     public String getBoxDeviceId() {
@@ -151,7 +166,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setBoxDeviceId(String boxDeviceId) {
-        this.boxDeviceId = boxDeviceId;
+        this.boxDeviceId = boxDeviceId.trim();
     }
 
     public boolean getSub() {
@@ -167,7 +182,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setData1(String data1) {
-        this.data1 = data1;
+        this.data1 = data1.trim();
     }
 
     public String getData2() {
@@ -175,7 +190,7 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setData2(String data2) {
-        this.data2 = data2;
+        this.data2 = data2.trim();
     }
 
     public String getTraceTransfer() {
@@ -183,14 +198,14 @@ public class TerminalEntity implements Serializable {
     }
 
     public void setTraceTransfer(String traceTransfer) {
-        this.traceTransfer = traceTransfer;
+        this.traceTransfer = traceTransfer.trim();
     }
 
-    public boolean getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

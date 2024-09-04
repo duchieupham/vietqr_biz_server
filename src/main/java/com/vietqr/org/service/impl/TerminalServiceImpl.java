@@ -2,6 +2,7 @@ package com.vietqr.org.service.impl;
 
 import com.vietqr.org.constant.Constant;
 import com.vietqr.org.constant.Status;
+import com.vietqr.org.constant.UniqueError;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.terminal.*;
@@ -16,16 +17,13 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class TerminalServiceImpl implements TerminalService {
@@ -34,28 +32,53 @@ public class TerminalServiceImpl implements TerminalService {
     private final String sheetName = Constant.TERMINAL_SHEET_NAME;
     private final String sheetTitle = Constant.TERMINAL_TITLE;
 
-    @Autowired
-    private TerminalRepository repo;
+    private final TerminalRepository repo;
+
+    public TerminalServiceImpl(TerminalRepository repo) {
+        this.repo = repo;
+    }
 
     @Override
     public ResponseMessageDTO insertTerminal(TerminalInsertDTO dto) {
-        ResponseMessageDTO result = null;
         /*
          * TODO: Implement generate VietQR Code (when connect gRPC)
-         *  Check user is belong to the merchant
          * */
+        ResponseMessageDTO result = null;
         try {
-            TerminalEntity entity = new TerminalEntity(dto.getName().trim(), dto.getAddress().trim(), dto.getMid().trim(), dto.getCode().trim(), dto.getBankId().trim());
-            entity.setCode(GeneratorUtil.generateTerminalCode(entity.getName()));
-            UUID uuid = UUID.randomUUID();
-            entity.setId(uuid.toString());
-            entity.setNumOfStaff(0);
-            entity.setTimeCreated(DateTimeUtil.getNowUTC());
-            entity.setPublicId(GeneratorUtil.generatePublicId("TER"));
-            entity.setStatus(true);
-            entity.setSub(false);
+            TerminalEntity entity = new TerminalEntity(dto.getName(), dto.getAddress(), dto.getMid(), dto.getCode(), dto.getBankId());
+            // Generate id
+            do {
+                UUID uuid = UUID.randomUUID();
+                if (!repo.existsById(uuid.toString())) {
+                    entity.setId(uuid.toString());
+                }
+            } while (entity.getId().isEmpty());
+            // Generate terminal code by name
+            while (entity.getCode().isEmpty()){
+                String code = GeneratorUtil.generateTerminalCode(entity.getName());
+                if (repo.isTerminalCodeExists(code) == 0) {
+                    entity.setCode(GeneratorUtil.generateTerminalCode(entity.getName()));
+                }
+            }
+            // Generate public id
+            do {
+                String publicId = GeneratorUtil.generatePublicId("TER");
+                if (repo.isTerminalPublicIdExists(publicId) == 0) {
+                    entity.setPublicId(publicId);
+                }
+            } while (entity.getPublicId().isEmpty());
+
             repo.save(entity);
             result = new ResponseMessageDTO(Status.SUCCESS, "");
+        } catch (DataIntegrityViolationException e) {
+            String message = e.getMessage() == null ? "" : e.getMessage();
+            if (message.contains(UniqueError.TERMINAL_CODE)) {
+                result = new ResponseMessageDTO(Status.FAILED, "E205");
+                logger.error("insertTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "E05");
+                logger.error("insertTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            }
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("insertTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
@@ -65,16 +88,12 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public Object getListOfTerminal(TerminalGetListDTO dto) {
-        /*
-         * TODO: Check user is belong to the merchant
-         *  Handle role of user: Admin, staff of merchant or terminal
-         * */
+    public Object getTerminalsByMid(String mid) {
         Object result = null;
         try {
-            List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminal(dto.getMid().trim());
-            if (entities != null) {
-                result = new ResponseObjectDTO(Status.SUCCESS, entities);
+            Optional<List<ITerminalResultOfFindDTO>> entities = repo.getListOfTerminal(mid.trim());
+            if (entities.isPresent()) {
+                result = new ResponseObjectDTO(Status.SUCCESS, entities.get());
             } else {
                 result = new ResponseMessageDTO(Status.FAILED, "E185");
                 logger.error("getListOfTerminal: List of terminal is null at: " + System.currentTimeMillis());
@@ -88,15 +107,12 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public Object getTerminalById(TerminalAuthDTO dto) {
-        /*
-         * TODO: Check user is belong to the merchant
-         * */
+    public Object getTerminalById(String tid) {
         Object result = null;
         try {
-            TerminalEntity entity = repo.findTerminalById(dto.getId().trim());
-            if (entity != null) {
-                result = new ResponseObjectDTO(Status.SUCCESS, entity);
+            Optional<TerminalEntity> entity = repo.findTerminalById(tid.trim());
+            if (entity.isPresent()) {
+                result = new ResponseObjectDTO(Status.SUCCESS, entity.get());
             } else {
                 result = new ResponseMessageDTO(Status.FAILED, "E186");
                 logger.error("getTerminalById: Terminal is null at: " + System.currentTimeMillis());
@@ -112,8 +128,7 @@ public class TerminalServiceImpl implements TerminalService {
     @Override
     public Object searchTerminals(TerminalFindDTO dto) {
         /*
-         * TODO: Check user is belong to the merchant
-         *  Get bank detail consist of bank_account, bank_short_name, img_id (when connect gRPC)
+         * TODO: Get bank detail consist of bank_account, bank_short_name, img_id (when connect gRPC)
          *  Must be improve search
          * */
         Object result = null;
@@ -160,34 +175,37 @@ public class TerminalServiceImpl implements TerminalService {
 
     @Override
     public ResponseMessageDTO updateTerminal(String id, TerminalUpdateDTO dto) {
-        ResponseMessageDTO result = null;
         /*
          * TODO: Implement re-generate VietQR Code if update code (when connect gRPC)
-         *  Check user is belong to the merchant
          * */
-
+        ResponseMessageDTO result = null;
         try {
-            TerminalEntity entity = repo.findTerminalById(id);
-            if (entity.getName().equals(dto.getName().trim()) && entity.getAddress().equals(dto.getAddress().trim()) && entity.getCode().equals(dto.getCode().trim()) && entity.getBankId().equals(dto.getBankId().trim())) {
-                result = new ResponseMessageDTO(Status.FAILED, "E187");
-                logger.error("updateTerminal: Invalid request body at: " + System.currentTimeMillis());
+            Optional<TerminalEntity> terminal = repo.findTerminalById(id);
+            if (terminal.isPresent()) {
+                TerminalEntity entity = terminal.get();
+                if (entity.getName().equals(dto.getName().trim()) && entity.getAddress().equals(dto.getAddress().trim()) && entity.getCode().equals(dto.getCode().trim()) && entity.getBankId().equals(dto.getBankId().trim())) {
+                    result = new ResponseMessageDTO(Status.FAILED, "E187");
+                    logger.error("updateTerminal: Invalid request body at: " + System.currentTimeMillis());
+                } else {
+                    if (!entity.getName().equals(dto.getName().trim()) && !dto.getName().isEmpty()) {
+                        entity.setName(dto.getName());
+                    }
+                    if (!entity.getAddress().equals(dto.getAddress().trim()) && !dto.getAddress().isEmpty()) {
+                        entity.setAddress(dto.getAddress());
+                    }
+                    if (!entity.getCode().equals(dto.getCode().trim()) && !dto.getCode().isEmpty()) {
+                        entity.setCode(dto.getCode());
+                    }
+                    if (!entity.getBankId().equals(dto.getBankId().trim()) && !dto.getBankId().isEmpty()) {
+                        entity.setBankId(dto.getBankId());
+                    }
+                    repo.updateTerminal(entity.getId(), entity.getName(), entity.getAddress(), entity.getCode(), entity.getBankId());
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                }
             } else {
-                if (!entity.getName().equals(dto.getName().trim()) && !dto.getName().isEmpty()) {
-                    entity.setName(dto.getName().trim());
-                }
-                if (!entity.getAddress().equals(dto.getAddress().trim()) && !dto.getAddress().isEmpty()) {
-                    entity.setAddress(dto.getAddress().trim());
-                }
-                if (!entity.getCode().equals(dto.getCode().trim()) && !dto.getCode().isEmpty()) {
-                    entity.setCode(dto.getCode().trim());
-                }
-                if (!entity.getBankId().equals(dto.getBankId().trim()) && !dto.getBankId().isEmpty()) {
-                    entity.setBankId(dto.getBankId().trim());
-                }
-                repo.updateTerminal(entity.getId(), entity.getName(), entity.getAddress(), entity.getCode(), entity.getBankId());
-                result = new ResponseMessageDTO(Status.SUCCESS, "");
+                result = new ResponseMessageDTO(Status.FAILED, "E186");
+                logger.error("updateTerminal: Terminal is null at: " + System.currentTimeMillis());
             }
-
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("updateTerminal: " + e.getMessage() + " at: " + System.currentTimeMillis());
@@ -197,25 +215,25 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public ResponseMessageDTO deleteTerminalById(TerminalAuthDTO dto) {
+    public ResponseMessageDTO deleteTerminalById(String tid) {
         /*
          * TODO: Update info when update the status
          * */
         ResponseMessageDTO result = null;
-
         try {
-            if (isTerminalAuthorized(dto.getId().trim(), dto.getUserId().trim())) {
-                TerminalEntity entity = repo.findTerminalById(dto.getId().trim());
-                if (entity.getStatus()) {
-                    repo.updateTerminalStatusById(dto.getId().trim(), false, DateTimeUtil.getNowUTC());
+            Optional<TerminalEntity> terminal = repo.findTerminalById(tid.trim());
+            if (terminal.isPresent()) {
+                TerminalEntity entity = terminal.get();
+                if (entity.getStatus() == 1) {
+                    repo.updateTerminalStatusById(tid.trim(), false, DateTimeUtil.getNowUTC());
                     result = new ResponseMessageDTO(Status.SUCCESS, "");
                 } else {
-                    result = new ResponseMessageDTO(Status.FAILED, "E05");
-                    logger.error("deleteTerminalById: Terminal was deleted at: " + System.currentTimeMillis());
+                    result = new ResponseMessageDTO(Status.FAILED, "E115");
+                    logger.error("deleteTerminalById: User don't have the permission to do this action at: " + System.currentTimeMillis());
                 }
             } else {
-                result = new ResponseMessageDTO(Status.FAILED, "E115");
-                logger.error("deleteTerminalById: User don't have the permission to do this action at: " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E186");
+                logger.error("deleteTerminalById: Terminal is null at: " + System.currentTimeMillis());
             }
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
@@ -226,24 +244,23 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public ResponseMessageDTO recoverTerminalById(TerminalAuthDTO dto) {
+    public ResponseMessageDTO recoverTerminalById(String tid) {
         ResponseMessageDTO result = null;
-
         try {
-            if (isTerminalAuthorized(dto.getId().trim(), dto.getUserId().trim())) {
-                TerminalEntity entity = repo.findTerminalById(dto.getId().trim());
-                if (!entity.getStatus() && entity.getTimeUpdatedStatus() < DateTimeUtil.getTimeUTCNMonthsAgo(6)) {
-                    repo.updateTerminalStatusById(dto.getId().trim(), true, DateTimeUtil.getNowUTC());
+            Optional<TerminalEntity> terminal = repo.findTerminalById(tid.trim());
+            if (terminal.isPresent()) {
+                TerminalEntity entity = terminal.get();
+                if (entity.getStatus() == 0 && entity.getTimeUpdatedStatus() < DateTimeUtil.getTimeUTCNMonthsAgo(6)) {
+                    repo.updateTerminalStatusById(tid.trim(), true, DateTimeUtil.getNowUTC());
                     result = new ResponseMessageDTO(Status.SUCCESS, "");
                 } else {
                     result = new ResponseMessageDTO(Status.FAILED, "E05");
                     logger.error("recoverTerminalById: Terminal is active or was deleted more than 6 months at: " + System.currentTimeMillis());
                 }
             } else {
-                result = new ResponseMessageDTO(Status.FAILED, "E115");
-                logger.error("recoverTerminalById: User don't have the permission to do this action at: " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E186");
+                logger.error("recoverTerminalById: Terminal is null at: " + System.currentTimeMillis());
             }
-
         } catch (Exception e) {
             result = new ResponseMessageDTO(Status.FAILED, "E05");
             logger.error("recoverTerminalById: " + e.getMessage() + " at: " + System.currentTimeMillis());
@@ -253,10 +270,10 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public Object getListOfTerminalDeleted(TerminalGetListDTO dto) {
+    public Object getTerminalsDeletedByMid(String mid) {
         Object result = null;
         try {
-            List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminalDeleted(dto.getUserId().trim(), dto.getMid().trim(), DateTimeUtil.getTimeUTCNMonthsAgo(6));
+            List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminalDeleted(mid.trim(), DateTimeUtil.getTimeUTCNMonthsAgo(6));
             if (entities != null) {
                 result = new ResponseObjectDTO(Status.SUCCESS, entities);
             } else {
@@ -277,10 +294,10 @@ public class TerminalServiceImpl implements TerminalService {
          * TODO: Update a headers
          * */
         ResponseMessageDTO result = null;
-
-        try (XSSFWorkbook workbook = new XSSFWorkbook();) {
-            TerminalEntity entity = repo.findTerminalById(id.trim());
-            if (entity != null) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Optional<TerminalEntity> terminal = repo.findTerminalById(id.trim());
+            if (terminal.isPresent()) {
+                TerminalEntity entity = terminal.get();
                 XSSFSheet sheet = workbook.createSheet(sheetName);
                 // header
                 int rownum = 0;
@@ -321,7 +338,6 @@ public class TerminalServiceImpl implements TerminalService {
          * TODO: Update a headers
          * */
         ResponseMessageDTO result = null;
-
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             List<TerminalEntity> entities = repo.findTerminalsByMid(mid.trim());
 
@@ -361,11 +377,7 @@ public class TerminalServiceImpl implements TerminalService {
 
     @Override
     public Object importTerminals(InputStream is) {
-        /*
-         * TODO: Insert terminal without id and more
-         * */
         Object result = null;
-
         try (Workbook workbook = new XSSFWorkbook(is)) {
             Sheet sheet = workbook.getSheet(sheetName);
             Iterator<Row> rows = sheet.iterator();
@@ -424,7 +436,7 @@ public class TerminalServiceImpl implements TerminalService {
                             terminal.setTraceTransfer(currentCell.getStringCellValue());
                             break;
                         case 14:
-                            terminal.setStatus(currentCell.getBooleanCellValue());
+                            terminal.setStatus((int) currentCell.getNumericCellValue());
                             break;
                         case 15:
                             terminal.setNumOfStaff((int) currentCell.getNumericCellValue());
@@ -487,21 +499,5 @@ public class TerminalServiceImpl implements TerminalService {
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getNumOfStaff(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount++, entity.getTimeUpdatedStatus(), style);
         ExcelGeneratorUtil.createCell(sheet, rowContent, columnCount, entity.getTimeCreated(), style);
-    }
-
-    private boolean isTerminalAuthorized(String id, String userId) {
-        return repo.countTerminalByAuth(id, userId) == 1;
-    }
-
-    private boolean isTerminalIdExists(String id) {
-        return repo.isTerminalIdExists(id) == 1;
-    }
-
-    private boolean isTerminalCodeExists(String code) {
-        return repo.isTerminalCodeExists(code) == 1;
-    }
-
-    private boolean isTerminalPublicIdExists(String publicId) {
-        return repo.isTerminalPublicIdExists(publicId) == 1;
     }
 }

@@ -54,7 +54,7 @@ public class TerminalInsertDTO {
     }
 
     public void setMid(@NotNull @NotBlank @NotEmpty String mid) {
-        this.mid = mid;
+        this.mid = mid.trim();
     }
 
     public @NotBlank @NotEmpty @Size(min = 1, max = 15) String getCode() {
@@ -62,7 +62,7 @@ public class TerminalInsertDTO {
     }
 
     public void setCode(@NotBlank @NotEmpty @Size(min = 1, max = 15) String code) {
-        this.code = code;
+        this.code = code.trim();
     }
 
     public @NotNull @NotBlank @NotEmpty String getBankId() {
@@ -70,6 +70,6 @@ public class TerminalInsertDTO {
     }
 
     public void setBankId(@NotNull @NotBlank @NotEmpty String bankId) {
-        this.bankId = bankId;
+        this.bankId = bankId.trim();
     }
 }
