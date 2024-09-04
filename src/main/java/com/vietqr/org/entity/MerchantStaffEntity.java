@@ -45,13 +45,11 @@ public class MerchantStaffEntity implements Serializable {
         this.id = "";
     }
 
-    public MerchantStaffEntity(String mid, String tid, String userId, String data, String permissionGroupId, String merchantStaffRoleId, String staffRoleName) {
+    public MerchantStaffEntity(String mid, String tid, String userId, String merchantStaffRoleId, String staffRoleName) {
         this.id = "";
         this.mid = mid;
         this.tid = tid;
         this.userId = userId;
-        this.data = data;
-        this.permissionGroupId = permissionGroupId;
         this.merchantStaffRoleId = merchantStaffRoleId;
         this.staffRoleName = staffRoleName;
     }

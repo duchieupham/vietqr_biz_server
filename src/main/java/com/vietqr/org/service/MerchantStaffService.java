@@ -13,4 +13,5 @@ public interface MerchantStaffService {
     ResponseMessageDTO insertMerchantStaffByForm(MerchantStaffInsertDTO dto);
     Object importMerchantStaff(InputStream is, MerchantStaffImportDTO dto);
     Object getExampleMerchantStaffExcel(HttpServletResponse httpServletResponse);
+    boolean isAuthorized(String userId, String permissionId, String id, int type);
 }
