@@ -3,7 +3,14 @@ package com.vietqr.org.exception;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
+<<<<<<< HEAD
 import io.jsonwebtoken.SignatureException;
+=======
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+>>>>>>> 466c370c2e1ce64aee24ba90ad4f80e43c0abb68
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +21,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.nio.file.AccessDeniedException;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
@@ -52,6 +61,42 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ResponseMessageDTO> handleJsonParseException(HttpMessageNotReadableException ex) {
         return responseEntity;
+    }
+
+    // exception handler for Token has expired
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ResponseMessageDTO> handleExpiredJwtException(ExpiredJwtException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessageDTO(Status.FAILED, "E199"));
+    }
+
+    // exception handler for Invalid signature
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<ResponseMessageDTO> handleSignatureException(SignatureException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessageDTO(Status.FAILED, "E200"));
+    }
+
+    // exception handler for Invalid JWT token
+    @ExceptionHandler(MalformedJwtException.class)
+    public ResponseEntity<ResponseMessageDTO> handleMalformedJwtException(MalformedJwtException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessageDTO(Status.FAILED, "E201"));
+    }
+
+    // exception handler for Unsupported JWT
+    @ExceptionHandler(UnsupportedJwtException.class)
+    public ResponseEntity<ResponseMessageDTO> handleUnsupportedJwtException(UnsupportedJwtException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessageDTO(Status.FAILED, "E202"));
+    }
+
+    // exception handler for Token is null or empty
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ResponseMessageDTO> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessageDTO(Status.FAILED, "E203"));
+    }
+
+    // exception handler for Not have the necessary permissions
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ResponseMessageDTO> handleAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessageDTO(Status.FAILED, "E204"));
     }
 
     // exception handler for parse json error
