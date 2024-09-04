@@ -35,7 +35,7 @@ public class TerminalUpdateDTO {
     }
 
     public void setName(@NotBlank @NotEmpty @Size(min = 1, max = 100) String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public @NotBlank @NotEmpty @Size(min = 1, max = 200) String getAddress() {
@@ -43,7 +43,7 @@ public class TerminalUpdateDTO {
     }
 
     public void setAddress(@NotBlank @NotEmpty @Size(min = 1, max = 200) String address) {
-        this.address = address;
+        this.address = address.trim();
     }
 
     public @NotBlank @NotEmpty @Size(min = 1, max = 15) String getCode() {
@@ -51,7 +51,7 @@ public class TerminalUpdateDTO {
     }
 
     public void setCode(@NotBlank @NotEmpty @Size(min = 1, max = 15) String code) {
-        this.code = code;
+        this.code = code.trim();
     }
 
     public @NotBlank @NotEmpty String getBankId() {
@@ -59,7 +59,7 @@ public class TerminalUpdateDTO {
     }
 
     public void setBankId(@NotBlank @NotEmpty String bankId) {
-        this.bankId = bankId;
+        this.bankId = bankId.trim();
     }
 
     public @NotNull @NotBlank @NotEmpty String getUserId() {
@@ -67,6 +67,6 @@ public class TerminalUpdateDTO {
     }
 
     public void setUserId(@NotNull @NotBlank @NotEmpty String userId) {
-        this.userId = userId;
+        this.userId = userId.trim();
     }
 }

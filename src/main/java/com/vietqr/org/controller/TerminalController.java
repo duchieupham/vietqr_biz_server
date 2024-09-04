@@ -5,7 +5,6 @@ import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.terminal.*;
 import com.vietqr.org.security.Authorized;
 import com.vietqr.org.service.TerminalService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,67 +34,125 @@ public class TerminalController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<Object> getListOfTerminal(@Validated @RequestBody TerminalGetListDTO dto) {
-        Object response = terminalService.getListOfTerminal(dto);
+    @Authorized("")
+    public ResponseEntity<Object> getListOfTerminal(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @RequestBody String mid
+    ) {
+        Object response = terminalService.getListOfTerminal(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId) {
-        Object response = terminalService.getTerminalById(new TerminalAuthDTO(id, userId));
+    @Authorized("")
+    public ResponseEntity<Object> getTerminalById(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @PathVariable(value = "id") String tid
+    ) {
+        Object response = terminalService.getTerminalById(tid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchTerminals(@Validated @RequestBody TerminalFindDTO dto) {
+    @Authorized("")
+    public ResponseEntity<Object> searchTerminals(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @RequestBody TerminalFindDTO dto
+    ) {
         Object response = terminalService.searchTerminals(dto);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseMessageDTO> updateTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody TerminalUpdateDTO dto) {
-        ResponseMessageDTO response = terminalService.updateTerminal(id, dto);
+    @Authorized("")
+    public ResponseEntity<ResponseMessageDTO> updateTerminalById(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @PathVariable(value = "id") String tid,
+            @Validated @RequestBody TerminalUpdateDTO dto
+    ) {
+        ResponseMessageDTO response = terminalService.updateTerminal(tid, dto);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @PatchMapping("/{id}/delete")
-    public ResponseEntity<ResponseMessageDTO> deleteTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId) {
-        ResponseMessageDTO response = terminalService.deleteTerminalById(new TerminalAuthDTO(id, userId));
+    @Authorized("")
+    public ResponseEntity<ResponseMessageDTO> deleteTerminalById(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @PathVariable(value = "id") String tid
+    ) {
+        ResponseMessageDTO response = terminalService.deleteTerminalById(tid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @GetMapping("/deleted")
-    public ResponseEntity<Object> getListOfTerminalDeleted(@Validated @RequestBody TerminalGetListDTO dto) {
-        Object response = terminalService.getListOfTerminalDeleted(dto);
+    @Authorized("")
+    public ResponseEntity<Object> getListOfTerminalDeleted(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @RequestBody String mid
+    ) {
+        Object response = terminalService.getListOfTerminalDeleted(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PatchMapping("/{id}/recover")
-    public ResponseEntity<ResponseMessageDTO> recoverTerminalById(@Validated @PathVariable(value = "id") String id, @Validated @RequestBody String userId) {
-        ResponseMessageDTO response = terminalService.recoverTerminalById(new TerminalAuthDTO(id, userId));
+    @Authorized("")
+    public ResponseEntity<ResponseMessageDTO> recoverTerminalById(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @PathVariable(value = "id") String tid
+    ) {
+        ResponseMessageDTO response = terminalService.recoverTerminalById(tid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @GetMapping("/{id}/export")
-    public ResponseEntity<ResponseMessageDTO> exportTerminalById(@Validated @PathVariable(value = "id") String id, HttpServletResponse httpServletResponse) {
-        ResponseMessageDTO response = terminalService.exportTerminalById(httpServletResponse, id);
+    @Authorized("")
+    public ResponseEntity<ResponseMessageDTO> exportTerminalById(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @PathVariable(value = "id") String tid,
+            HttpServletResponse httpServletResponse
+    ) {
+        ResponseMessageDTO response = terminalService.exportTerminalById(httpServletResponse, tid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @GetMapping("/export")
-    public ResponseEntity<ResponseMessageDTO> exportTerminalsByMid(@Validated @RequestBody String mid, HttpServletResponse httpServletResponse) {
-        ResponseMessageDTO response = terminalService.exportTerminalsByMid(httpServletResponse, mid);
+    @Authorized("")
+    public ResponseEntity<ResponseMessageDTO> exportTerminalsByMid(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @RequestBody String mid,
+            HttpServletResponse httpServletResponse
+    ) {
+        ResponseMessageDTO response = terminalService.exportTerminalsByMid(httpServletResponse, id);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @PostMapping("/import")
-    public ResponseEntity<Object> importTerminals(InputStream is) {
+    @Authorized("")
+    public ResponseEntity<Object> importTerminals(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            InputStream is
+    ) {
         Object response = terminalService.importTerminals(is);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<ResponseMessageDTO> transferTerminals(@Validated @RequestBody TerminalTransferDTO dto) {
+    @Authorized("")
+    public ResponseEntity<ResponseMessageDTO> transferTerminals(
+            @Validated @RequestParam String id,
+            @Validated @RequestParam int type,
+            @Validated @RequestBody TerminalTransferDTO dto
+    ) {
         ResponseMessageDTO response = terminalService.transferTerminals(dto);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
