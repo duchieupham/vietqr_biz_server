@@ -88,7 +88,7 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public Object getListOfTerminal(String mid) {
+    public Object getTerminalsByMid(String mid) {
         Object result = null;
         try {
             Optional<List<ITerminalResultOfFindDTO>> entities = repo.getListOfTerminal(mid.trim());
@@ -270,7 +270,7 @@ public class TerminalServiceImpl implements TerminalService {
     }
 
     @Override
-    public Object getListOfTerminalDeleted(String mid) {
+    public Object getTerminalsDeletedByMid(String mid) {
         Object result = null;
         try {
             List<ITerminalResultOfFindDTO> entities = repo.getListOfTerminalDeleted(mid.trim(), DateTimeUtil.getTimeUTCNMonthsAgo(6));

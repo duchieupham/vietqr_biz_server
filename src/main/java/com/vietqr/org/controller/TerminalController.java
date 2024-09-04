@@ -34,18 +34,18 @@ public class TerminalController {
     }
 
     @GetMapping("/")
-    @Authorized("")
-    public ResponseEntity<Object> getListOfTerminal(
+    @Authorized("84ecfbc7-be43-46f8-bc51-123f44cf8714")
+    public ResponseEntity<Object> getTerminalsByMid(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
             @Validated @RequestBody String mid
     ) {
-        Object response = terminalService.getListOfTerminal(mid);
+        Object response = terminalService.getTerminalsByMid(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @GetMapping("/{id}")
-    @Authorized("")
+    @Authorized("6e261c66-c001-4cd6-8691-4fb8aeb7b61d")
     public ResponseEntity<Object> getTerminalById(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
@@ -56,7 +56,7 @@ public class TerminalController {
     }
 
     @GetMapping("/search")
-    @Authorized("")
+    @Authorized("04daf42f-da84-4aa7-a114-a18cc8c181eb")
     public ResponseEntity<Object> searchTerminals(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
@@ -67,7 +67,7 @@ public class TerminalController {
     }
 
     @PutMapping("/{id}")
-    @Authorized("")
+    @Authorized("b23dbf56-2aa8-4bc0-b35b-83767e4e5b65")
     public ResponseEntity<ResponseMessageDTO> updateTerminalById(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
@@ -79,7 +79,7 @@ public class TerminalController {
     }
 
     @PatchMapping("/{id}/delete")
-    @Authorized("")
+    @Authorized("73aeadda-f909-4c8f-ac72-1aefcc20a2f4")
     public ResponseEntity<ResponseMessageDTO> deleteTerminalById(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
@@ -90,18 +90,18 @@ public class TerminalController {
     }
 
     @GetMapping("/deleted")
-    @Authorized("")
-    public ResponseEntity<Object> getListOfTerminalDeleted(
+    @Authorized("a1546626-0307-4aff-bc66-5acc430c1306")
+    public ResponseEntity<Object> getTerminalsDeletedByMid(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
             @Validated @RequestBody String mid
     ) {
-        Object response = terminalService.getListOfTerminalDeleted(mid);
+        Object response = terminalService.getTerminalsDeletedByMid(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PatchMapping("/{id}/recover")
-    @Authorized("")
+    @Authorized("ecc19b19-3e8c-4468-bb00-bfd69d7bcc42")
     public ResponseEntity<ResponseMessageDTO> recoverTerminalById(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
@@ -112,7 +112,7 @@ public class TerminalController {
     }
 
     @GetMapping("/{id}/export")
-    @Authorized("")
+    @Authorized("acaf0764-dbe0-4877-a9e6-2903a80704e9")
     public ResponseEntity<ResponseMessageDTO> exportTerminalById(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
@@ -124,7 +124,7 @@ public class TerminalController {
     }
 
     @GetMapping("/export")
-    @Authorized("")
+    @Authorized("1919c254-b51c-4e50-bc30-89c059116d63")
     public ResponseEntity<ResponseMessageDTO> exportTerminalsByMid(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
@@ -136,7 +136,7 @@ public class TerminalController {
     }
 
     @PostMapping("/import")
-    @Authorized("")
+    @Authorized("03c88cd4-79c6-45f4-a1ef-a7cc6317dc06")
     public ResponseEntity<Object> importTerminals(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
@@ -147,7 +147,7 @@ public class TerminalController {
     }
 
     @PostMapping("/transfer")
-    @Authorized("")
+    @Authorized("ec4a923b-33d0-4cb7-b089-f018046a5f6d")
     public ResponseEntity<ResponseMessageDTO> transferTerminals(
             @Validated @RequestParam String id,
             @Validated @RequestParam int type,
