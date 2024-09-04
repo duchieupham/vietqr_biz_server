@@ -26,4 +26,6 @@ public interface MerchantRepository extends JpaRepository<MerchantEntity, Long> 
     @Query(value = "SELECT * FROM merchant WHERE time_updated_status IS NOT NULL AND time_updated_status >= :sixMonthsAgo", nativeQuery = true)
     List<MerchantEntity> findDeletedMerchants(@Param("sixMonthsAgo") Long sixMonthsAgo);
 
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM merchant WHERE user_id = :userId AND id = :mid)", nativeQuery = true)
+    int existsByUserId(@Param("userId") String userId, @Param("mid") String mid);
 }

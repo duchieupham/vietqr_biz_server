@@ -10,6 +10,7 @@ import com.vietqr.org.dto.merchantstaff.MerchantStaffDataDTO;
 import com.vietqr.org.dto.merchantstaff.MerchantStaffImportDTO;
 import com.vietqr.org.dto.merchantstaff.MerchantStaffInsertDTO;
 import com.vietqr.org.entity.MerchantStaffEntity;
+import com.vietqr.org.repository.MerchantRepository;
 import com.vietqr.org.repository.MerchantStaffRepository;
 import com.vietqr.org.repository.TerminalRepository;
 import com.vietqr.org.service.MerchantStaffService;
@@ -36,11 +37,17 @@ public class MerchantStaffServiceImpl implements MerchantStaffService {
     private final String sheetName = Constant.MERCHANT_STAFF_SHEET_NAME;
     private final String sheetTitle = Constant.MERCHANT_STAFF_TITLE;
 
-    @Autowired
-    private MerchantStaffRepository repo;
+    private final MerchantStaffRepository repo;
 
-    @Autowired
-    private TerminalRepository terminalRepo;
+    private final TerminalRepository terminalRepo;
+
+    private final MerchantRepository merchantRepo;
+
+    public MerchantStaffServiceImpl(MerchantStaffRepository repo, TerminalRepository terminalRepo, MerchantRepository merchantRepo) {
+        this.repo = repo;
+        this.terminalRepo = terminalRepo;
+        this.merchantRepo = merchantRepo;
+    }
 
     @Override
     public ResponseMessageDTO insertMerchantStaffByForm(MerchantStaffInsertDTO dto) {
@@ -192,13 +199,19 @@ public class MerchantStaffServiceImpl implements MerchantStaffService {
         boolean result = false;
         try {
             Optional<String> permission = Optional.empty();
-            if (type == 0) {
-                permission = repo.findMerchantStaffPermissionByTid(userId, id);
-            } else if (type == 1) {
-                permission = repo.findMerchantStaffPermissionByMid(userId, id);
-            } else {
-                logger.error("isAuthorized: Invalid type provided at: " + System.currentTimeMillis());
-                throw new IllegalArgumentException();
+            switch (type) {
+                case 0:
+                    permission = repo.findMerchantStaffPermissionByTid(userId, id);
+                    break;
+                case 1:
+                    if (merchantRepo.existsByUserId(userId, id) == 1) {
+                        return true;
+                    }
+                    permission = repo.findMerchantStaffPermissionByMid(userId, id);
+                    break;
+                default:
+                    logger.error("isAuthorized: Invalid type provided at: " + System.currentTimeMillis());
+                    throw new IllegalArgumentException();
             }
 
             if (permission.isPresent()) {
