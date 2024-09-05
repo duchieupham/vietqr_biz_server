@@ -8,11 +8,6 @@ public class BoxDeviceStatusDTO {
     @NotNull
     @NotEmpty
     @NotBlank
-    private String userId;
-
-    @NotNull
-    @NotEmpty
-    @NotBlank
     private String tid;
 
     @NotNull
@@ -23,22 +18,13 @@ public class BoxDeviceStatusDTO {
     public BoxDeviceStatusDTO() {
     }
 
-    public BoxDeviceStatusDTO(String userId, String tid, String boxDeviceId) {
-        this.userId = userId;
+    public BoxDeviceStatusDTO(String tid, String boxDeviceId) {
         this.tid = tid;
         this.boxDeviceId = boxDeviceId;
     }
 
-    public @NotNull @NotEmpty @NotBlank String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(@NotNull @NotEmpty @NotBlank String userId) {
-        this.userId = userId;
-    }
-
     public @NotNull @NotEmpty @NotBlank String getTid() {
-        return tid;
+        return tid.trim();
     }
 
     public void setTid(@NotNull @NotEmpty @NotBlank String tid) {
@@ -46,7 +32,7 @@ public class BoxDeviceStatusDTO {
     }
 
     public @NotNull @NotEmpty @NotBlank String getBoxDeviceId() {
-        return boxDeviceId;
+        return boxDeviceId.trim();
     }
 
     public void setBoxDeviceId(@NotNull @NotEmpty @NotBlank String boxDeviceId) {

@@ -17,25 +17,19 @@ public class BoxDeviceInsertDTO {
     @NotNull
     @NotEmpty
     @NotBlank
-    private String userId;
-
-    @NotNull
-    @NotEmpty
-    @NotBlank
     private String tid;
 
     public BoxDeviceInsertDTO() {
     }
 
-    public BoxDeviceInsertDTO(String deviceCode, String certificate, String userId, String tid) {
+    public BoxDeviceInsertDTO(String deviceCode, String certificate, String tid) {
         this.deviceCode = deviceCode;
         this.certificate = certificate;
-        this.userId = userId;
         this.tid = tid;
     }
 
     public @NotEmpty @NotBlank String getDeviceCode() {
-        return deviceCode;
+        return deviceCode.trim();
     }
 
     public void setDeviceCode(@NotEmpty @NotBlank String deviceCode) {
@@ -43,23 +37,15 @@ public class BoxDeviceInsertDTO {
     }
 
     public @NotNull @NotEmpty @NotBlank String getCertificate() {
-        return certificate;
+        return certificate.trim();
     }
 
     public void setCertificate(@NotNull @NotEmpty @NotBlank String certificate) {
         this.certificate = certificate;
     }
 
-    public @NotNull @NotEmpty @NotBlank String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(@NotNull @NotEmpty @NotBlank String userId) {
-        this.userId = userId;
-    }
-
     public @NotNull @NotEmpty @NotBlank String getTid() {
-        return tid;
+        return tid.trim();
     }
 
     public void setTid(@NotNull @NotEmpty @NotBlank String tid) {

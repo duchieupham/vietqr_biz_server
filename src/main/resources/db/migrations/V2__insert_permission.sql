@@ -1,6 +1,5 @@
 INSERT INTO permission (id, category, color, description, name)
 VALUES
---(UUID(), 0, '#00a67d', 'permission', 'Insert')
 ("6c31c106-d8fd-4910-8148-aaafde33bbec", 0, '#00a67d', 'Create the terminal', 'insertTerminal'),
 ("84ecfbc7-be43-46f8-bc51-123f44cf8714", 0, '#00a67d', 'Get a list of terminals for the merchant', 'getTerminalsByMid'),
 ("6e261c66-c001-4cd6-8691-4fb8aeb7b61d", 0, '#00a67d', 'Get the terminal by ID', 'getTerminalById'),
