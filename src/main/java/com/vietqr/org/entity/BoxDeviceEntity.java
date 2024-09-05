@@ -14,13 +14,13 @@ public class BoxDeviceEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private String id;
+    private String id = "";
 
     @Column(name = "device_code", nullable = false)
-    private String deviceCode;
+    private String deviceCode = "";
 
     @Column(name = "certificate", nullable = false)
-    private String certificate;
+    private String certificate = "";
 
     /*
     * Status
@@ -29,19 +29,16 @@ public class BoxDeviceEntity implements Serializable {
     * 2: deleted
     * */
     @Column(name = "status", nullable = false)
-    private int status;
+    private int status = 1;
 
     @Column(name = "time_created", nullable = false)
-    private long timeCreated;
+    private long timeCreated = DateTimeUtil.getNowUTC();
 
     @Column(name = "time_active", nullable = false)
-    private long timeActive;
+    private long timeActive = DateTimeUtil.getNowUTC();
 
     public BoxDeviceEntity() {
-        this.id = "";
-        this.status = 1;
-        this.timeCreated = DateTimeUtil.getNowUTC();
-        this.timeActive = DateTimeUtil.getNowUTC();
+        super();
     }
 
     public BoxDeviceEntity(String id, String deviceCode, String certificate, int status, long timeCreated, long timeActive) {
