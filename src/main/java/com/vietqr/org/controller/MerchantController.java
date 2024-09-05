@@ -3,6 +3,7 @@ package com.vietqr.org.controller;
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.merchant.MerchantRequestDTO;
+import com.vietqr.org.security.Authorized;
 import com.vietqr.org.service.MerchantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,50 +29,73 @@ public class MerchantController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseMessageDTO> saveMerchant(@RequestBody MerchantRequestDTO merchantRequestDTO) {
+    @Authorized("f7d3b8d0-0bd7-425f-bca6-48cc875e2338")
+    public ResponseEntity<ResponseMessageDTO> saveMerchant(@RequestBody MerchantRequestDTO merchantRequestDTO,
+                                                           @RequestParam String id,
+                                                           @RequestParam int type) {
         ResponseMessageDTO response = merchantService.insertMerchant(merchantRequestDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllMerchant(@RequestParam String id) {
-        Object response = merchantService.merchantInfo(id);
+    @Authorized("4c78ec77-8a2a-4d49-b0e6-6768a65b0846")
+    public ResponseEntity<Object> getMerchantDetail(@RequestParam String mid,
+                                                    @RequestParam String id,
+                                                    @RequestParam int type) {
+        Object response = merchantService.merchantInfo(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PutMapping
-    public ResponseEntity<ResponseMessageDTO> updateMerchant(@RequestParam String id,
-                                                             @RequestBody MerchantRequestDTO merchantRequestDTO) {
-        ResponseMessageDTO response = merchantService.updateMerchant(id, merchantRequestDTO);
+    @Authorized("947e16c4-92e0-4200-bb5d-4d84305566a9")
+    public ResponseEntity<ResponseMessageDTO> updateMerchant(@RequestParam String mid,
+                                                             @RequestBody MerchantRequestDTO merchantRequestDTO,
+                                                             @RequestParam String id,
+                                                             @RequestParam int type) {
+        ResponseMessageDTO response = merchantService.updateMerchant(mid, merchantRequestDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<ResponseMessageDTO> deleteMerchant(@PathVariable String id) {
-        ResponseMessageDTO response = merchantService.deleteMerchant(id);
+    @PatchMapping("/{mid}")
+    @Authorized("b1e837eb-e391-43ce-bd39-269d5558fac3")
+    public ResponseEntity<ResponseMessageDTO> deleteMerchant(@PathVariable String mid,
+                                                             @RequestParam String id,
+                                                             @RequestParam int type) {
+        ResponseMessageDTO response = merchantService.deleteMerchant(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @GetMapping("/list-delete")
-    public ResponseEntity<Object> getListDeleteMerchant() {
+    @Authorized("00be8a60-d50d-4953-8428-5766a90d4d89")
+    public ResponseEntity<Object> getListDeleteMerchant(@RequestParam String id,
+                                                        @RequestParam int type) {
         Object response = merchantService.getListDeleteMerchant();
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PatchMapping
-    public ResponseEntity<ResponseMessageDTO> recoverMerchant(@RequestParam String id) {
-        ResponseMessageDTO response = merchantService.recoverMerchant(id);
+    @Authorized("cb07c43d-782e-490f-a2d9-fb940b2de901")
+    public ResponseEntity<ResponseMessageDTO> recoverMerchant(@RequestParam String mid,
+                                                              @RequestParam String id,
+                                                              @RequestParam int type) {
+        ResponseMessageDTO response = merchantService.recoverMerchant(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @GetMapping("/export/{id}")
-    public ResponseEntity<ResponseMessageDTO> exportMerchant(@PathVariable String id, HttpServletResponse httpServletResponse) {
-        ResponseMessageDTO response = merchantService.exportMerchantToExcel(httpServletResponse, id);
+    @GetMapping("/export/{mid}")
+    @Authorized("7f45fdc2-9928-4c11-9220-326b85d838b3")
+    public ResponseEntity<ResponseMessageDTO> exportMerchant(@PathVariable String mid, HttpServletResponse httpServletResponse,
+                                                             @RequestParam String id,
+                                                             @RequestParam int type) {
+        ResponseMessageDTO response = merchantService.exportMerchantToExcel(httpServletResponse, mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<ResponseMessageDTO> merchantDataTransfer(@RequestParam String oldMid, @RequestParam String newMid) {
+    @Authorized("65de83e7-6238-4117-8b16-20ba6f07bad7")
+    public ResponseEntity<ResponseMessageDTO> merchantDataTransfer(@RequestParam String oldMid, @RequestParam String newMid,
+                                                                   @RequestParam String id,
+                                                                   @RequestParam int type) {
         ResponseMessageDTO response = merchantService.merchantDataTransfer(oldMid, newMid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
