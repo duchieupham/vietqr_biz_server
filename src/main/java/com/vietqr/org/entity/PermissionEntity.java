@@ -17,6 +17,16 @@ public class PermissionEntity implements Serializable {
     @Column(nullable = false)
     private String description;
 
+    /*
+    0: Insert
+    1: Update
+    2: Delete
+    3: Get
+    4: Export Excel
+    5: Import Excel
+    6: Recover
+    7: Other
+    */
     @Column(nullable = false)
     private int category;
 
