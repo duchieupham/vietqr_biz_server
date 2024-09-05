@@ -17,7 +17,13 @@ public interface BoxDeviceRepository extends JpaRepository<BoxDeviceEntity, Stri
             , nativeQuery = true)
     Optional<List<BoxDeviceEntity>> findBoxDeviceByMid(@Param(value = "mid") String mid);
 
-    @Query(value = "SELECT * FROM box_device WHERE id = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM (SELECT box_device_id FROM terminal WHERE  = :tid) AS t" +
+            " INNER JOIN box_device AS b" +
+            " ON t.box_device_id = b.id LIMIT 1"
+            , nativeQuery = true)
+    Optional<BoxDeviceEntity> findBoxDeviceByTid(@Param(value = "tid") String tid);
+
+    @Query(value = "SELECT * FROM box_device WHERE id = :id LIMIT 1", nativeQuery = true)
     Optional<BoxDeviceEntity> findBoxDeviceById(@Param(value = "id") String id);
 
     @Transactional

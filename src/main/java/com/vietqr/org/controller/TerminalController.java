@@ -131,7 +131,7 @@ public class TerminalController {
             @Validated @RequestBody String mid,
             HttpServletResponse httpServletResponse
     ) {
-        ResponseMessageDTO response = terminalService.exportTerminalsByMid(httpServletResponse, id);
+        ResponseMessageDTO response = terminalService.exportTerminalsByMid(httpServletResponse, mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
