@@ -29,38 +29,38 @@ public class MerchantController {
     }
 
     @PostMapping
-    @Authorized("f7d3b8d0-0bd7-425f-bca6-48cc875e2338")
-    public ResponseEntity<ResponseMessageDTO> saveMerchant(@RequestBody MerchantRequestDTO merchantRequestDTO,
-                                                           @RequestParam String id,
-                                                           @RequestParam int type) {
+    public ResponseEntity<ResponseMessageDTO> saveMerchant(@RequestBody MerchantRequestDTO merchantRequestDTO) {
         ResponseMessageDTO response = merchantService.insertMerchant(merchantRequestDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @GetMapping
     @Authorized("4c78ec77-8a2a-4d49-b0e6-6768a65b0846")
-    public ResponseEntity<Object> getMerchantDetail(@RequestParam String mid,
-                                                    @RequestParam String id,
-                                                    @RequestParam int type) {
+    public ResponseEntity<Object> getMerchantDetail(@RequestParam String id,
+                                                    @RequestParam int type,
+                                                    @RequestParam String mid
+                                                    ) {
         Object response = merchantService.merchantInfo(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PutMapping
     @Authorized("947e16c4-92e0-4200-bb5d-4d84305566a9")
-    public ResponseEntity<ResponseMessageDTO> updateMerchant(@RequestParam String mid,
-                                                             @RequestBody MerchantRequestDTO merchantRequestDTO,
-                                                             @RequestParam String id,
-                                                             @RequestParam int type) {
+    public ResponseEntity<ResponseMessageDTO> updateMerchant(@RequestParam String id,
+                                                             @RequestParam int type,
+                                                             @RequestParam String mid,
+                                                             @RequestBody MerchantRequestDTO merchantRequestDTO
+                                                             ) {
         ResponseMessageDTO response = merchantService.updateMerchant(mid, merchantRequestDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @PatchMapping("/{mid}")
     @Authorized("b1e837eb-e391-43ce-bd39-269d5558fac3")
-    public ResponseEntity<ResponseMessageDTO> deleteMerchant(@PathVariable String mid,
-                                                             @RequestParam String id,
-                                                             @RequestParam int type) {
+    public ResponseEntity<ResponseMessageDTO> deleteMerchant(@RequestParam String id,
+                                                             @RequestParam int type,
+                                                             @PathVariable String mid
+                                                             ) {
         ResponseMessageDTO response = merchantService.deleteMerchant(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
@@ -75,27 +75,29 @@ public class MerchantController {
 
     @PatchMapping
     @Authorized("cb07c43d-782e-490f-a2d9-fb940b2de901")
-    public ResponseEntity<ResponseMessageDTO> recoverMerchant(@RequestParam String mid,
-                                                              @RequestParam String id,
-                                                              @RequestParam int type) {
+    public ResponseEntity<ResponseMessageDTO> recoverMerchant(@RequestParam String id,
+                                                              @RequestParam int type,
+                                                              @RequestParam String mid) {
         ResponseMessageDTO response = merchantService.recoverMerchant(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @GetMapping("/export/{mid}")
     @Authorized("7f45fdc2-9928-4c11-9220-326b85d838b3")
-    public ResponseEntity<ResponseMessageDTO> exportMerchant(@PathVariable String mid, HttpServletResponse httpServletResponse,
-                                                             @RequestParam String id,
-                                                             @RequestParam int type) {
+    public ResponseEntity<ResponseMessageDTO> exportMerchant(@RequestParam String id,
+                                                             @RequestParam int type,
+                                                             @PathVariable String mid, HttpServletResponse httpServletResponse
+                                                             ) {
         ResponseMessageDTO response = merchantService.exportMerchantToExcel(httpServletResponse, mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
     @PostMapping("/transfer")
     @Authorized("65de83e7-6238-4117-8b16-20ba6f07bad7")
-    public ResponseEntity<ResponseMessageDTO> merchantDataTransfer(@RequestParam String oldMid, @RequestParam String newMid,
-                                                                   @RequestParam String id,
-                                                                   @RequestParam int type) {
+    public ResponseEntity<ResponseMessageDTO> merchantDataTransfer(@RequestParam String id,
+                                                                   @RequestParam int type,
+                                                                   @RequestParam String oldMid, @RequestParam String newMid
+                                                                   ) {
         ResponseMessageDTO response = merchantService.merchantDataTransfer(oldMid, newMid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }

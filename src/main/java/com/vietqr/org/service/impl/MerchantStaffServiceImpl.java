@@ -201,6 +201,9 @@ public class MerchantStaffServiceImpl implements MerchantStaffService {
             Optional<String> permission = Optional.empty();
             switch (type) {
                 case 0:
+                    if (merchantRepo.existsByTid(userId, id) == 1) {
+                        return true;
+                    }
                     permission = repo.findMerchantStaffPermissionByTid(userId, id);
                     break;
                 case 1:
