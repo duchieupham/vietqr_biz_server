@@ -4,6 +4,8 @@ import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.merchant.MerchantRequestDTO;
 import com.vietqr.org.security.Authorized;
+import com.vietqr.org.security.IdParam;
+import com.vietqr.org.security.TypeParam;
 import com.vietqr.org.service.MerchantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +38,8 @@ public class MerchantController {
 
     @GetMapping
     @Authorized("4c78ec77-8a2a-4d49-b0e6-6768a65b0846")
-    public ResponseEntity<Object> getMerchantDetail(@RequestParam String id,
-                                                    @RequestParam int type,
+    public ResponseEntity<Object> getMerchantDetail(@RequestParam @IdParam String id,
+                                                    @RequestParam @TypeParam int type,
                                                     @RequestParam String mid
                                                     ) {
         Object response = merchantService.merchantInfo(mid);
@@ -46,8 +48,8 @@ public class MerchantController {
 
     @PutMapping
     @Authorized("947e16c4-92e0-4200-bb5d-4d84305566a9")
-    public ResponseEntity<ResponseMessageDTO> updateMerchant(@RequestParam String id,
-                                                             @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> updateMerchant(@RequestParam @IdParam String id,
+                                                             @RequestParam @TypeParam int type,
                                                              @RequestParam String mid,
                                                              @RequestBody MerchantRequestDTO merchantRequestDTO
                                                              ) {
@@ -57,8 +59,8 @@ public class MerchantController {
 
     @PatchMapping("/{mid}")
     @Authorized("b1e837eb-e391-43ce-bd39-269d5558fac3")
-    public ResponseEntity<ResponseMessageDTO> deleteMerchant(@RequestParam String id,
-                                                             @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> deleteMerchant(@RequestParam @IdParam String id,
+                                                             @RequestParam @TypeParam int type,
                                                              @PathVariable String mid
                                                              ) {
         ResponseMessageDTO response = merchantService.deleteMerchant(mid);
@@ -67,16 +69,16 @@ public class MerchantController {
 
     @GetMapping("/list-delete")
     @Authorized("00be8a60-d50d-4953-8428-5766a90d4d89")
-    public ResponseEntity<Object> getListDeleteMerchant(@RequestParam String id,
-                                                        @RequestParam int type) {
+    public ResponseEntity<Object> getListDeleteMerchant(@RequestParam @IdParam String id,
+                                                        @RequestParam @TypeParam int type) {
         Object response = merchantService.getListDeleteMerchant();
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PatchMapping
     @Authorized("cb07c43d-782e-490f-a2d9-fb940b2de901")
-    public ResponseEntity<ResponseMessageDTO> recoverMerchant(@RequestParam String id,
-                                                              @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> recoverMerchant(@RequestParam @IdParam String id,
+                                                              @RequestParam @TypeParam int type,
                                                               @RequestParam String mid) {
         ResponseMessageDTO response = merchantService.recoverMerchant(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
@@ -84,8 +86,8 @@ public class MerchantController {
 
     @GetMapping("/export/{mid}")
     @Authorized("7f45fdc2-9928-4c11-9220-326b85d838b3")
-    public ResponseEntity<ResponseMessageDTO> exportMerchant(@RequestParam String id,
-                                                             @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> exportMerchant(@RequestParam @IdParam String id,
+                                                             @RequestParam @TypeParam int type,
                                                              @PathVariable String mid, HttpServletResponse httpServletResponse
                                                              ) {
         ResponseMessageDTO response = merchantService.exportMerchantToExcel(httpServletResponse, mid);
@@ -94,8 +96,8 @@ public class MerchantController {
 
     @PostMapping("/transfer")
     @Authorized("65de83e7-6238-4117-8b16-20ba6f07bad7")
-    public ResponseEntity<ResponseMessageDTO> merchantDataTransfer(@RequestParam String id,
-                                                                   @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> merchantDataTransfer(@RequestParam @IdParam String id,
+                                                                   @RequestParam @TypeParam int type,
                                                                    @RequestParam String oldMid, @RequestParam String newMid
                                                                    ) {
         ResponseMessageDTO response = merchantService.merchantDataTransfer(oldMid, newMid);

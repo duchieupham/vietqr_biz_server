@@ -4,6 +4,8 @@ import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.merchantcategory.InsertMerchantCategoryDTO;
 import com.vietqr.org.security.Authorized;
+import com.vietqr.org.security.IdParam;
+import com.vietqr.org.security.TypeParam;
 import com.vietqr.org.service.MerchantCategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +30,8 @@ public class MerchantCategoryController {
 
     @PostMapping
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> insertMerchantCategory(@RequestParam String id,
-                                                                     @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> insertMerchantCategory(@RequestParam @IdParam String id,
+                                                                     @RequestParam @TypeParam int type,
                                                                      @RequestBody InsertMerchantCategoryDTO categoryDTO
                                                                      ) {
         ResponseMessageDTO response = categoryService.saveMerchantCategory(categoryDTO);
@@ -38,8 +40,8 @@ public class MerchantCategoryController {
 
     @PutMapping("/{cid}")
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> updateMerchantCategory(@RequestParam String id,
-                                                                     @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> updateMerchantCategory(@RequestParam @IdParam String id,
+                                                                     @RequestParam @TypeParam int type,
                                                                      @PathVariable(value = "cid") String cid,
                                                                      @RequestBody InsertMerchantCategoryDTO categoryDTO
                                                                      ) {
@@ -49,16 +51,16 @@ public class MerchantCategoryController {
 
     @GetMapping
     @Authorized("")
-    public ResponseEntity<Object> getAllMerchantCategory(@RequestParam String id,
-                                                         @RequestParam int type) {
+    public ResponseEntity<Object> getAllMerchantCategory(@RequestParam @IdParam String id,
+                                                         @RequestParam @TypeParam int type) {
         Object response = categoryService.getListMerchantCategory();
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @GetMapping("/{mid}")
     @Authorized("")
-    public ResponseEntity<Object> getMerchantCategoryDetail(@RequestParam String id,
-                                                            @RequestParam int type,
+    public ResponseEntity<Object> getMerchantCategoryDetail(@RequestParam @IdParam String id,
+                                                            @RequestParam @TypeParam int type,
                                                             @PathVariable String mid
                                                             ) {
         Object response = categoryService.getMerchantCategoryById(mid);
@@ -67,8 +69,8 @@ public class MerchantCategoryController {
 
     @PatchMapping("/{mid}")
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> removeMerchantCategory(@RequestParam String id,
-                                                                     @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> removeMerchantCategory(@RequestParam @IdParam String id,
+                                                                     @RequestParam @TypeParam int type,
                                                                      @PathVariable String mid
                                                                      ) {
         ResponseMessageDTO response = categoryService.deleteMerchantCategory(mid);

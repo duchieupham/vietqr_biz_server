@@ -4,6 +4,8 @@ import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.merchantproduct.MerchantProductDTO;
 import com.vietqr.org.security.Authorized;
+import com.vietqr.org.security.IdParam;
+import com.vietqr.org.security.TypeParam;
 import com.vietqr.org.service.MerchantProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +29,8 @@ public class MerchantProductController {
 
     @PostMapping
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> insertMerchantProduct(@RequestParam String id,
-                                                                    @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> insertMerchantProduct(@RequestParam @IdParam String id,
+                                                                    @RequestParam @TypeParam int type,
                                                                     @RequestBody MerchantProductDTO merchantProductDTO) {
         ResponseMessageDTO response = merchantProductService.saveMerchantProduct(merchantProductDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
@@ -36,8 +38,8 @@ public class MerchantProductController {
 
     @PutMapping("/{pid}")
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> updateMerchantProduct(@RequestParam String id,
-                                                                    @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> updateMerchantProduct(@RequestParam @IdParam String id,
+                                                                    @RequestParam @TypeParam int type,
                                                                     @PathVariable String pid,
                                                                     @RequestBody MerchantProductDTO merchantProductDTO) {
         ResponseMessageDTO response = merchantProductService.updateMerchantProduct(pid, merchantProductDTO);
@@ -46,16 +48,16 @@ public class MerchantProductController {
 
     @GetMapping
     @Authorized("")
-    public ResponseEntity<Object> getAllMerchantProduct(@RequestParam String id,
-                                                        @RequestParam int type) {
+    public ResponseEntity<Object> getAllMerchantProduct(@RequestParam @IdParam String id,
+                                                        @RequestParam @TypeParam int type) {
         Object response = merchantProductService.getListMerchantProduct();
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @GetMapping("/{pid}")
     @Authorized("")
-    public ResponseEntity<Object> getMerchantProductDetail(@RequestParam String id,
-                                                           @RequestParam int type,
+    public ResponseEntity<Object> getMerchantProductDetail(@RequestParam @IdParam String id,
+                                                           @RequestParam @TypeParam int type,
                                                            @PathVariable String pid) {
         Object response = merchantProductService.getMerchantProductById(pid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
@@ -63,8 +65,8 @@ public class MerchantProductController {
 
     @PatchMapping("/{pid}")
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> removeMerchantProduct(@RequestParam String id,
-                                                                    @RequestParam int type,
+    public ResponseEntity<ResponseMessageDTO> removeMerchantProduct(@RequestParam @IdParam String id,
+                                                                    @RequestParam @TypeParam int type,
                                                                     @PathVariable String pid) {
         ResponseMessageDTO response = merchantProductService.deleteMerchantProduct(pid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
