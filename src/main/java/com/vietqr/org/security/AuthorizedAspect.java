@@ -56,10 +56,10 @@ public class AuthorizedAspect {
         Parameter[] parameters = method.getParameters();
 
         for (int i = 0; i < parameters.length; i++) {
-            if (parameters[i].getName().equals("id")) {
+            if (parameters[i].isAnnotationPresent(IdParam.class)) {
                 id = (String) args[i];
             }
-            if (parameters[i].getName().equals("type")) {
+            if (parameters[i].isAnnotationPresent(TypeParam.class)) {
                 type = (Integer) args[i];
             }
         }
