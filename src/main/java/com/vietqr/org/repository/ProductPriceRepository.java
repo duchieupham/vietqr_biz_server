@@ -18,13 +18,13 @@ public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity
     @Query(value = "UPDATE product_price SET amount = :amount WHERE id = :id", nativeQuery = true)
     void updateAmountProductPriceById(@Param(value = "id") String id, @Param(value = "amount") int amount);
 
-    @Query(value = "SELECT product_id, amount, trace_transfer, data1, data2"
+    @Query(value = "SELECT product_id AS productId, amount, trace_transfer AS traceTransfer, data1, data2"
             + " FROM product_price"
             + " WHERE id = :id"
             , nativeQuery = true)
     IProductPriceDTO findProductPriceById(@Param(value = "id") String id);
 
-    @Query(value = "SELECT product_id, amount, trace_transfer, data1, data2"
+    @Query(value = "SELECT product_id AS productId, amount, trace_transfer AS traceTransfer, data1, data2"
             + " FROM product_price"
             + " WHERE product_id = productId"
             , nativeQuery = true)
