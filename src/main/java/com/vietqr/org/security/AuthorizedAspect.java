@@ -13,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.nio.file.AccessDeniedException;
 
 @Component
@@ -29,8 +30,8 @@ public class AuthorizedAspect {
      * 0: tid
      * 1: mid
      * */
-    @Around(value = "@annotation(com.vietqr.org.security.Authorized) && args(id, type, ..)", argNames = "joinPoint,id,type")
-    public Object Authorized(ProceedingJoinPoint joinPoint, String id, int type) throws Throwable {
+    @Around(value = "@annotation(com.vietqr.org.security.Authorized)")
+    public Object Authorized(ProceedingJoinPoint joinPoint) throws Throwable {
         String HEADER = "Authorization";
         String PREFIX = "Bearer ";
 
@@ -48,6 +49,20 @@ public class AuthorizedAspect {
 
         Claims claims = JwtUtil.parse(token);
         String userId = claims.get("userId", String.class);
+
+        Object[] args = joinPoint.getArgs();
+        String id = "";
+        int type = -1;
+        Parameter[] parameters = method.getParameters();
+
+        for (int i = 0; i < parameters.length; i++) {
+            if (parameters[i].getName().equals("id")) {
+                id = (String) args[i];
+            }
+            if (parameters[i].getName().equals("type")) {
+                type = (Integer) args[i];
+            }
+        }
 
         // Check permission
         if (merchantStaffService.isAuthorized(userId, permissionId, id, type)) {
