@@ -1,5 +1,6 @@
 package com.vietqr.org.service.impl;
 
+import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.merchantcategory.InsertMerchantCategoryDTO;
@@ -35,10 +36,10 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
             merchantCategory.setName(categoryDTO.getName());
             merchantCategory.setStatus(true);
             merchantCategoryRepository.save(merchantCategory);
-            result = new ResponseMessageDTO("SUCCESS", "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR saveMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -58,10 +59,10 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
                 }
                 merchantCategoryRepository.save(merchantCategory);
             }
-            result = new ResponseMessageDTO("SUCCESS", "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR updateMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -71,10 +72,10 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
         Object result;
         try {
             List<MerchantCategoryEntity> merchantCategoryEntityList = merchantCategoryRepository.getAllMerchantCategory();
-            result = new ResponseObjectDTO("SUCCESS", merchantCategoryEntityList);
+            result = new ResponseObjectDTO(Status.SUCCESS, merchantCategoryEntityList);
         } catch (Exception e) {
             logger.error("ERROR listMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -86,13 +87,13 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
             Optional<MerchantCategoryEntity> merchantCategory = merchantCategoryRepository.findMerchantCategoryById(id);
             if (merchantCategory.isPresent()) {
                 MerchantCategoryEntity merchantCategoryEntity = merchantCategory.get();
-                result = new ResponseObjectDTO("SUCCESS", merchantCategoryEntity);
+                result = new ResponseObjectDTO(Status.SUCCESS, merchantCategoryEntity);
             } else {
-                result = new ResponseMessageDTO("FAILED", "E05");
+                result = new ResponseMessageDTO(Status.FAILED, "E05");
             }
         } catch (Exception e) {
             logger.error("ERROR getMerchantCategoryById: " + e.getMessage() + " at " + System.currentTimeMillis());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }
@@ -107,10 +108,10 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
                 merchantCategory.setStatus(false);
                 merchantCategoryRepository.save(merchantCategory);
             }
-            result = new ResponseMessageDTO("SUCCESS", "");
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR removeMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
-            result = new ResponseMessageDTO("FAILED", "E05");
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;
     }

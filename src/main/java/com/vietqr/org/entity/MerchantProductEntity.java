@@ -22,6 +22,10 @@ public class MerchantProductEntity implements Serializable {
     private String name;
     @Column(name = "unit")
     private String unit;
+
+//    0 = publish
+//    1 = available
+//    2 = disable
     @Column(name = "status")
     private int status;
     @Column(name = "tid")
