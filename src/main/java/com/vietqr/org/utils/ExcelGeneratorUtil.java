@@ -1,16 +1,13 @@
 package com.vietqr.org.utils;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.*;
 
 import javax.servlet.http.HttpServletResponse;
 
 public class ExcelGeneratorUtil {
+    private final static String fontName = "Avenir Book";
+
     public static void createCell(XSSFSheet sheet, Row row, int columnCount, Object value, CellStyle style) {
         sheet.autoSizeColumn(columnCount);
         Cell cell = row.createCell(columnCount);
@@ -31,7 +28,8 @@ public class ExcelGeneratorUtil {
     public static CellStyle getStyleContent(XSSFWorkbook workbook) {
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
-        font.setFontHeight(14);
+        font.setFontHeight(10);
+        font.setFontName(fontName);
         style.setFont(font);
         return style;
     }
@@ -39,17 +37,23 @@ public class ExcelGeneratorUtil {
     public static CellStyle getStyleHeader(XSSFWorkbook workbook) {
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
-        font.setFontHeight(16);
+        font.setFontHeight(10);
+        font.setFontName(fontName);
         font.setBold(true);
+        font.setColor(IndexedColors.WHITE.getIndex());
         style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
         return style;
     }
 
     public static CellStyle getStyleTitle(XSSFWorkbook workbook) {
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
-        font.setFontHeight(18);
+        font.setFontHeight(12);
+        font.setFontName(fontName);
         style.setFont(font);
         font.setBold(true);
         style.setAlignment(HorizontalAlignment.CENTER);

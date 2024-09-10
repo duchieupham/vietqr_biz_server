@@ -17,17 +17,23 @@ import com.vietqr.org.service.MerchantStaffService;
 import com.vietqr.org.utils.DateTimeUtil;
 import com.vietqr.org.utils.ExcelGeneratorUtil;
 import javassist.NotFoundException;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.*;
 
 @Service
@@ -161,25 +167,55 @@ public class MerchantStaffServiceImpl implements MerchantStaffService {
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet(sheetName);
-            int rownum = 0;
-            Map<String, String[]> items = new HashMap<String, String[]>();
-            items.put("Permissions", new String[]{"Create", "Update", "Delete"});
-            items.put("Functions", new String[]{"Merchant", "Terminal", "Staff", "Customer"});
+            int rownum = 3;
             // header
             Row row = sheet.createRow(rownum++);
             CellStyle styleHeader = ExcelGeneratorUtil.getStyleHeader(workbook);
             CellStyle styleTitle = ExcelGeneratorUtil.getStyleTitle(workbook);
             CellStyle styleContent = ExcelGeneratorUtil.getStyleContent(workbook);
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.length - 1));
+            // logo vietQR
+
+            final String imagePath = "vietqr.png";
+            ClassLoader classLoader = getClass().getClassLoader();
+            InputStream imageInputStream = classLoader.getResourceAsStream(imagePath);
+            if (imageInputStream == null) {
+                throw new FileNotFoundException("File not found: vietqr.png");
+            }
+            byte[] imageBytes = IOUtils.toByteArray(imageInputStream);
+//            final String imageUrl = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fdownloadlogomienphi.com%2Flogo%2Fdownload-logo-vector-viet-qr-vietqr-mien-phi&psig=AOvVaw2S9u8ysNrAjbdOJ-qI1aWy&ust=1725716779133000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJCn0I66rogDFQAAAAAdAAAAABAE";
+//            byte[] imageBytes = IOUtils.toByteArray(url.openStream());
+            int pictureIndex = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
+            XSSFDrawing drawing = (XSSFDrawing) sheet.createDrawingPatriarch();
+            XSSFClientAnchor anchor = new XSSFClientAnchor();
+            sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, headers.length - 1));
+            anchor.setCol1(0);
+            anchor.setCol2(headers.length - 1);
+            anchor.setRow1(0);
+            anchor.setRow2(3);
+            XSSFPicture picture = drawing.createPicture(anchor, pictureIndex);
+            picture.resize(1, 1);
+            for (int i = 0; i < 4; i++) {
+                sheet.autoSizeColumn(i);
+            }
             // title
+            sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, headers.length - 1));
             ExcelGeneratorUtil.createCell(sheet, row, 0, sheetTitle, styleTitle);
             row = sheet.createRow(rownum++);
+
+            // Set header row and apply autoSizeColumn later
             for (int i = 0; i < headers.length; i++) {
                 ExcelGeneratorUtil.createCell(sheet, row, i, headers[i], styleHeader);
             }
+
             // content
+            int ordinal = 1;
             Row rowContent = sheet.createRow(rownum);
-            ExcelGeneratorUtil.createCell(sheet, rowContent, 0, rownum - 2, styleContent);
+            ExcelGeneratorUtil.createCell(sheet, rowContent, 0, ordinal, styleContent);
+
+            // Auto resize columns to fit the content
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
 
             ExcelGeneratorUtil.initResponseForExport(httpServletResponse);
             ServletOutputStream outputStream = httpServletResponse.getOutputStream();
