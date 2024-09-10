@@ -28,4 +28,10 @@ public interface MerchantRepository extends JpaRepository<MerchantEntity, Long> 
 
     @Query(value = "SELECT EXISTS(SELECT 1 FROM merchant WHERE user_id = :userId AND id = :mid)", nativeQuery = true)
     int existsByUserId(@Param("userId") String userId, @Param("mid") String mid);
+
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM merchant m"
+            + " WHERE m.id = (SELECT t.mid FROM terminal t WHERE t.id = :tid)"
+            + " AND m.user_id = :userId)"
+            , nativeQuery = true)
+    int existsByTid(@Param("userId") String userId, @Param("tid") String tid);
 }
