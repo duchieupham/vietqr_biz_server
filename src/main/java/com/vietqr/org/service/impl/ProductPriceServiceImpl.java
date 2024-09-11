@@ -67,7 +67,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     public ResponseMessageDTO updateAmountProductPriceById(ProductPriceUpdateAmountDTO dto) {
         ResponseMessageDTO result = null;
         try {
-            repo.updateAmountProductPriceById(dto.getId(), dto.getAmount());
+            repo.updateAmountProductPriceById(dto.getId(), dto.getAmount(), DateTimeUtil.getNowUTC());
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error(LOG_ERROR + "updateAmountProductPrice: " + e.getMessage() + " at: " + System.currentTimeMillis());
@@ -109,7 +109,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     public ResponseMessageDTO updateData1ProductPriceById(ProductPriceUpdateData1DTO dto) {
         ResponseMessageDTO result = null;
         try {
-            repo.updateData1ProductPriceById(dto.getId(), dto.getData1());
+            repo.updateData1ProductPriceById(dto.getId(), dto.getData1(), DateTimeUtil.getNowUTC());
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error(LOG_ERROR + "updateData1ProductPriceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
@@ -123,7 +123,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     public ResponseMessageDTO updateData2ProductPriceById(ProductPriceUpdateData2DTO dto) {
         ResponseMessageDTO result = null;
         try {
-            repo.updateData2ProductPriceById(dto.getId(), dto.getData2());
+            repo.updateData2ProductPriceById(dto.getId(), dto.getData2(), DateTimeUtil.getNowUTC());
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error(LOG_ERROR + "updateData2ProductPriceById: " + e.getMessage() + " at: " + System.currentTimeMillis());

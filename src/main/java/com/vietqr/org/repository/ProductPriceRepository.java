@@ -15,8 +15,12 @@ public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE product_price SET amount = :amount WHERE id = :id", nativeQuery = true)
-    void updateAmountProductPriceById(@Param(value = "id") String id, @Param(value = "amount") int amount);
+    @Query(value = "UPDATE product_price SET amount = :amount, time_updated = :timeUpdated WHERE id = :id", nativeQuery = true)
+    void updateAmountProductPriceById(
+            @Param(value = "id") String id,
+            @Param(value = "amount") int amount,
+            @Param(value = "timeUpdated") long timeUpdated
+    );
 
     @Query(value = "SELECT product_id AS productId, amount, trace_transfer AS traceTransfer, data1, data2"
             + " FROM product_price"
@@ -32,11 +36,19 @@ public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE product_price SET data1 = :data1 WHERE id = :id", nativeQuery = true)
-    void updateData1ProductPriceById(@Param(value = "id") String id, @Param(value = "data1") String data1);
+    @Query(value = "UPDATE product_price SET data1 = :data1, time_updated = :timeUpdated WHERE id = :id", nativeQuery = true)
+    void updateData1ProductPriceById(
+            @Param(value = "id") String id,
+            @Param(value = "data1") String data1,
+            @Param(value = "timeUpdated") long timeUpdated
+    );
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE product_price SET data2 = :data2 WHERE id = :id", nativeQuery = true)
-    void updateData2ProductPriceById(@Param(value = "id") String id, @Param(value = "data2") String data2);
+    @Query(value = "UPDATE product_price SET data2 = :data2, time_updated = :timeUpdated WHERE id = :id", nativeQuery = true)
+    void updateData2ProductPriceById(
+            @Param(value = "id") String id,
+            @Param(value = "data2") String data2,
+            @Param(value = "timeUpdated") long timeUpdated
+    );
 }
