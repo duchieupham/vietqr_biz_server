@@ -10,6 +10,7 @@ import com.vietqr.org.dto.terminalinventory.TerminalInventoryUpdateQuantityDTO;
 import com.vietqr.org.entity.TerminalInventoryEntity;
 import com.vietqr.org.repository.TerminalInventoryRepository;
 import com.vietqr.org.service.TerminalInventoryService;
+import com.vietqr.org.service.redis.RedisService;
 import com.vietqr.org.utils.DateTimeUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class TerminalInventoryServiceImpl implements TerminalInventoryService {
     private final String LOG_ERROR = "Failed at TerminalInventoryServiceImpl: ";
     private final TerminalInventoryRepository repo;
 
-    public TerminalInventoryServiceImpl(TerminalInventoryRepository repo) {
+    public TerminalInventoryServiceImpl(TerminalInventoryRepository repo, RedisService redisService) {
         this.repo = repo;
     }
 
