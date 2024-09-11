@@ -6,6 +6,8 @@ import com.vietqr.org.dto.terminalinventory.TerminalInventoryInsertDTO;
 import com.vietqr.org.dto.terminalinventory.TerminalInventoryUpdateExpDTO;
 import com.vietqr.org.dto.terminalinventory.TerminalInventoryUpdateQuantityDTO;
 import com.vietqr.org.security.Authorized;
+import com.vietqr.org.security.IdParam;
+import com.vietqr.org.security.TypeParam;
 import com.vietqr.org.service.TerminalInventoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,8 +26,8 @@ public class TerminalInventoryController {
     @PostMapping("/insert")
     @Authorized("")
     public ResponseEntity<ResponseMessageDTO> insertTerminalInventory(
-            @Validated @RequestParam String id,
-            @Validated @RequestParam int type,
+            @Validated @RequestParam @IdParam String id,
+            @Validated @RequestParam @TypeParam int type,
             @Validated @RequestBody TerminalInventoryInsertDTO dto
     ) {
         ResponseMessageDTO response = terminalInventoryService.insertTerminalInventory(dto);
@@ -35,8 +37,8 @@ public class TerminalInventoryController {
     @PatchMapping("/update-amount")
     @Authorized("")
     public ResponseEntity<ResponseMessageDTO> updateQuantityTerminalInventoryById(
-            @Validated @RequestParam String id,
-            @Validated @RequestParam int type,
+            @Validated @RequestParam @IdParam String id,
+            @Validated @RequestParam @TypeParam int type,
             @Validated @RequestBody TerminalInventoryUpdateQuantityDTO dto
     ) {
         ResponseMessageDTO response = terminalInventoryService.updateQuantityTerminalInventoryById(dto);
@@ -46,8 +48,8 @@ public class TerminalInventoryController {
     @GetMapping("/{id}")
     @Authorized("")
     public ResponseEntity<Object> getTerminalInventoryById(
-            @Validated @RequestParam String id,
-            @Validated @RequestParam int type,
+            @Validated @RequestParam @IdParam String id,
+            @Validated @RequestParam @TypeParam int type,
             @Validated @PathVariable(value = "id") String terminalInventoryId
     ) {
         Object response = terminalInventoryService.findTerminalInventoryById(terminalInventoryId);
@@ -57,8 +59,8 @@ public class TerminalInventoryController {
     @GetMapping("/tid/{id}")
     @Authorized("")
     public ResponseEntity<Object> getTerminalInventoryByTid(
-            @Validated @RequestParam String id,
-            @Validated @RequestParam int type,
+            @Validated @RequestParam @IdParam String id,
+            @Validated @RequestParam @TypeParam int type,
             @Validated @PathVariable(value = "id") String tid
     ) {
         Object response = terminalInventoryService.findTerminalInventoryByTid(tid);
@@ -68,8 +70,8 @@ public class TerminalInventoryController {
     @PutMapping("/exp")
     @Authorized("")
     public ResponseEntity<ResponseMessageDTO> updateExpTerminalInventoryById(
-            @Validated @RequestParam String id,
-            @Validated @RequestParam int type,
+            @Validated @RequestParam @IdParam String id,
+            @Validated @RequestParam @TypeParam int type,
             @Validated @RequestBody TerminalInventoryUpdateExpDTO dto
     ) {
         ResponseMessageDTO response = terminalInventoryService.updateExpTerminalInventoryById(dto);
