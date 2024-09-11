@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/merchant-product")
@@ -31,8 +32,9 @@ public class MerchantProductController {
     @Authorized("")
     public ResponseEntity<ResponseMessageDTO> insertMerchantProduct(@RequestParam @IdParam String id,
                                                                     @RequestParam @TypeParam int type,
-                                                                    @RequestBody MerchantProductDTO merchantProductDTO) {
-        ResponseMessageDTO response = merchantProductService.saveMerchantProduct(merchantProductDTO);
+                                                                    @RequestBody MerchantProductDTO merchantProductDTO,
+                                                                    @RequestParam MultipartFile file) {
+        ResponseMessageDTO response = merchantProductService.saveMerchantProduct(file, merchantProductDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 

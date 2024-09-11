@@ -6,9 +6,11 @@ import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.merchantproduct.MerchantProductDTO;
 import com.vietqr.org.entity.MerchantProductEntity;
 import com.vietqr.org.repository.MerchantProductRepository;
+import com.vietqr.org.service.AmazonS3Service;
 import com.vietqr.org.service.MerchantProductService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,18 +20,28 @@ import java.util.UUID;
 public class MerchantProductServiceImpl implements MerchantProductService {
     private static final Logger logger = Logger.getLogger(MerchantProductServiceImpl.class);
     private final MerchantProductRepository merchantProductRepository;
+    private final AmazonS3Service amazonS3Service;
 
-    public MerchantProductServiceImpl(MerchantProductRepository merchantProductRepository) {
+    public MerchantProductServiceImpl(MerchantProductRepository merchantProductRepository, AmazonS3Service amazonS3Service) {
         this.merchantProductRepository = merchantProductRepository;
+        this.amazonS3Service = amazonS3Service;
     }
 
     @Override
-    public ResponseMessageDTO saveMerchantProduct(MerchantProductDTO productInsertDTO) {
+    public ResponseMessageDTO saveMerchantProduct(MultipartFile file, MerchantProductDTO productInsertDTO) {
         ResponseMessageDTO result;
         try {
             MerchantProductEntity productEntity = new MerchantProductEntity();
             String id = generateUniqueId();
             productEntity.setId(id);
+            try {
+                Thread thread = new Thread(() -> {
+                    amazonS3Service.uploadFile(file.getOriginalFilename(), file);
+                });
+                thread.start();
+            } catch (Exception e) {
+                logger.error("saveMerchantProduct: AmazonS3 ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
+            }
             productEntity.setImgId(productInsertDTO.getImgId());
             productEntity.setCategoryId(productInsertDTO.getCategoryId());
             productEntity.setName(productInsertDTO.getName());
