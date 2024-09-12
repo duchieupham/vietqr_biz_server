@@ -27,7 +27,7 @@ public class GrpcConfig {
                 .build();
     }
 
-    // Khởi chạy gRPC server sau khi Spring Boot start
+    // Start the gRPC server after Spring Boot starts
     @PostConstruct
     public void startGrpcServer() throws Exception {
         if (grpcServer != null) {
@@ -40,12 +40,14 @@ public class GrpcConfig {
         }
     }
 
-    // Shutdown gRPC server
+    // Shutdown the gRPC server
     @PreDestroy
     public void stopGrpcServer() {
         if (grpcServer != null) {
             grpcServer.shutdown();
             System.out.println("gRPC server stopped");
+        } else {
+            System.err.println("Failed to shutdown gRPC server, grpcServer is null");
         }
     }
 }

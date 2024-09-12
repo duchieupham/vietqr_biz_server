@@ -11,13 +11,10 @@ public class VietQRBizServiceImpl extends VietQRBizServiceGrpc.VietQRBizServiceI
     @Override
     public void sendMessage(MessageRequest request, StreamObserver<MessageResponse> responseObserver) {
         System.out.println("Received message from vietqr_server: " + request.getMessage());
-
-        // Xây dựng phản hồi
         MessageResponse response = MessageResponse.newBuilder()
                 .setReply("Hello vietqr_server")
                 .build();
 
-        // Gửi phản hồi lại cho client
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
