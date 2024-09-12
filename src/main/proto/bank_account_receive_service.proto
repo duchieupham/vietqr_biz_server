@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.vietqr.org.grpc";
+option java_outer_classname = "BankAccountReceiveServiceProto";
+
+service BankAccountReceiveService {
+  rpc GetBankAccountReceive (GetBankAccountReceiveRequest) returns (stream BankAccountReceiveResponse);
+}
+
+message GetBankAccountReceiveRequest {
+  string bankId = 1;
+}
+
+message BankAccountReceiveResponse {
+  string bankAccount = 1;
+  string userBankName = 2;
+  bool isSync = 3;
+  string bankTypeId = 4;
+  string userId = 5;
+  string bankShortName = 6;
+}
