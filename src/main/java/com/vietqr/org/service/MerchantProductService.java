@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MerchantProductService {
     ResponseMessageDTO saveMerchantProduct(MultipartFile file, MerchantProductDTO productInsertDTO);
-    ResponseMessageDTO updateMerchantProduct(String id, MerchantProductDTO productInsertDTO);
+    ResponseMessageDTO updateMerchantProduct(String id, MerchantProductDTO productInsertDTO, MultipartFile file);
     Object getListMerchantProduct();
     Object getMerchantProductById(String id);
     ResponseMessageDTO deleteMerchantProduct(String id);
