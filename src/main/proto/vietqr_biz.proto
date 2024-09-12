@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_package = "com.example.vietqr_biz";
+option java_multiple_files = true;
+
+// Definition of VietQRBizService
+service VietQRBizService {
+  // Definition of RPC method sendMessage
+  rpc SendMessage (MessageRequest) returns (MessageResponse);
+}
+
+// Definition of MessageRequest for sending messages from the client to the server
+message MessageRequest {
+  // The field message contains the content to be sent
+  string message = 1;
+}
+
+// Definition of MessageResponse for the server to respond to the client
+message MessageResponse {
+  // The field reply contains the response content from the server
+  string reply = 1;
+}
