@@ -6,6 +6,7 @@ import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.merchantproduct.MerchantProductDTO;
 import com.vietqr.org.entity.ImageEntity;
 import com.vietqr.org.entity.MerchantProductEntity;
+import com.vietqr.org.repository.ImageRepository;
 import com.vietqr.org.repository.MerchantProductRepository;
 import com.vietqr.org.service.AmazonS3Service;
 import com.vietqr.org.service.ImageService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,11 +27,13 @@ public class MerchantProductServiceImpl implements MerchantProductService {
     private final MerchantProductRepository merchantProductRepository;
     private final AmazonS3Service amazonS3Service;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
-    public MerchantProductServiceImpl(MerchantProductRepository merchantProductRepository, AmazonS3Service amazonS3Service, ImageService imageService) {
+    public MerchantProductServiceImpl(MerchantProductRepository merchantProductRepository, AmazonS3Service amazonS3Service, ImageService imageService, ImageRepository imageRepository) {
         this.merchantProductRepository = merchantProductRepository;
         this.amazonS3Service = amazonS3Service;
         this.imageService = imageService;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -38,26 +42,18 @@ public class MerchantProductServiceImpl implements MerchantProductService {
         try {
             MerchantProductEntity productEntity = new MerchantProductEntity();
             String id = generateUniqueId();
-            String uuid = UUID.randomUUID().toString();
-            String fileName = file.getOriginalFilename() != null ? StringUtils.cleanPath(file.getOriginalFilename()) : "default-file-name";
-            ImageEntity image = new ImageEntity(uuid, fileName, file.getBytes());
             productEntity.setId(id);
-            try {
-                Thread thread = new Thread(() -> {
-                    amazonS3Service.uploadFile(uuid, file);
-                });
-                thread.start();
-            } catch (Exception e) {
-                logger.error("saveMerchantProduct: AmazonS3 ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
-            }
-            productEntity.setImgId(uuid);
+
+            String imgId = handleImageUpload(file, null);
+            productEntity.setImgId(imgId);
+
             productEntity.setCategoryId(productInsertDTO.getCategoryId());
             productEntity.setName(productInsertDTO.getName());
             productEntity.setUnit(productInsertDTO.getUnit());
             productEntity.setStatus(0);
             productEntity.setTid(productInsertDTO.getTid());
+
             merchantProductRepository.save(productEntity);
-            imageService.saveImage(image);
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR saveMerchantProduct: " + e.getMessage() + " at " + System.currentTimeMillis());
@@ -67,12 +63,16 @@ public class MerchantProductServiceImpl implements MerchantProductService {
     }
 
     @Override
-    public ResponseMessageDTO updateMerchantProduct(String id, MerchantProductDTO productInsertDTO) {
+    public ResponseMessageDTO updateMerchantProduct(String id, MerchantProductDTO productInsertDTO, MultipartFile file) {
         ResponseMessageDTO result;
         try {
             Optional<MerchantProductEntity> optionalMerchantProduct = merchantProductRepository.getMerchantProductById(id);
             if (optionalMerchantProduct.isPresent()) {
                 MerchantProductEntity merchantProduct = optionalMerchantProduct.get();
+
+                String imgId = handleImageUpload(file, merchantProduct.getImgId());
+                merchantProduct.setImgId(imgId);
+
                 merchantProductRepository.save(updateFieldProduct(merchantProduct, productInsertDTO));
                 result = new ResponseMessageDTO(Status.SUCCESS, "");
             } else {
@@ -156,5 +156,28 @@ public class MerchantProductServiceImpl implements MerchantProductService {
             productEntity.setUnit(productInsertDTO.getUnit());
         }
         return productEntity;
+    }
+
+    private String handleImageUpload(MultipartFile file, String currentImgId) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            String fileName = file.getOriginalFilename() != null ? StringUtils.cleanPath(file.getOriginalFilename()) : "default-file-name";
+            ImageEntity existingImage = imageRepository.findImageByName(fileName);
+
+            if (existingImage != null) {
+                return existingImage.getId();
+            } else {
+                String uuid = UUID.randomUUID().toString();
+                ImageEntity newImage = new ImageEntity(uuid, fileName, file.getBytes());
+                try {
+                    Thread thread = new Thread(() -> amazonS3Service.uploadFile(uuid, file));
+                    thread.start();
+                } catch (Exception e) {
+                    logger.error("handleImageUpload: AmazonS3 ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
+                }
+                imageService.saveImage(newImage);
+                return uuid;
+            }
+        }
+        return currentImgId;
     }
 }

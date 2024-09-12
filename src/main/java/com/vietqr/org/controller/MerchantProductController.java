@@ -50,8 +50,11 @@ public class MerchantProductController {
     public ResponseEntity<ResponseMessageDTO> updateMerchantProduct(@RequestParam @IdParam String id,
                                                                     @RequestParam @TypeParam int type,
                                                                     @PathVariable String pid,
-                                                                    @RequestBody MerchantProductDTO merchantProductDTO) {
-        ResponseMessageDTO response = merchantProductService.updateMerchantProduct(pid, merchantProductDTO);
+                                                                    @RequestPart("merchantProductDTO") String merchantProductDTOString,
+                                                                    @RequestPart MultipartFile file) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        MerchantProductDTO merchantProductDTO = objectMapper.readValue(merchantProductDTOString, MerchantProductDTO.class);
+        ResponseMessageDTO response = merchantProductService.updateMerchantProduct(pid, merchantProductDTO, file);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
