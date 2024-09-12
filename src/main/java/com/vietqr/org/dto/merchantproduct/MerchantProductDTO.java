@@ -1,7 +1,6 @@
 package com.vietqr.org.dto.merchantproduct;
 
 public class MerchantProductDTO {
-    private String imgId;
     private String categoryId;
     private String name;
     private String unit;
@@ -10,20 +9,11 @@ public class MerchantProductDTO {
     public MerchantProductDTO() {
     }
 
-    public MerchantProductDTO(String imgId, String categoryId, String name, String unit, String tid) {
-        this.imgId = imgId;
+    public MerchantProductDTO(String categoryId, String name, String unit, String tid) {
         this.categoryId = categoryId;
         this.name = name;
         this.unit = unit;
         this.tid = tid;
-    }
-
-    public String getImgId() {
-        return imgId;
-    }
-
-    public void setImgId(String imgId) {
-        this.imgId = imgId;
     }
 
     public String getCategoryId() {
