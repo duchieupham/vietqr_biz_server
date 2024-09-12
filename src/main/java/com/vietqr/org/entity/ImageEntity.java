@@ -16,7 +16,7 @@ public class ImageEntity implements Serializable {
     private String id;
     @Column(name = "name")
     private String name;
-    @Column(name = "image")
+    @Column(name = "image", columnDefinition = "LONGBLOB")
     private byte[] image;
 
     public ImageEntity() {

@@ -1,5 +1,6 @@
 package com.vietqr.org.service.impl;
 
+import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.entity.ImageEntity;
 import com.vietqr.org.repository.ImageRepository;
@@ -23,9 +24,11 @@ public class ImageServiceImpl implements ImageService {
         ResponseMessageDTO result;
         try {
             imageRepository.save(image);
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error("");
+            logger.error("ERROR saveImage: " + e.getMessage() + " at " + System.currentTimeMillis());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
-        return null;
+        return result;
     }
 }
