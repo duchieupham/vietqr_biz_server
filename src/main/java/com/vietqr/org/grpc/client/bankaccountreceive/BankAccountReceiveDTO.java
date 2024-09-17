@@ -1,4 +1,4 @@
-package com.vietqr.org.grpc.client;
+package com.vietqr.org.grpc.client.bankaccountreceive;
 
 public class BankAccountReceiveDTO {
     private String bankAccount;
