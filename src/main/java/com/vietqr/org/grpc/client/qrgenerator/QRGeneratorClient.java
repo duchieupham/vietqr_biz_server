@@ -1,10 +1,12 @@
 package com.vietqr.org.grpc.client.qrgenerator;
 
 import com.example.grpc.qrgenerator.QRGeneratorServiceGrpc;
-import com.example.grpc.qrgenerator.VietQR;
 import com.example.grpc.qrgenerator.RequestStaticQR;
 import com.example.grpc.qrgenerator.RequestDynamicQR;
 import com.example.grpc.qrgenerator.RequestSemiDynamicQR;
+import com.example.grpc.qrgenerator.StaticQR;
+import com.example.grpc.qrgenerator.DynamicQR;
+import com.example.grpc.qrgenerator.SemiDynamicQR;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import org.apache.log4j.Logger;
@@ -23,47 +25,31 @@ public class QRGeneratorClient {
         this.qrGeneratorServiceStub = QRGeneratorServiceGrpc.newStub(channel);
     }
 
-    private QRGeneratorDTO mapQR(VietQR vietQR) {
-        QRGeneratorDTO result = new QRGeneratorDTO();
-
-        result.setBankCode(vietQR.getBankCode());
-        result.setBankName(vietQR.getBankName());
-        result.setBankAccount(vietQR.getBankAccount());
-        result.setUserBankName(vietQR.getUserBankName());
-        result.setAmount(vietQR.getAmount());
-        result.setContent(vietQR.getContent());
-        result.setQrCode(vietQR.getQrCode());
-        result.setImgId(vietQR.getImgId());
-        result.setExisting(vietQR.getExisting());
-        result.setTransactionId(vietQR.getTransactionId());
-        result.setTransactionRefId(vietQR.getTransactionRefId());
-        result.setQrLink(vietQR.getQrLink());
-        result.setTerminalCode(vietQR.getTerminalCode());
-        result.setSubTerminalCode(vietQR.getSubTerminalCode());
-        result.setServiceCode(vietQR.getServiceCode());
-        result.setOrderId(vietQR.getOrderId());
-
-        return result;
-    }
-
-    public QRGeneratorDTO generateStaticQR(StaticQRCreateDTO dto) throws InterruptedException {
+    public StaticQRDTO generateStaticQR(RequestStaticQRDTO dto) throws InterruptedException {
         RequestStaticQR request = RequestStaticQR.newBuilder()
                 .setAmount(dto.getAmount())
                 .setBankAccount(dto.getBankAccount())
                 .setContent(dto.getContent())
                 .setBankCode(dto.getBankCode())
                 .setTerminalCode(dto.getTerminalCode())
-                .setCustomerBankCode(dto.getCustomerBankCode())
                 .setTransType(dto.getTransType())
                 .setToken(dto.getToken())
                 .build();
         CountDownLatch latch = new CountDownLatch(1);
-        QRGeneratorDTO result = new QRGeneratorDTO();
+        StaticQRDTO result = new StaticQRDTO();
 
-        qrGeneratorServiceStub.generateStaticQR(request, new StreamObserver<VietQR>() {
+        qrGeneratorServiceStub.generateStaticQR(request, new StreamObserver<StaticQR>() {
             @Override
-            public void onNext(VietQR response) {
-                result.clone(mapQR(response));
+            public void onNext(StaticQR response) {
+                result.setBankCode(response.getBankCode());
+                result.setBankName(response.getBankName());
+                result.setBankAccount(response.getBankAccount());
+                result.setUserBankName(response.getUserBankName());
+                result.setAmount(response.getAmount());
+                result.setContent(response.getContent());
+                result.setQrCode(response.getQrCode());
+                result.setImgId(response.getImgId());
+                result.setTraceTransfer(response.getTraceTransfer());
             }
 
             @Override
@@ -83,7 +69,7 @@ public class QRGeneratorClient {
         return result;
     }
 
-    public QRGeneratorDTO generateDynamicQR(DynamicQRCreateDTO dto) throws InterruptedException {
+    public DynamicQRDTO generateDynamicQR(RequestDynamicQRDTO dto) throws InterruptedException {
         RequestDynamicQR request = RequestDynamicQR.newBuilder()
                 .setAmount(dto.getAmount())
                 .setBankAccount(dto.getBankAccount())
@@ -92,9 +78,6 @@ public class QRGeneratorClient {
                 .setUserBankName(dto.getUserBankName())
                 .setTerminalCode(dto.getTerminalCode())
                 .setSubTerminalCode(dto.getSubTerminalCode())
-                .setCustomerBankAccount(dto.getCustomerBankAccount())
-                .setCustomerName(dto.getCustomerName())
-                .setCustomerBankCode(dto.getCustomerBankCode())
                 .setTransType(dto.getTransType())
                 .setServiceCode(dto.getServiceCode())
                 .setNote(dto.getNote())
@@ -105,12 +88,24 @@ public class QRGeneratorClient {
                 .setToken(dto.getToken())
                 .build();
         CountDownLatch latch = new CountDownLatch(1);
-        QRGeneratorDTO result = new QRGeneratorDTO();
+        DynamicQRDTO result = new DynamicQRDTO();
 
-        qrGeneratorServiceStub.generateDynamicQR(request, new StreamObserver<VietQR>() {
+        qrGeneratorServiceStub.generateDynamicQR(request, new StreamObserver<DynamicQR>() {
             @Override
-            public void onNext(VietQR response) {
-                result.clone(mapQR(response));
+            public void onNext(DynamicQR response) {
+                result.setBankCode(response.getBankCode());
+                result.setBankName(response.getBankName());
+                result.setBankAccount(response.getBankAccount());
+                result.setUserBankName(response.getUserBankName());
+                result.setAmount(response.getAmount());
+                result.setContent(response.getContent());
+                result.setQrCode(response.getQrCode());
+                result.setImgId(response.getImgId());
+                result.setExisting(response.getExisting());
+                result.setTransactionRefId(response.getTransactionRefId());
+                result.setQrLink(response.getQrLink());
+                result.setServiceCode(response.getServiceCode());
+                result.setOrderId(response.getOrderId());
             }
 
             @Override
@@ -130,25 +125,32 @@ public class QRGeneratorClient {
         return result;
     }
 
-    public QRGeneratorDTO generateSemiDynamicQR(SemiDynamicQRCreateDTO dto) throws InterruptedException {
+    public SemiDynamicQRDTO generateSemiDynamicQR(RequestSemiDynamicQRDTO dto) throws InterruptedException {
         RequestSemiDynamicQR request = RequestSemiDynamicQR.newBuilder()
                 .setAmount(dto.getAmount())
                 .setBankAccount(dto.getBankAccount())
                 .setContent(dto.getContent())
                 .setBankCode(dto.getBankCode())
                 .setTerminalCode(dto.getTerminalCode())
-                .setCustomerBankCode(dto.getCustomerBankCode())
                 .setTransType(dto.getTransType())
                 .setServiceCode(dto.getServiceCode())
                 .setToken(dto.getToken())
                 .build();
         CountDownLatch latch = new CountDownLatch(1);
-        QRGeneratorDTO result = new QRGeneratorDTO();
+        SemiDynamicQRDTO result = new SemiDynamicQRDTO();
 
-        qrGeneratorServiceStub.generateSemiDynamicQR(request, new StreamObserver<VietQR>() {
+        qrGeneratorServiceStub.generateSemiDynamicQR(request, new StreamObserver<SemiDynamicQR>() {
             @Override
-            public void onNext(VietQR response) {
-                result.clone(mapQR(response));
+            public void onNext(SemiDynamicQR response) {
+                result.setBankCode(response.getBankCode());
+                result.setBankName(response.getBankName());
+                result.setBankAccount(response.getBankAccount());
+                result.setUserBankName(response.getUserBankName());
+                result.setAmount(response.getAmount());
+                result.setContent(response.getContent());
+                result.setQrCode(response.getQrCode());
+                result.setImgId(response.getImgId());
+                result.setTraceTransfer(response.getTraceTransfer());
             }
 
             @Override

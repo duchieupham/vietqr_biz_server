@@ -1,6 +1,6 @@
 package com.vietqr.org.grpc.client.qrgenerator;
 
-public class QRGeneratorDTO {
+public class DynamicQRDTO {
     private String bankCode;
     private String bankName;
     private String bankAccount;
@@ -10,15 +10,12 @@ public class QRGeneratorDTO {
     private String qrCode;
     private String imgId;
     private int existing;
-    private String transactionId;
     private String transactionRefId;
     private String qrLink;
-    private String terminalCode;
-    private String subTerminalCode;
     private String serviceCode;
     private String orderId;
 
-    public QRGeneratorDTO() {
+    public DynamicQRDTO() {
     }
 
     public String getBankCode() {
@@ -93,14 +90,6 @@ public class QRGeneratorDTO {
         this.existing = existing;
     }
 
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
     public String getTransactionRefId() {
         return transactionRefId;
     }
@@ -117,22 +106,6 @@ public class QRGeneratorDTO {
         this.qrLink = qrLink;
     }
 
-    public String getTerminalCode() {
-        return terminalCode;
-    }
-
-    public void setTerminalCode(String terminalCode) {
-        this.terminalCode = terminalCode;
-    }
-
-    public String getSubTerminalCode() {
-        return subTerminalCode;
-    }
-
-    public void setSubTerminalCode(String subTerminalCode) {
-        this.subTerminalCode = subTerminalCode;
-    }
-
     public String getServiceCode() {
         return serviceCode;
     }
@@ -147,24 +120,5 @@ public class QRGeneratorDTO {
 
     public void setOrderId(String orderId) {
         this.orderId = orderId;
-    }
-
-    public void clone(QRGeneratorDTO dto) {
-        bankCode = dto.getBankCode();
-        bankName = dto.getBankName();
-        bankAccount = dto.getBankAccount();
-        userBankName = dto.getUserBankName();
-        amount = dto.getAmount();
-        content = dto.getContent();
-        qrCode = dto.getQrCode();
-        imgId = dto.getImgId();
-        existing = dto.getExisting();
-        transactionId = dto.getTransactionId();
-        transactionRefId = dto.getTransactionRefId();
-        qrLink = dto.getQrLink();
-        terminalCode = dto.getTerminalCode();
-        subTerminalCode = dto.getSubTerminalCode();
-        serviceCode = dto.getServiceCode();
-        orderId = dto.getOrderId();
     }
 }

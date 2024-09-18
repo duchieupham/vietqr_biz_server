@@ -1,17 +1,15 @@
 package com.vietqr.org.grpc.client.qrgenerator;
 
-public class SemiDynamicQRCreateDTO {
+public class RequestStaticQRDTO {
     private long amount;
     private String content;
     private String bankAccount;
     private String bankCode;
     private String transType;
-    private String customerBankCode;
     private String terminalCode;
-    private String serviceCode;
     private String token;
 
-    public SemiDynamicQRCreateDTO() {
+    public RequestStaticQRDTO() {
     }
 
     public long getAmount() {
@@ -54,28 +52,12 @@ public class SemiDynamicQRCreateDTO {
         this.transType = transType;
     }
 
-    public String getCustomerBankCode() {
-        return customerBankCode;
-    }
-
-    public void setCustomerBankCode(String customerBankCode) {
-        this.customerBankCode = customerBankCode;
-    }
-
     public String getTerminalCode() {
         return terminalCode;
     }
 
     public void setTerminalCode(String terminalCode) {
         this.terminalCode = terminalCode;
-    }
-
-    public String getServiceCode() {
-        return serviceCode;
-    }
-
-    public void setServiceCode(String serviceCode) {
-        this.serviceCode = serviceCode;
     }
 
     public String getToken() {

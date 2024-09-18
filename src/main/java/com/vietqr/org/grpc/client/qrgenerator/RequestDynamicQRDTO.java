@@ -1,15 +1,12 @@
 package com.vietqr.org.grpc.client.qrgenerator;
 
-public class DynamicQRCreateDTO {
+public class RequestDynamicQRDTO {
     private long amount;
     private String content;
     private String bankAccount;
     private String bankCode;
     private String userBankName;
     private String transType;
-    private String customerBankAccount;
-    private String customerBankCode;
-    private String customerName;
     private String orderId;
     private String sign;
     private String terminalCode;
@@ -17,11 +14,10 @@ public class DynamicQRCreateDTO {
     private String note;
     private String urlLink;
     private boolean reconciliation;
-    private int qrType;
     private String serviceCode;
     private String token;
 
-    public DynamicQRCreateDTO() {
+    public RequestDynamicQRDTO() {
     }
 
     public long getAmount() {
@@ -70,30 +66,6 @@ public class DynamicQRCreateDTO {
 
     public void setTransType(String transType) {
         this.transType = transType;
-    }
-
-    public String getCustomerBankAccount() {
-        return customerBankAccount;
-    }
-
-    public void setCustomerBankAccount(String customerBankAccount) {
-        this.customerBankAccount = customerBankAccount;
-    }
-
-    public String getCustomerBankCode() {
-        return customerBankCode;
-    }
-
-    public void setCustomerBankCode(String customerBankCode) {
-        this.customerBankCode = customerBankCode;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
     }
 
     public String getOrderId() {
@@ -150,14 +122,6 @@ public class DynamicQRCreateDTO {
 
     public void setReconciliation(boolean reconciliation) {
         this.reconciliation = reconciliation;
-    }
-
-    public int getQrType() {
-        return qrType;
-    }
-
-    public void setQrType(int qrType) {
-        this.qrType = qrType;
     }
 
     public String getServiceCode() {
