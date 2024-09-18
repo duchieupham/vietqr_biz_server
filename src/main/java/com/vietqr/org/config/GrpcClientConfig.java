@@ -1,6 +1,6 @@
 package com.vietqr.org.config;
 
-import com.vietqr.org.grpc.client.BankAccountReceiveClient;
+import com.vietqr.org.grpc.client.bankaccountreceive.BankAccountReceiveClient;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.beans.factory.annotation.Value;

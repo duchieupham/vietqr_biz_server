@@ -1,4 +1,4 @@
-package com.vietqr.org.grpc.client;
+package com.vietqr.org.grpc.client.bankaccountreceive;
 
 import com.example.grpc.bankaccountreceive.*;
 import io.grpc.ManagedChannel;

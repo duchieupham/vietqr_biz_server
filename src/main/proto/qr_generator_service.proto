@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.grpc.qrgenerator";
+option java_outer_classname = "QRGeneratorServiceProto";
+
+service QRGeneratorService {
+  rpc GenerateStaticQR (RequestStaticQR) returns (StaticQR);
+  rpc GenerateDynamicQR (RequestDynamicQR) returns (DynamicQR);
+  rpc GenerateSemiDynamicQR (RequestSemiDynamicQR) returns (SemiDynamicQR);
+}
+
+message RequestStaticQR {
+  sint64 amount = 1;
+  string content = 2; /* length <= 20 */
+  string bankAccount = 3;
+  string bankCode = 4;
+  string transType = 5;
+  string terminalCode = 6;
+  string token = 7;
+}
+
+message StaticQR {
+  string bankCode = 1;
+  string bankName = 2;
+  string bankAccount = 3;
+  string userBankName = 4;
+  sint64 amount = 5;
+  string content = 6;
+  string qrCode = 7;
+  string imgId = 8;
+  string traceTransfer = 9;
+}
+
+message RequestDynamicQR {
+  sint64 amount = 1;
+  string content = 2; /* length <= 50 */
+  string bankAccount = 3;
+  string bankCode = 4;
+  string userBankName = 5;
+  string transType = 6;
+  string orderId = 7;
+  string sign = 8;
+  string terminalCode = 9;
+  string subTerminalCode = 10;
+  string note = 11;
+  string urlLink = 12;
+  bool reconciliation = 13;
+  string serviceCode = 14;
+  string token = 15;
+}
+
+message DynamicQR {
+  string bankCode = 1;
+  string bankName = 2;
+  string bankAccount = 3;
+  string userBankName = 4;
+  sint64 amount = 5;
+  string content = 6;
+  string qrCode = 7;
+  string imgId = 8;
+  int32 existing = 9;
+  string transactionRefId = 10;
+  string qrLink = 11;
+  string serviceCode = 12;
+  string orderId = 13;
+}
+
+// content & serviceCode up to 19
+message RequestSemiDynamicQR {
+  sint64 amount = 1;
+  string content = 2;
+  string bankAccount = 3;
+  string bankCode = 4;
+  string transType = 5;
+  string terminalCode = 7;
+  string serviceCode = 8;
+  string token = 9;
+}
+
+message SemiDynamicQR {
+  string bankCode = 1;
+  string bankName = 2;
+  string bankAccount = 3;
+  string userBankName = 4;
+  sint64 amount = 5;
+  string content = 6; // = content or serviceCode
+  string qrCode = 7;
+  string imgId = 8;
+  string traceTransfer = 9;
+}
