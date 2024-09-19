@@ -12,19 +12,22 @@ public class MerchantCategoryEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private String id;
-    @Column(name = "mid")
+
+    @Column(name = "mid", nullable = false)
     private String mid;
-    @Column(name = "name")
+
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "status")
-    private boolean status;
+
+    @Column(name = "status", nullable = false)
+    private int status;
 
     public MerchantCategoryEntity() {
     }
 
-    public MerchantCategoryEntity(String id, String mid, String name, boolean status) {
+    public MerchantCategoryEntity(String id, String mid, String name, int status) {
         this.id = id;
         this.mid = mid;
         this.name = name;
@@ -56,11 +59,11 @@ public class MerchantCategoryEntity implements Serializable {
         this.name = name;
     }
 
-    public boolean getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 }
