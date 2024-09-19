@@ -2,23 +2,16 @@ package com.vietqr.org.controller;
 
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.merchantcategory.InsertMerchantCategoryDTO;
+import com.vietqr.org.dto.merchantcategory.MerchantCategoryDTO;
 import com.vietqr.org.security.Authorized;
 import com.vietqr.org.security.IdParam;
 import com.vietqr.org.security.TypeParam;
 import com.vietqr.org.service.MerchantCategoryService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/merchant-categories")
 public class MerchantCategoryController {
 
@@ -30,50 +23,68 @@ public class MerchantCategoryController {
 
     @PostMapping
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> insertMerchantCategory(@RequestParam @IdParam String id,
-                                                                     @RequestParam @TypeParam int type,
-                                                                     @RequestBody InsertMerchantCategoryDTO categoryDTO
-                                                                     ) {
-        ResponseMessageDTO response = categoryService.saveMerchantCategory(categoryDTO);
+    public ResponseEntity<ResponseMessageDTO> insertMerchantCategory(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @RequestBody MerchantCategoryDTO categoryDTO
+    ) {
+        ResponseMessageDTO response = categoryService.insertMerchantCategory(categoryDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @PutMapping("/{cid}")
+    @PutMapping("/{id}")
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> updateMerchantCategory(@RequestParam @IdParam String id,
-                                                                     @RequestParam @TypeParam int type,
-                                                                     @PathVariable(value = "cid") String cid,
-                                                                     @RequestBody InsertMerchantCategoryDTO categoryDTO
-                                                                     ) {
+    public ResponseEntity<ResponseMessageDTO> updateMerchantCategory(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @PathVariable(value = "id") String cid,
+            @RequestBody MerchantCategoryDTO categoryDTO
+    ) {
         ResponseMessageDTO response = categoryService.updateMerchantCategory(cid, categoryDTO);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @GetMapping
+    @GetMapping("/merchant/{mid}")
     @Authorized("")
-    public ResponseEntity<Object> getAllMerchantCategory(@RequestParam @IdParam String id,
-                                                         @RequestParam @TypeParam int type) {
-        Object response = categoryService.getListMerchantCategory();
+    public ResponseEntity<Object> getMerchantCategoryByMid(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @PathVariable(value = "mid") String mid
+    ) {
+        Object response = categoryService.getMerchantCategoryByMid(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
-    @GetMapping("/{mid}")
+    @GetMapping("/{id}")
     @Authorized("")
-    public ResponseEntity<Object> getMerchantCategoryDetail(@RequestParam @IdParam String id,
-                                                            @RequestParam @TypeParam int type,
-                                                            @PathVariable String mid
-                                                            ) {
-        Object response = categoryService.getMerchantCategoryById(mid);
+    public ResponseEntity<Object> getMerchantCategoryDetail(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @PathVariable(value = "id") String mcId
+    ) {
+        Object response = categoryService.getMerchantCategoryById(mcId);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
-    @PatchMapping("/{mid}")
+    @PatchMapping("/{id}")
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> removeMerchantCategory(@RequestParam @IdParam String id,
-                                                                     @RequestParam @TypeParam int type,
-                                                                     @PathVariable String mid
-                                                                     ) {
-        ResponseMessageDTO response = categoryService.deleteMerchantCategory(mid);
+    public ResponseEntity<ResponseMessageDTO> deleteMerchantCategory(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @PathVariable(value = "id") String mcId
+    ) {
+        ResponseMessageDTO response = categoryService.deleteMerchantCategory(mcId);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
+
+    @PatchMapping("/merchant/{mid}")
+    @Authorized("")
+    public ResponseEntity<ResponseMessageDTO> deleteMerchantCategoryByMid(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @PathVariable(value = "mid") String mid
+    ) {
+        ResponseMessageDTO response = categoryService.deleteMerchantCategoryByMid(mid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 }

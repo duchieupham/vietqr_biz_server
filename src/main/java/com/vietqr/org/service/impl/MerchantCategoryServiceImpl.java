@@ -3,7 +3,9 @@ package com.vietqr.org.service.impl;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
-import com.vietqr.org.dto.merchantcategory.InsertMerchantCategoryDTO;
+import com.vietqr.org.dto.merchantcategory.IMerchantCategoryMidDTO;
+import com.vietqr.org.dto.merchantcategory.IMerchantCategoryIdDTO;
+import com.vietqr.org.dto.merchantcategory.MerchantCategoryDTO;
 import com.vietqr.org.entity.MerchantCategoryEntity;
 import com.vietqr.org.repository.MerchantCategoryRepository;
 import com.vietqr.org.service.MerchantCategoryService;
@@ -13,10 +15,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MerchantCategoryServiceImpl implements MerchantCategoryService {
-
     private static final Logger logger = Logger.getLogger(MerchantCategoryServiceImpl.class);
     private final MerchantCategoryRepository merchantCategoryRepository;
 
@@ -26,7 +28,7 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
     }
 
     @Override
-    public ResponseMessageDTO saveMerchantCategory(InsertMerchantCategoryDTO categoryDTO) {
+    public ResponseMessageDTO insertMerchantCategory(MerchantCategoryDTO categoryDTO) {
         ResponseMessageDTO result;
         try {
             MerchantCategoryEntity merchantCategory = new MerchantCategoryEntity();
@@ -34,45 +36,57 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
             merchantCategory.setId(id);
             merchantCategory.setMid(categoryDTO.getMid());
             merchantCategory.setName(categoryDTO.getName());
-            merchantCategory.setStatus(true);
+            merchantCategory.setStatus(1);
             merchantCategoryRepository.save(merchantCategory);
+
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR saveMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
+
         return result;
     }
 
     @Override
-    public ResponseMessageDTO updateMerchantCategory(String id, InsertMerchantCategoryDTO categoryDTO) {
+    public ResponseMessageDTO updateMerchantCategory(String id, MerchantCategoryDTO categoryDTO) {
         ResponseMessageDTO result;
         try {
-            Optional<MerchantCategoryEntity> optionalMerchantCategory = merchantCategoryRepository.findMerchantCategoryById(id);
+            Optional<IMerchantCategoryIdDTO> optionalMerchantCategory = merchantCategoryRepository.findMerchantCategoryById(id.trim());
             if (optionalMerchantCategory.isPresent()) {
-                MerchantCategoryEntity merchantCategory = optionalMerchantCategory.get();
-                if (categoryDTO.getMid() != null && !categoryDTO.getMid().isEmpty()) {
+                IMerchantCategoryIdDTO dto = optionalMerchantCategory.get();
+                MerchantCategoryEntity merchantCategory = new MerchantCategoryEntity(
+                        id.trim(),
+                        dto.getMid(),
+                        dto.getName(),
+                        dto.getStatus()
+                );
+                if (!categoryDTO.getMid().isEmpty()) {
                     merchantCategory.setMid(categoryDTO.getMid());
                 }
-                if (categoryDTO.getName() != null && !categoryDTO.getName().isEmpty()) {
+                if (!categoryDTO.getName().isEmpty()) {
                     merchantCategory.setName(categoryDTO.getName());
                 }
                 merchantCategoryRepository.save(merchantCategory);
+                result = new ResponseMessageDTO(Status.SUCCESS, "");
+            } else {
+                logger.error("ERROR updateMerchantCategory: Not found at " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E209");
             }
-            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR updateMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
+
         return result;
     }
 
     @Override
-    public Object getListMerchantCategory() {
+    public Object getMerchantCategoryByMid(String mid) {
         Object result;
         try {
-            List<MerchantCategoryEntity> merchantCategoryEntityList = merchantCategoryRepository.getAllMerchantCategory();
-            result = new ResponseObjectDTO(Status.SUCCESS, merchantCategoryEntityList);
+            List<IMerchantCategoryMidDTO> list = merchantCategoryRepository.findMerchantCategoryByMid(mid.trim());
+            result = new ResponseObjectDTO(Status.SUCCESS, list);
         } catch (Exception e) {
             logger.error("ERROR listMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
@@ -84,17 +98,18 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
     public Object getMerchantCategoryById(String id) {
         Object result;
         try {
-            Optional<MerchantCategoryEntity> merchantCategory = merchantCategoryRepository.findMerchantCategoryById(id);
+            Optional<IMerchantCategoryIdDTO> merchantCategory = merchantCategoryRepository.findMerchantCategoryById(id.trim());
             if (merchantCategory.isPresent()) {
-                MerchantCategoryEntity merchantCategoryEntity = merchantCategory.get();
-                result = new ResponseObjectDTO(Status.SUCCESS, merchantCategoryEntity);
+                result = new ResponseObjectDTO(Status.SUCCESS, merchantCategory.get());
             } else {
-                result = new ResponseMessageDTO(Status.FAILED, "E05");
+                logger.error("ERROR getMerchantCategoryById: Not found at " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E209");
             }
         } catch (Exception e) {
             logger.error("ERROR getMerchantCategoryById: " + e.getMessage() + " at " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
+
         return result;
     }
 
@@ -102,17 +117,62 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
     public ResponseMessageDTO deleteMerchantCategory(String id) {
         ResponseMessageDTO result;
         try {
-            Optional<MerchantCategoryEntity> optionalMerchantCategory = merchantCategoryRepository.findMerchantCategoryById(id);
+            Optional<IMerchantCategoryIdDTO> optionalMerchantCategory = merchantCategoryRepository.findMerchantCategoryById(id.trim());
             if (optionalMerchantCategory.isPresent()) {
-                MerchantCategoryEntity merchantCategory = optionalMerchantCategory.get();
-                merchantCategory.setStatus(false);
-                merchantCategoryRepository.save(merchantCategory);
+                if (optionalMerchantCategory.get().getStatus() != 0) {
+                    MerchantCategoryEntity merchantCategory = new MerchantCategoryEntity(
+                            id.trim(),
+                            optionalMerchantCategory.get().getMid(),
+                            optionalMerchantCategory.get().getName(),
+                            0
+                    );
+
+                    merchantCategoryRepository.save(merchantCategory);
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                } else {
+                    logger.error("ERROR updateMerchantCategory: Category was deleted at " + System.currentTimeMillis());
+                    result = new ResponseMessageDTO(Status.FAILED, "E210");
+                }
+            } else {
+                logger.error("ERROR updateMerchantCategory: Not found at " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E209");
             }
-            result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR removeMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
+
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO deleteMerchantCategoryByMid(String mid) {
+        ResponseMessageDTO result;
+        try {
+            List<IMerchantCategoryMidDTO> merchantCategory = merchantCategoryRepository.findMerchantCategoryByMid(mid.trim());
+            if (!merchantCategory.isEmpty()) {
+                List<MerchantCategoryEntity> list = merchantCategory
+                        .stream()
+                        .map((item) ->
+                                new MerchantCategoryEntity(
+                                        item.getId(),
+                                        mid.trim(),
+                                        item.getName(),
+                                        0
+                                )
+                        ).collect(Collectors.toList());
+                merchantCategoryRepository.saveAll(list);
+
+                result = new ResponseMessageDTO(Status.SUCCESS, "");
+            } else {
+                logger.error("ERROR updateMerchantCategory: Not found at " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E209");
+            }
+        } catch (Exception e) {
+            logger.error("ERROR removeMerchantCategory: " + e.getMessage() + " at " + System.currentTimeMillis());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
+
         return result;
     }
 
@@ -121,6 +181,7 @@ public class MerchantCategoryServiceImpl implements MerchantCategoryService {
         do {
             newId = UUID.randomUUID().toString();
         } while (merchantCategoryRepository.existsById(newId));
+
         return newId;
     }
 }
