@@ -8,17 +8,14 @@ public class JwtUtil {
 
     /*
     * New version of jjwt
-    *
-    public static Claims parse(String token) {
+    * public static Claims parse(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET.getBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
-
-}
-    */
+    * */
 
     public static Claims parse(String token) {
         Claims claims = Jwts.parser()
