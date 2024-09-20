@@ -12,22 +12,23 @@ public class MerchantCategoryEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "id", nullable = false)
     private String id;
 
-    @Column(name = "mid", nullable = false)
+    @Column(nullable = false)
     private String mid;
 
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private int status;
 
     public MerchantCategoryEntity() {
+        super();
     }
 
     public MerchantCategoryEntity(String id, String mid, String name, int status) {
+        super();
         this.id = id;
         this.mid = mid;
         this.name = name;

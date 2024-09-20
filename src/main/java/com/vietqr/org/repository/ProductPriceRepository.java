@@ -10,9 +10,6 @@ import org.springframework.data.repository.query.Param;
 import javax.transaction.Transactional;
 
 public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity, String> {
-    @Query(value = "SELECT EXISTS(SELECT 1 FROM product_price WHERE id = :id)", nativeQuery = true)
-    int existsProductPriceById(@Param(value = "id") String id);
-
     @Modifying
     @Transactional
     @Query(value = "UPDATE product_price SET amount = :amount, time_updated = :timeUpdated WHERE id = :id", nativeQuery = true)
@@ -22,13 +19,13 @@ public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity
             @Param(value = "timeUpdated") long timeUpdated
     );
 
-    @Query(value = "SELECT product_id AS productId, amount, trace_transfer AS traceTransfer, data1, data2"
+    @Query(value = "SELECT product_id AS productId, amount AS amount, trace_transfer AS traceTransfer, data1 AS data1, data2 AS data2"
             + " FROM product_price"
             + " WHERE id = :id"
             , nativeQuery = true)
     IProductPriceDTO findProductPriceById(@Param(value = "id") String id);
 
-    @Query(value = "SELECT product_id AS productId, amount, trace_transfer AS traceTransfer, data1, data2"
+    @Query(value = "SELECT product_id AS productId, amount AS amount, trace_transfer AS traceTransfer, data1 AS data1, data2 AS data2"
             + " FROM product_price"
             + " WHERE product_id = productId"
             , nativeQuery = true)
@@ -36,19 +33,41 @@ public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE product_price SET data1 = :data1, time_updated = :timeUpdated WHERE id = :id", nativeQuery = true)
+    @Query(value = "UPDATE product_price SET data1 = :data1, data2 = '', trace_transfer = :traceTransfer, time_updated = :timeUpdated WHERE id = :id", nativeQuery = true)
     void updateData1ProductPriceById(
             @Param(value = "id") String id,
             @Param(value = "data1") String data1,
+            @Param(value = "traceTransfer") String traceTransfer,
             @Param(value = "timeUpdated") long timeUpdated
     );
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE product_price SET data2 = :data2, time_updated = :timeUpdated WHERE id = :id", nativeQuery = true)
+    @Query(value = "UPDATE product_price SET data1 = '', data2 = :data2, trace_transfer = :traceTransfer, time_updated = :timeUpdated WHERE id = :id", nativeQuery = true)
     void updateData2ProductPriceById(
             @Param(value = "id") String id,
             @Param(value = "data2") String data2,
+            @Param(value = "traceTransfer") String traceTransfer,
+            @Param(value = "timeUpdated") long timeUpdated
+    );
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE product_price SET data1 = :data1, data2 = '', trace_transfer = :traceTransfer, time_updated = :timeUpdated WHERE product_id = :productId", nativeQuery = true)
+    void updateData1ProductPriceByProductId(
+            @Param(value = "productId") String productId,
+            @Param(value = "data1") String data1,
+            @Param(value = "traceTransfer") String traceTransfer,
+            @Param(value = "timeUpdated") long timeUpdated
+    );
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE product_price SET data1 = '', data2 = :data2, trace_transfer = :traceTransfer, time_updated = :timeUpdated WHERE product_id = :productId", nativeQuery = true)
+    void updateData2ProductPriceByProductId(
+            @Param(value = "productId") String productId,
+            @Param(value = "data2") String data2,
+            @Param(value = "traceTransfer") String traceTransfer,
             @Param(value = "timeUpdated") long timeUpdated
     );
 }

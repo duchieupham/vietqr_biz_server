@@ -36,15 +36,10 @@ public class ProductPriceEntity implements Serializable {
 
     public ProductPriceEntity() {
         super();
-        this.id = "";
     }
 
-    public ProductPriceEntity(String data1, String data2, String traceTransfer, int amount, String productId) {
+    public ProductPriceEntity(int amount, String productId) {
         super();
-        this.id = "";
-        this.data1 = data1;
-        this.data2 = data2;
-        this.traceTransfer = traceTransfer;
         this.amount = amount;
         this.productId = productId;
     }

@@ -6,9 +6,13 @@ import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.productprice.*;
 import com.vietqr.org.entity.ProductPriceEntity;
+import com.vietqr.org.grpc.client.qrgenerator.QRGeneratorClient;
+import com.vietqr.org.grpc.client.qrgenerator.RequestSemiDynamicQRDTO;
+import com.vietqr.org.grpc.client.qrgenerator.SemiDynamicQRDTO;
 import com.vietqr.org.repository.ProductPriceRepository;
 import com.vietqr.org.service.ProductPriceService;
 import com.vietqr.org.utils.DateTimeUtil;
+import com.vietqr.org.utils.MmsUtil;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -20,28 +24,40 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     private static final Logger logger = Logger.getLogger(ProductPriceServiceImpl.class);
     private final String LOG_ERROR = "Failed at ProductPriceServiceImpl: ";
     private final ProductPriceRepository repo;
+    private final QRGeneratorClient qrGeneratorClient;
 
-    public ProductPriceServiceImpl(ProductPriceRepository repo) {
+    public ProductPriceServiceImpl(ProductPriceRepository repo, QRGeneratorClient qrGeneratorClient) {
         this.repo = repo;
+        this.qrGeneratorClient = qrGeneratorClient;
     }
 
     @Override
-    public ResponseMessageDTO insertProductPrice(ProductPriceInsertDTO dto) {
+    public ResponseMessageDTO insertProductPrice(ProductPriceDTO dto, String token) {
         ResponseMessageDTO result = null;
         try {
             ProductPriceEntity entity = new ProductPriceEntity(
-                    dto.getData1(),
-                    dto.getData2(),
-                    dto.getTraceTransfer(),
                     dto.getAmount(),
-                    dto.getProductId()
+                    // product_id
+                    dto.getId()
             );
-            do {
-                UUID uuid = UUID.randomUUID();
-                if (repo.existsProductPriceById(uuid.toString()) != 1) {
-                    entity.setId(uuid.toString());
-                }
-            } while (entity.getId().isEmpty());
+            entity.setId(generateUniqueId());
+            SemiDynamicQRDTO semiDynamicQR = qrGeneratorClient.generateSemiDynamicQR(new RequestSemiDynamicQRDTO(
+                    dto.getAmount(),
+                    dto.getContent(),
+                    dto.getBankAccount(),
+                    dto.getBankCode(),
+                    dto.getTransType(),
+                    dto.getServiceCode(),
+                    token
+            ));
+            if (MmsUtil.isMmsActive(semiDynamicQR.getContent())) {
+                entity.setData1("");
+                entity.setData2(semiDynamicQR.getQrCode());
+            } else {
+                entity.setData1(semiDynamicQR.getQrCode());
+                entity.setData2("");
+            }
+            entity.setTraceTransfer(semiDynamicQR.getTraceTransfer());
             entity.setTimeCreated(DateTimeUtil.getNowUTC());
             entity.setTimeUpdated(DateTimeUtil.getNowUTC());
             repo.save(entity);
@@ -106,13 +122,28 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     }
 
     @Override
-    public ResponseMessageDTO updateData1ProductPriceById(ProductPriceUpdateData1DTO dto) {
+    public ResponseMessageDTO updateDataProductPriceById(ProductPriceDTO dto, String token) {
         ResponseMessageDTO result = null;
         try {
-            repo.updateData1ProductPriceById(dto.getId(), dto.getData1(), DateTimeUtil.getNowUTC());
+            SemiDynamicQRDTO semiDynamicQR = qrGeneratorClient.generateSemiDynamicQR(new RequestSemiDynamicQRDTO(
+                    dto.getAmount(),
+                    dto.getContent(),
+                    dto.getBankAccount(),
+                    dto.getBankCode(),
+                    dto.getTransType(),
+                    dto.getServiceCode(),
+                    token
+            ));
+
+            if (MmsUtil.isMmsActive(semiDynamicQR.getContent())) {
+                repo.updateData2ProductPriceById(dto.getId(), semiDynamicQR.getQrCode(), semiDynamicQR.getTraceTransfer(), DateTimeUtil.getNowUTC());
+            } else {
+                repo.updateData1ProductPriceById(dto.getId(), semiDynamicQR.getQrCode(), semiDynamicQR.getTraceTransfer(), DateTimeUtil.getNowUTC());
+            }
+
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error(LOG_ERROR + "updateData1ProductPriceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            logger.error(LOG_ERROR + "updateDataProductPriceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
 
@@ -120,16 +151,40 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     }
 
     @Override
-    public ResponseMessageDTO updateData2ProductPriceById(ProductPriceUpdateData2DTO dto) {
+    public ResponseMessageDTO updateDataProductPriceByProductId(ProductPriceDTO dto, String token) {
         ResponseMessageDTO result = null;
         try {
-            repo.updateData2ProductPriceById(dto.getId(), dto.getData2(), DateTimeUtil.getNowUTC());
+            SemiDynamicQRDTO semiDynamicQR = qrGeneratorClient.generateSemiDynamicQR(new RequestSemiDynamicQRDTO(
+                    dto.getAmount(),
+                    dto.getContent(),
+                    dto.getBankAccount(),
+                    dto.getBankCode(),
+                    dto.getTransType(),
+                    dto.getServiceCode(),
+                    token
+            ));
+
+            if (MmsUtil.isMmsActive(semiDynamicQR.getContent())) {
+                repo.updateData2ProductPriceByProductId(dto.getId(), semiDynamicQR.getQrCode(), semiDynamicQR.getTraceTransfer(), DateTimeUtil.getNowUTC());
+            } else {
+                repo.updateData1ProductPriceByProductId(dto.getId(), semiDynamicQR.getQrCode(), semiDynamicQR.getTraceTransfer(), DateTimeUtil.getNowUTC());
+            }
+
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
-            logger.error(LOG_ERROR + "updateData2ProductPriceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
+            logger.error(LOG_ERROR + "updateDataProductPriceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
 
         return result;
+    }
+
+    private String generateUniqueId() {
+        String uuid;
+        do {
+            uuid = UUID.randomUUID().toString();
+        } while (repo.existsById(uuid));
+
+        return uuid;
     }
 }

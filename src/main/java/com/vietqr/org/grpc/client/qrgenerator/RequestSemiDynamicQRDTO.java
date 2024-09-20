@@ -6,11 +6,20 @@ public class RequestSemiDynamicQRDTO {
     private String bankAccount;
     private String bankCode;
     private String transType;
-    private String terminalCode;
     private String serviceCode;
     private String token;
 
     public RequestSemiDynamicQRDTO() {
+    }
+
+    public RequestSemiDynamicQRDTO(long amount, String content, String bankAccount, String bankCode, String transType, String serviceCode, String token) {
+        this.amount = amount;
+        this.content = content;
+        this.bankAccount = bankAccount;
+        this.bankCode = bankCode;
+        this.transType = transType;
+        this.serviceCode = serviceCode;
+        this.token = token;
     }
 
     public long getAmount() {
@@ -51,14 +60,6 @@ public class RequestSemiDynamicQRDTO {
 
     public void setTransType(String transType) {
         this.transType = transType;
-    }
-
-    public String getTerminalCode() {
-        return terminalCode;
-    }
-
-    public void setTerminalCode(String terminalCode) {
-        this.terminalCode = terminalCode;
     }
 
     public String getServiceCode() {

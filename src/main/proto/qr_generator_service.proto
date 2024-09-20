@@ -73,9 +73,8 @@ message RequestSemiDynamicQR {
   string bankAccount = 3;
   string bankCode = 4;
   string transType = 5;
-  string terminalCode = 7;
-  string serviceCode = 8;
-  string token = 9;
+  string serviceCode = 6;
+  string token = 7;
 }
 
 message SemiDynamicQR {

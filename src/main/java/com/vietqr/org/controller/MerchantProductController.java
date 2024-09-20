@@ -11,16 +11,7 @@ import com.vietqr.org.security.TypeParam;
 import com.vietqr.org.service.MerchantProductService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -38,7 +29,8 @@ public class MerchantProductController {
             @RequestParam @IdParam String id,
             @RequestParam @TypeParam int type,
             @RequestPart("merchantProductDTO") String merchantProductDTOString,
-            @RequestPart MultipartFile file) throws JsonProcessingException {
+            @RequestPart MultipartFile file
+    ) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         MerchantProductDTO merchantProductDTO = objectMapper.readValue(merchantProductDTOString, MerchantProductDTO.class);
         ResponseMessageDTO response = merchantProductService.saveMerchantProduct(file, merchantProductDTO);
@@ -47,11 +39,13 @@ public class MerchantProductController {
 
     @PutMapping("/{pid}")
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> updateMerchantProduct(@RequestParam @IdParam String id,
-                                                                    @RequestParam @TypeParam int type,
-                                                                    @PathVariable String pid,
-                                                                    @RequestPart("merchantProductDTO") String merchantProductDTOString,
-                                                                    @RequestPart MultipartFile file) throws JsonProcessingException {
+    public ResponseEntity<ResponseMessageDTO> updateMerchantProduct(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @PathVariable String pid,
+            @RequestPart("merchantProductDTO") String merchantProductDTOString,
+            @RequestPart MultipartFile file
+    ) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         MerchantProductDTO merchantProductDTO = objectMapper.readValue(merchantProductDTOString, MerchantProductDTO.class);
         ResponseMessageDTO response = merchantProductService.updateMerchantProduct(pid, merchantProductDTO, file);
@@ -60,26 +54,32 @@ public class MerchantProductController {
 
     @GetMapping
     @Authorized("")
-    public ResponseEntity<Object> getAllMerchantProduct(@RequestParam @IdParam String id,
-                                                        @RequestParam @TypeParam int type) {
+    public ResponseEntity<Object> getAllMerchantProduct(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type
+    ) {
         Object response = merchantProductService.getListMerchantProduct();
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @GetMapping("/{pid}")
     @Authorized("")
-    public ResponseEntity<Object> getMerchantProductDetail(@RequestParam @IdParam String id,
-                                                           @RequestParam @TypeParam int type,
-                                                           @PathVariable String pid) {
+    public ResponseEntity<Object> getMerchantProductDetail(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @PathVariable String pid
+    ) {
         Object response = merchantProductService.getMerchantProductById(pid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
     @PatchMapping("/{pid}")
     @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> removeMerchantProduct(@RequestParam @IdParam String id,
-                                                                    @RequestParam @TypeParam int type,
-                                                                    @PathVariable String pid) {
+    public ResponseEntity<ResponseMessageDTO> removeMerchantProduct(
+            @RequestParam @IdParam String id,
+            @RequestParam @TypeParam int type,
+            @PathVariable String pid
+    ) {
         ResponseMessageDTO response = merchantProductService.deleteMerchantProduct(pid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }

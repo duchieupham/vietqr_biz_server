@@ -2,6 +2,6 @@ package com.vietqr.org.utils;
 
 public class MmsUtil {
     public static boolean isMmsActive(String content){
-        return content.startsWith("SQR");
+        return content.contains("SQR");
     }
 }
