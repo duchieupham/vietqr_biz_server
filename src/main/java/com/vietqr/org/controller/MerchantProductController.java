@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.merchantproduct.MerchantProductDTO;
+import com.vietqr.org.dto.productprice.ProductPriceInsertProductDTO;
 import com.vietqr.org.security.Authorized;
 import com.vietqr.org.security.IdParam;
 import com.vietqr.org.security.TypeParam;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/merchant-product")
 public class MerchantProductController {
     private final MerchantProductService merchantProductService;
@@ -29,11 +31,14 @@ public class MerchantProductController {
             @RequestParam @IdParam String id,
             @RequestParam @TypeParam int type,
             @RequestPart("merchantProductDTO") String merchantProductDTOString,
+            @RequestPart("productPriceInsertProductDTO") String productPriceInsertProductDTOString,
+            @RequestHeader("Authorization") String token,
             @RequestPart MultipartFile file
     ) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         MerchantProductDTO merchantProductDTO = objectMapper.readValue(merchantProductDTOString, MerchantProductDTO.class);
-        ResponseMessageDTO response = merchantProductService.saveMerchantProduct(file, merchantProductDTO);
+        ProductPriceInsertProductDTO productPriceInsertProductDTO = objectMapper.readValue(productPriceInsertProductDTOString, ProductPriceInsertProductDTO.class);
+        ResponseMessageDTO response = merchantProductService.saveMerchantProduct(file, merchantProductDTO, productPriceInsertProductDTO, token);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
@@ -42,7 +47,7 @@ public class MerchantProductController {
     public ResponseEntity<ResponseMessageDTO> updateMerchantProduct(
             @RequestParam @IdParam String id,
             @RequestParam @TypeParam int type,
-            @PathVariable String pid,
+            @PathVariable("pid") String pid,
             @RequestPart("merchantProductDTO") String merchantProductDTOString,
             @RequestPart MultipartFile file
     ) throws JsonProcessingException {
@@ -67,7 +72,7 @@ public class MerchantProductController {
     public ResponseEntity<Object> getMerchantProductDetail(
             @RequestParam @IdParam String id,
             @RequestParam @TypeParam int type,
-            @PathVariable String pid
+            @PathVariable("pid") String pid
     ) {
         Object response = merchantProductService.getMerchantProductById(pid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
@@ -78,7 +83,7 @@ public class MerchantProductController {
     public ResponseEntity<ResponseMessageDTO> removeMerchantProduct(
             @RequestParam @IdParam String id,
             @RequestParam @TypeParam int type,
-            @PathVariable String pid
+            @PathVariable("pid") String pid
     ) {
         ResponseMessageDTO response = merchantProductService.deleteMerchantProduct(pid);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));

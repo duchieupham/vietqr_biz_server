@@ -1,7 +1,5 @@
 package com.vietqr.org.dto.productprice;
 
-import com.vietqr.org.grpc.client.qrgenerator.RequestSemiDynamicQRDTO;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -28,6 +26,16 @@ public class ProductPriceDTO {
     private String serviceCode;
 
     public ProductPriceDTO() {
+    }
+
+    public ProductPriceDTO(String id, int amount, String content, String bankAccount, String bankCode, String transType, String serviceCode) {
+        this.id = id;
+        this.amount = amount;
+        this.content = content;
+        this.bankAccount = bankAccount;
+        this.bankCode = bankCode;
+        this.transType = transType;
+        this.serviceCode = serviceCode;
     }
 
     public @NotBlank String getId() {

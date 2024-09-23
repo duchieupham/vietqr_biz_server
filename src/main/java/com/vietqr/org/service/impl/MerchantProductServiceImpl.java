@@ -4,6 +4,8 @@ import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.merchantproduct.MerchantProductDTO;
+import com.vietqr.org.dto.productprice.ProductPriceDTO;
+import com.vietqr.org.dto.productprice.ProductPriceInsertProductDTO;
 import com.vietqr.org.entity.ImageEntity;
 import com.vietqr.org.entity.MerchantProductEntity;
 import com.vietqr.org.repository.ImageRepository;
@@ -11,6 +13,7 @@ import com.vietqr.org.repository.MerchantProductRepository;
 import com.vietqr.org.service.AmazonS3Service;
 import com.vietqr.org.service.ImageService;
 import com.vietqr.org.service.MerchantProductService;
+import com.vietqr.org.service.ProductPriceService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,15 +32,18 @@ public class MerchantProductServiceImpl implements MerchantProductService {
     private final ImageService imageService;
     private final ImageRepository imageRepository;
 
-    public MerchantProductServiceImpl(MerchantProductRepository merchantProductRepository, AmazonS3Service amazonS3Service, ImageService imageService, ImageRepository imageRepository) {
+    private final ProductPriceService productPriceService;
+
+    public MerchantProductServiceImpl(MerchantProductRepository merchantProductRepository, AmazonS3Service amazonS3Service, ImageService imageService, ImageRepository imageRepository, ProductPriceService productPriceService) {
         this.merchantProductRepository = merchantProductRepository;
         this.amazonS3Service = amazonS3Service;
         this.imageService = imageService;
         this.imageRepository = imageRepository;
+        this.productPriceService = productPriceService;
     }
 
     @Override
-    public ResponseMessageDTO saveMerchantProduct(MultipartFile file, MerchantProductDTO productInsertDTO) {
+    public ResponseMessageDTO saveMerchantProduct(MultipartFile file, MerchantProductDTO productInsertDTO, ProductPriceInsertProductDTO productPriceInsertProductDTO, String token) {
         ResponseMessageDTO result;
         try {
             MerchantProductEntity productEntity = new MerchantProductEntity();
@@ -53,7 +59,18 @@ public class MerchantProductServiceImpl implements MerchantProductService {
             productEntity.setStatus(0);
             productEntity.setTid(productInsertDTO.getTid());
 
+            ProductPriceDTO productPriceDTO = new ProductPriceDTO(
+                    id,
+                    productPriceInsertProductDTO.getAmount(),
+                    productPriceInsertProductDTO.getContent(),
+                    productPriceInsertProductDTO.getBankAccount(),
+                    productPriceInsertProductDTO.getBankCode(),
+                    productPriceInsertProductDTO.getTransType(),
+                    productPriceInsertProductDTO.getServiceCode()
+            );
+
             merchantProductRepository.save(productEntity);
+            productPriceService.insertProductPrice(productPriceDTO, token);
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR saveMerchantProduct: " + e.getMessage() + " at " + System.currentTimeMillis());
