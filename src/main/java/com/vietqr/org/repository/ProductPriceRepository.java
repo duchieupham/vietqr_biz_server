@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity, String> {
     @Modifying
@@ -21,15 +22,15 @@ public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity
 
     @Query(value = "SELECT product_id AS productId, amount AS amount, trace_transfer AS traceTransfer, data1 AS data1, data2 AS data2"
             + " FROM product_price"
-            + " WHERE id = :id"
+            + " WHERE id = :id LIMIT 1"
             , nativeQuery = true)
-    IProductPriceDTO findProductPriceById(@Param(value = "id") String id);
+    Optional<IProductPriceDTO> findProductPriceById(@Param(value = "id") String id);
 
     @Query(value = "SELECT product_id AS productId, amount AS amount, trace_transfer AS traceTransfer, data1 AS data1, data2 AS data2"
             + " FROM product_price"
-            + " WHERE product_id = productId"
+            + " WHERE product_id = :productId LIMIT 1"
             , nativeQuery = true)
-    IProductPriceDTO findProductPriceByProductId(@Param(value = "productId") String productId);
+    Optional<IProductPriceDTO> findProductPriceByProductId(@Param(value = "productId") String productId);
 
     @Modifying
     @Transactional

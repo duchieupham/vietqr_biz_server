@@ -23,7 +23,7 @@ public class ProductPriceController {
     }
 
     @PostMapping("/insert")
-    @Authorized("")
+    @Authorized("29991b33-5830-48b6-ba31-3c2af8fae515")
     public ResponseEntity<ResponseMessageDTO> insertProductPrice(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -35,7 +35,7 @@ public class ProductPriceController {
     }
 
     @PatchMapping("/update-amount")
-    @Authorized("")
+    @Authorized("04881702-1d56-48f4-9a12-4fb84fa67b4e")
     public ResponseEntity<ResponseMessageDTO> updateAmountProductPriceById(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -46,7 +46,7 @@ public class ProductPriceController {
     }
 
     @GetMapping("/{id}")
-    @Authorized("")
+    @Authorized("3d3b0c66-73ce-4563-b7ef-20895f29de10")
     public ResponseEntity<Object> getProductPriceById(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -57,7 +57,7 @@ public class ProductPriceController {
     }
 
     @GetMapping("/product/{id}")
-    @Authorized("")
+    @Authorized("d24ad623-87a8-4701-a5e8-26163b8940d5")
     public ResponseEntity<Object> getProductPriceByProductId(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -68,7 +68,7 @@ public class ProductPriceController {
     }
 
     @PutMapping("/update-data")
-    @Authorized("")
+    @Authorized("5b37ef9b-2b08-4988-9e23-01a24e182f55")
     public ResponseEntity<ResponseMessageDTO> updateDataProductPriceById(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -80,7 +80,7 @@ public class ProductPriceController {
     }
 
     @PutMapping("/product/update-data")
-    @Authorized("")
+    @Authorized("6a276fc2-a8e1-44a3-b03e-583164cdcf81")
     public ResponseEntity<ResponseMessageDTO> updateDataProductPriceByProductId(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,

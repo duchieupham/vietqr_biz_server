@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -81,10 +82,24 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     @Override
     public ResponseMessageDTO updateAmountProductPriceById(ProductPriceUpdateAmountDTO dto) {
+        /*
+         * TODO: handle bank account to change qr
+         *  */
         ResponseMessageDTO result = null;
         try {
-            repo.updateAmountProductPriceById(dto.getId(), dto.getAmount(), DateTimeUtil.getNowUTC());
-            result = new ResponseMessageDTO(Status.SUCCESS, "");
+            Optional<IProductPriceDTO> entity = repo.findProductPriceById(dto.getId());
+            if (entity.isPresent()) {
+                if (entity.get().getAmount() == dto.getAmount()) {
+                    repo.updateAmountProductPriceById(dto.getId(), dto.getAmount(), DateTimeUtil.getNowUTC());
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                } else {
+                    logger.error(LOG_ERROR + "findProductPriceById: Amount not change at: " + System.currentTimeMillis());
+                    result = new ResponseMessageDTO(Status.FAILED, "E212");
+                }
+            } else {
+                logger.error(LOG_ERROR + "findProductPriceById: Not found at: " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E211");
+            }
         } catch (Exception e) {
             logger.error(LOG_ERROR + "updateAmountProductPrice: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
@@ -97,8 +112,13 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     public Object findProductPriceById(String productPriceId) {
         Object result = null;
         try {
-            IProductPriceDTO entity = repo.findProductPriceById(productPriceId);
-            result = new ResponseObjectDTO(Status.SUCCESS, entity);
+            Optional<IProductPriceDTO> entity = repo.findProductPriceById(productPriceId);
+            if (entity.isPresent()) {
+                result = new ResponseObjectDTO(Status.SUCCESS, entity.get());
+            } else {
+                logger.error(LOG_ERROR + "findProductPriceById: Not found at: " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E211");
+            }
         } catch (Exception e) {
             logger.error(LOG_ERROR + "findProductPriceById: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
@@ -111,8 +131,13 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     public Object findProductPriceByProductId(String productId) {
         Object result = null;
         try {
-            IProductPriceDTO entity = repo.findProductPriceByProductId(productId);
-            result = new ResponseObjectDTO(Status.SUCCESS, entity);
+            Optional<IProductPriceDTO> entity = repo.findProductPriceByProductId(productId);
+            if (entity.isPresent()) {
+                result = new ResponseObjectDTO(Status.SUCCESS, entity.get());
+            } else {
+                logger.error(LOG_ERROR + "findProductPriceByProductId: Not found at: " + System.currentTimeMillis());
+                result = new ResponseMessageDTO(Status.FAILED, "E211");
+            }
         } catch (Exception e) {
             logger.error(LOG_ERROR + "findProductPriceByProductId: " + e.getMessage() + " at: " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
@@ -123,6 +148,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     @Override
     public ResponseMessageDTO updateDataProductPriceById(ProductPriceDTO dto, String token) {
+        /*
+         * TODO: handle bank account to compare
+         *  */
         ResponseMessageDTO result = null;
         try {
             SemiDynamicQRDTO semiDynamicQR = qrGeneratorClient.generateSemiDynamicQR(new RequestSemiDynamicQRDTO(
@@ -152,6 +180,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
 
     @Override
     public ResponseMessageDTO updateDataProductPriceByProductId(ProductPriceDTO dto, String token) {
+        /*
+         * TODO: handle bank account to compare
+         *  */
         ResponseMessageDTO result = null;
         try {
             SemiDynamicQRDTO semiDynamicQR = qrGeneratorClient.generateSemiDynamicQR(new RequestSemiDynamicQRDTO(
