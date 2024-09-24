@@ -22,7 +22,7 @@ public class ProductPriceHistoryController {
     }
 
     @PostMapping("/insert")
-    @Authorized("")
+    @Authorized("cab3364a-76ff-4fa1-9541-43ab8c4a157b")
     public ResponseEntity<ResponseMessageDTO> insertProductPriceHistory(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -33,7 +33,7 @@ public class ProductPriceHistoryController {
     }
 
     @GetMapping("/product/{id}")
-    @Authorized("")
+    @Authorized("de7d8129-1ac0-405a-839f-34e57822ffb6")
     public ResponseEntity<Object> statisticProductPriceHistory(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -44,7 +44,7 @@ public class ProductPriceHistoryController {
     }
 
     @GetMapping("/{id}")
-    @Authorized("")
+    @Authorized("01e5e659-584d-457f-8023-9b1400884fd0")
     public ResponseEntity<Object> getProductPriceHistoryById(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
