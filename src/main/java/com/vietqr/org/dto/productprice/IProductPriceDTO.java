@@ -6,4 +6,6 @@ public interface IProductPriceDTO {
     String getTraceTransfer();
     String getData1();
     String getData2();
+
+    long getTimeUpdated();
 }

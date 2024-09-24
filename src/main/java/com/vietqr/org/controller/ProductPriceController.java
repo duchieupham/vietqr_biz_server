@@ -34,7 +34,7 @@ public class ProductPriceController {
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @PatchMapping("/update-amount")
+    @PutMapping("/update-amount")
     @Authorized("04881702-1d56-48f4-9a12-4fb84fa67b4e")
     public ResponseEntity<ResponseMessageDTO> updateAmountProductPriceById(
             @Validated @RequestParam @IdParam String id,

@@ -20,13 +20,13 @@ public interface ProductPriceRepository extends JpaRepository<ProductPriceEntity
             @Param(value = "timeUpdated") long timeUpdated
     );
 
-    @Query(value = "SELECT product_id AS productId, amount AS amount, trace_transfer AS traceTransfer, data1 AS data1, data2 AS data2"
+    @Query(value = "SELECT product_id AS productId, amount AS amount, trace_transfer AS traceTransfer, data1 AS data1, data2 AS data2, time_updated AS timeUpdated"
             + " FROM product_price"
             + " WHERE id = :id LIMIT 1"
             , nativeQuery = true)
     Optional<IProductPriceDTO> findProductPriceById(@Param(value = "id") String id);
 
-    @Query(value = "SELECT product_id AS productId, amount AS amount, trace_transfer AS traceTransfer, data1 AS data1, data2 AS data2"
+    @Query(value = "SELECT product_id AS productId, amount AS amount, trace_transfer AS traceTransfer, data1 AS data1, data2 AS data2, time_updated AS timeUpdated"
             + " FROM product_price"
             + " WHERE product_id = :productId LIMIT 1"
             , nativeQuery = true)

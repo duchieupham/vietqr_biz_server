@@ -70,7 +70,13 @@ public class MerchantProductServiceImpl implements MerchantProductService {
             );
 
             merchantProductRepository.save(productEntity);
-            productPriceService.insertProductPrice(productPriceDTO, token);
+            Thread thread = new Thread(() ->
+                    productPriceService.insertProductPrice(
+                            productPriceDTO,
+                            token
+                    )
+            );
+            thread.start();
             result = new ResponseMessageDTO(Status.SUCCESS, "");
         } catch (Exception e) {
             logger.error("ERROR saveMerchantProduct: " + e.getMessage() + " at " + System.currentTimeMillis());

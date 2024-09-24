@@ -5,15 +5,18 @@ import com.vietqr.org.constant.UniqueError;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
 import com.vietqr.org.dto.productprice.*;
+import com.vietqr.org.dto.productpricehistory.ProductPriceHistoryDTO;
 import com.vietqr.org.entity.ProductPriceEntity;
 import com.vietqr.org.grpc.client.qrgenerator.QRGeneratorClient;
 import com.vietqr.org.grpc.client.qrgenerator.RequestSemiDynamicQRDTO;
 import com.vietqr.org.grpc.client.qrgenerator.SemiDynamicQRDTO;
 import com.vietqr.org.repository.ProductPriceRepository;
+import com.vietqr.org.service.ProductPriceHistoryService;
 import com.vietqr.org.service.ProductPriceService;
 import com.vietqr.org.utils.DateTimeUtil;
 import com.vietqr.org.utils.MmsUtil;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +29,12 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     private final String LOG_ERROR = "Failed at ProductPriceServiceImpl: ";
     private final ProductPriceRepository repo;
     private final QRGeneratorClient qrGeneratorClient;
+    private final ProductPriceHistoryService productPriceHistoryService;
 
-    public ProductPriceServiceImpl(ProductPriceRepository repo, QRGeneratorClient qrGeneratorClient) {
+    public ProductPriceServiceImpl(ProductPriceRepository repo, QRGeneratorClient qrGeneratorClient, ProductPriceHistoryService productPriceHistoryService) {
         this.repo = repo;
         this.qrGeneratorClient = qrGeneratorClient;
+        this.productPriceHistoryService = productPriceHistoryService;
     }
 
     @Override
@@ -89,8 +94,18 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         try {
             Optional<IProductPriceDTO> entity = repo.findProductPriceById(dto.getId());
             if (entity.isPresent()) {
-                if (entity.get().getAmount() == dto.getAmount()) {
+                if (entity.get().getAmount() != dto.getAmount()) {
                     repo.updateAmountProductPriceById(dto.getId(), dto.getAmount(), DateTimeUtil.getNowUTC());
+                    Thread thread = new Thread(() ->
+                            productPriceHistoryService.insertProductPriceHistory(
+                                    new ProductPriceHistoryDTO(
+                                            entity.get().getProductId(),
+                                            entity.get().getAmount(),
+                                            entity.get().getTimeUpdated()
+                                    )
+                            )
+                    );
+                    thread.start();
                     result = new ResponseMessageDTO(Status.SUCCESS, "");
                 } else {
                     logger.error(LOG_ERROR + "findProductPriceById: Amount not change at: " + System.currentTimeMillis());
