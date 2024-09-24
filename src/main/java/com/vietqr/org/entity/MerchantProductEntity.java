@@ -1,5 +1,7 @@
 package com.vietqr.org.entity;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,34 +9,41 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
+@CrossOrigin
 @Table(name = "merchant_product")
 public class MerchantProductEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "id")
     private String id;
-    @Column(name = "imgId")
+
+    @Column(name = "img_Id", nullable = false)
     private String imgId;
-    @Column(name = "categoryId")
+
+    @Column(name = "category_Id", nullable = false)
     private String categoryId;
-    @Column(name = "name")
+
+    @Column(nullable = false)
     private String name;
-    @Column(name = "unit")
+
+    @Column(nullable = false)
     private String unit;
 
 //    0 = publish
 //    1 = available
 //    2 = disable
-    @Column(name = "status")
+    @Column(nullable = false)
     private int status;
-    @Column(name = "tid")
+
+    @Column(nullable = false)
     private String tid;
 
     public MerchantProductEntity() {
+        super();
     }
 
     public MerchantProductEntity(String id, String imgId, String categoryId, String name, String unit, int status, String tid) {
+        super();
         this.id = id;
         this.imgId = imgId;
         this.categoryId = categoryId;

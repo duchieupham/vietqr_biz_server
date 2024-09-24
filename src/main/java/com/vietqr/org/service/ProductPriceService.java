@@ -1,15 +1,13 @@
 package com.vietqr.org.service;
 
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.productprice.ProductPriceInsertDTO;
 import com.vietqr.org.dto.productprice.ProductPriceUpdateAmountDTO;
-import com.vietqr.org.dto.productprice.ProductPriceUpdateData1DTO;
-import com.vietqr.org.dto.productprice.ProductPriceUpdateData2DTO;
+import com.vietqr.org.dto.productprice.ProductPriceDTO;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface ProductPriceService {
-    ResponseMessageDTO insertProductPrice(ProductPriceInsertDTO dto);
+    ResponseMessageDTO insertProductPrice(ProductPriceDTO dto, String token);
 
     ResponseMessageDTO updateAmountProductPriceById(ProductPriceUpdateAmountDTO dto);
 
@@ -17,7 +15,7 @@ public interface ProductPriceService {
 
     Object findProductPriceByProductId(String productId);
 
-    ResponseMessageDTO updateData1ProductPriceById(ProductPriceUpdateData1DTO dto);
+    ResponseMessageDTO updateDataProductPriceById(ProductPriceDTO dto, String token);
 
-    ResponseMessageDTO updateData2ProductPriceById(ProductPriceUpdateData2DTO dto);
+    ResponseMessageDTO updateDataProductPriceByProductId(ProductPriceDTO dto, String token);
 }

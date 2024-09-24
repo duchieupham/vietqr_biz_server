@@ -17,6 +17,6 @@ public interface MerchantCategoryRepository extends JpaRepository<MerchantCatego
     @Query(value = "SELECT mid AS mid, name AS name, status AS status FROM merchant_category WHERE id = :id LIMIT 1", nativeQuery = true)
     Optional<IMerchantCategoryIdDTO> findMerchantCategoryById(@Param("id") String id);
 
-    @Query(value = "SELECT id, name, status FROM merchant_category WHERE mid = :mid AND status = 1", nativeQuery = true)
+    @Query(value = "SELECT id AS id, name AS name, status AS status FROM merchant_category WHERE mid = :mid AND status = 1", nativeQuery = true)
     List<IMerchantCategoryMidDTO> findMerchantCategoryByMid(@Param("mid") String mid);
 }

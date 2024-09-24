@@ -131,7 +131,6 @@ public class QRGeneratorClient {
                 .setBankAccount(dto.getBankAccount())
                 .setContent(dto.getContent())
                 .setBankCode(dto.getBankCode())
-                .setTerminalCode(dto.getTerminalCode())
                 .setTransType(dto.getTransType())
                 .setServiceCode(dto.getServiceCode())
                 .setToken(dto.getToken())

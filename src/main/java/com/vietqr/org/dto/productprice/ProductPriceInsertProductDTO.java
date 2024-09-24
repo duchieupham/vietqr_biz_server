@@ -1,32 +1,34 @@
-package com.vietqr.org.grpc.client.qrgenerator;
+package com.vietqr.org.dto.productprice;
 
-public class RequestSemiDynamicQRDTO {
-    private long amount;
+import javax.validation.constraints.NotNull;
+
+public class ProductPriceInsertProductDTO {
+    @NotNull
+    private int amount;
+
+    @NotNull
     private String content;
+
+    @NotNull
     private String bankAccount;
+
+    @NotNull
     private String bankCode;
+
+    @NotNull
     private String transType;
+
+    @NotNull
     private String serviceCode;
-    private String token;
 
-    public RequestSemiDynamicQRDTO() {
+    public ProductPriceInsertProductDTO() {
     }
 
-    public RequestSemiDynamicQRDTO(long amount, String content, String bankAccount, String bankCode, String transType, String serviceCode, String token) {
-        this.amount = amount;
-        this.content = content;
-        this.bankAccount = bankAccount;
-        this.bankCode = bankCode;
-        this.transType = transType;
-        this.serviceCode = serviceCode;
-        this.token = token;
-    }
-
-    public long getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 
@@ -68,13 +70,5 @@ public class RequestSemiDynamicQRDTO {
 
     public void setServiceCode(String serviceCode) {
         this.serviceCode = serviceCode;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }

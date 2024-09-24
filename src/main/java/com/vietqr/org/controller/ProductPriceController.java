@@ -2,10 +2,8 @@ package com.vietqr.org.controller;
 
 import com.vietqr.org.common.StatusResponse;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
-import com.vietqr.org.dto.productprice.ProductPriceInsertDTO;
 import com.vietqr.org.dto.productprice.ProductPriceUpdateAmountDTO;
-import com.vietqr.org.dto.productprice.ProductPriceUpdateData1DTO;
-import com.vietqr.org.dto.productprice.ProductPriceUpdateData2DTO;
+import com.vietqr.org.dto.productprice.ProductPriceDTO;
 import com.vietqr.org.security.Authorized;
 import com.vietqr.org.security.IdParam;
 import com.vietqr.org.security.TypeParam;
@@ -25,18 +23,19 @@ public class ProductPriceController {
     }
 
     @PostMapping("/insert")
-    @Authorized("")
+    @Authorized("29991b33-5830-48b6-ba31-3c2af8fae515")
     public ResponseEntity<ResponseMessageDTO> insertProductPrice(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
-            @Validated @RequestBody ProductPriceInsertDTO dto
+            @RequestHeader("Authorization") String token,
+            @Validated @RequestBody ProductPriceDTO dto
     ) {
-        ResponseMessageDTO response = productPriceService.insertProductPrice(dto);
+        ResponseMessageDTO response = productPriceService.insertProductPrice(dto, token);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @PatchMapping("/update-amount")
-    @Authorized("")
+    @PutMapping("/update-amount")
+    @Authorized("04881702-1d56-48f4-9a12-4fb84fa67b4e")
     public ResponseEntity<ResponseMessageDTO> updateAmountProductPriceById(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -47,7 +46,7 @@ public class ProductPriceController {
     }
 
     @GetMapping("/{id}")
-    @Authorized("")
+    @Authorized("3d3b0c66-73ce-4563-b7ef-20895f29de10")
     public ResponseEntity<Object> getProductPriceById(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -58,7 +57,7 @@ public class ProductPriceController {
     }
 
     @GetMapping("/product/{id}")
-    @Authorized("")
+    @Authorized("d24ad623-87a8-4701-a5e8-26163b8940d5")
     public ResponseEntity<Object> getProductPriceByProductId(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
@@ -68,25 +67,27 @@ public class ProductPriceController {
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
     }
 
-    @PatchMapping("/update-data1")
-    @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> updateData1ProductPriceById(
+    @PutMapping("/update-data")
+    @Authorized("5b37ef9b-2b08-4988-9e23-01a24e182f55")
+    public ResponseEntity<ResponseMessageDTO> updateDataProductPriceById(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
-            @Validated @RequestBody ProductPriceUpdateData1DTO dto
+            @RequestHeader("Authorization") String token,
+            @Validated @RequestBody ProductPriceDTO dto
     ) {
-        ResponseMessageDTO response = productPriceService.updateData1ProductPriceById(dto);
+        ResponseMessageDTO response = productPriceService.updateDataProductPriceById(dto, token);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
-    @PatchMapping("/update-data2")
-    @Authorized("")
-    public ResponseEntity<ResponseMessageDTO> updateData2ProductPriceById(
+    @PutMapping("/product/update-data")
+    @Authorized("6a276fc2-a8e1-44a3-b03e-583164cdcf81")
+    public ResponseEntity<ResponseMessageDTO> updateDataProductPriceByProductId(
             @Validated @RequestParam @IdParam String id,
             @Validated @RequestParam @TypeParam int type,
-            @Validated @RequestBody ProductPriceUpdateData2DTO dto
+            @RequestHeader("Authorization") String token,
+            @Validated @RequestBody ProductPriceDTO dto
     ) {
-        ResponseMessageDTO response = productPriceService.updateData2ProductPriceById(dto);
+        ResponseMessageDTO response = productPriceService.updateDataProductPriceByProductId(dto, token);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 }
