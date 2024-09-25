@@ -1,7 +1,10 @@
 package com.vietqr.org.utils;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class GeneratorUtil {
     public static String generateTerminalCode(String name) {
@@ -25,5 +28,14 @@ public class GeneratorUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Date now = new Date();
         return sdf.format(now);
+    }
+
+    public static <T> String generateUniqueId(JpaRepository<T, String> repo) {
+        String uuid;
+        do {
+            uuid = UUID.randomUUID().toString();
+        } while (repo.existsById(uuid));
+
+        return uuid;
     }
 }

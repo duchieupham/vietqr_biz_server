@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/terminal-oder")
+@RequestMapping("/api/terminal-order")
 public class TerminalOrderController {
     private final TerminalOrderService terminalOderService;
 
