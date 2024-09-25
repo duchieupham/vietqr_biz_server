@@ -6,26 +6,25 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "terminalOrderItem")
+@Table(name = "terminal_order_item")
 public class TerminalOrderItemEntity {
     @Id
-    @Column(name = "id")
     private String id;
-    @Column(name = "orderId")
+    @Column(name = "order_id", nullable = false)
     private String orderId;
-    @Column(name = "productId")
+    @Column(name = "product_id", nullable = false)
     private String productId;
-    @Column(name = "quantity")
+    @Column(nullable = false)
     private int quantity;
-    @Column(name = "amount")
+    @Column(nullable = false)
     private int amount;
-    @Column(name = "totalAmount")
+    @Column(name = "total_amount", nullable = false)
     private int totalAmount;
-    @Column(name = "vat")
+    @Column(nullable = false)
     private int vat;
-    @Column(name = "vatAmount")
+    @Column(name = "vat_amount", nullable = false)
     private int vatAmount;
-    @Column(name = "discountAmount")
+    @Column(name = "discount_amount", nullable = false)
     private int discountAmount;
 
     public TerminalOrderItemEntity() {

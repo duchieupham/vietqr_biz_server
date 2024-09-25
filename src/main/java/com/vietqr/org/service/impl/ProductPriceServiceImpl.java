@@ -14,14 +14,13 @@ import com.vietqr.org.repository.ProductPriceRepository;
 import com.vietqr.org.service.ProductPriceHistoryService;
 import com.vietqr.org.service.ProductPriceService;
 import com.vietqr.org.utils.DateTimeUtil;
+import com.vietqr.org.utils.GeneratorUtil;
 import com.vietqr.org.utils.MmsUtil;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class ProductPriceServiceImpl implements ProductPriceService {
@@ -46,7 +45,7 @@ public class ProductPriceServiceImpl implements ProductPriceService {
                     // product_id
                     dto.getId()
             );
-            entity.setId(generateUniqueId());
+            entity.setId(GeneratorUtil.generateUniqueId(repo));
             SemiDynamicQRDTO semiDynamicQR = qrGeneratorClient.generateSemiDynamicQR(new RequestSemiDynamicQRDTO(
                     dto.getAmount(),
                     dto.getContent(),
@@ -223,14 +222,5 @@ public class ProductPriceServiceImpl implements ProductPriceService {
         }
 
         return result;
-    }
-
-    private String generateUniqueId() {
-        String uuid;
-        do {
-            uuid = UUID.randomUUID().toString();
-        } while (repo.existsById(uuid));
-
-        return uuid;
     }
 }
