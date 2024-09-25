@@ -23,7 +23,7 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 
     private final S3Client s3Client;
 
-    @Value("${AWS_BUCKET_NAME}")
+    @Value("${aws.s3.bucket.name}")
     private String bucketName;
 
     public AmazonS3ServiceImpl(S3Client s3Client) {
