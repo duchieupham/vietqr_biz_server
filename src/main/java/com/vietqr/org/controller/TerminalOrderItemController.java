@@ -32,4 +32,26 @@ public class TerminalOrderItemController {
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 
+    @GetMapping("/{id}")
+    @Authorized("")
+    public ResponseEntity<Object> getTerminalOrderItemById(
+            @Validated @RequestParam @IdParam String id,
+            @Validated @RequestParam @TypeParam int type,
+            @Validated @PathVariable("id") String toiId
+    ) {
+        Object response = terminalOrderItemService.findTerminalOrderItemById(toiId);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
+    }
+
+    @GetMapping("/order/{id}")
+    @Authorized("")
+    public ResponseEntity<Object> getTerminalOrderItemByOrderId(
+            @Validated @RequestParam @IdParam String id,
+            @Validated @RequestParam @TypeParam int type,
+            @Validated @PathVariable("id") String toId
+    ) {
+        Object response = terminalOrderItemService.findTerminalOrderItemByOrderId(toId);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseObject(response));
+    }
+
 }

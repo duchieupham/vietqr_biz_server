@@ -4,10 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "terminal_order_item")
-public class TerminalOrderItemEntity {
+public class TerminalOrderItemEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     private String id;
     @Column(name = "order_id", nullable = false)
@@ -28,9 +31,11 @@ public class TerminalOrderItemEntity {
     private int discountAmount;
 
     public TerminalOrderItemEntity() {
+        super();
     }
 
     public TerminalOrderItemEntity(String id, String orderId, String productId, int quantity, int amount, int totalAmount, int vat, int vatAmount, int discountAmount) {
+        super();
         this.id = id;
         this.orderId = orderId;
         this.productId = productId;
@@ -39,6 +44,16 @@ public class TerminalOrderItemEntity {
         this.totalAmount = totalAmount;
         this.vat = vat;
         this.vatAmount = vatAmount;
+        this.discountAmount = discountAmount;
+    }
+
+    public TerminalOrderItemEntity(String id, String orderId, String productId, int quantity, int vat, int discountAmount) {
+        super();
+        this.id = id;
+        this.orderId = orderId;
+        this.productId = productId;
+        this.quantity = quantity;
+        this.vat = vat;
         this.discountAmount = discountAmount;
     }
 
