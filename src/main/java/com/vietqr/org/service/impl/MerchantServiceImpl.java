@@ -1,5 +1,6 @@
 package com.vietqr.org.service.impl;
 
+import com.vietqr.org.constant.Constant;
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
 import com.vietqr.org.dto.common.ResponseObjectDTO;
@@ -14,18 +15,26 @@ import com.vietqr.org.utils.DateTimeUtil;
 import com.vietqr.org.utils.ExcelGeneratorUtil;
 import com.vietqr.org.utils.GeneratorUtil;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -286,6 +295,29 @@ public class MerchantServiceImpl implements MerchantService {
         return result;
     }
 
+    @Override
+    public ResponseMessageDTO importMerchantFromExcel(MultipartFile file) {
+        ResponseMessageDTO result;
+        try (InputStream inputStream = file.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            List<MerchantEntity> merchants = new ArrayList<>();
+            if (rowIterator.hasNext()) {
+                rowIterator.next();
+                Row row = rowIterator.next();
+                MerchantEntity merchant = createMerchantFromRow(row);
+                merchants.add(merchant);
+            }
+            merchantRepository.saveAll(merchants);
+            result = new ResponseMessageDTO(Status.SUCCESS, "");
+        } catch (Exception e) {
+            logger.error("ERROR importMerchantFromExcel: " + e.getMessage() + " at " + System.currentTimeMillis());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
+        return result;
+    }
+
     private String generateShortName(String fullName) {
         SecureRandom random = new SecureRandom();
         String shortName;
@@ -340,5 +372,51 @@ public class MerchantServiceImpl implements MerchantService {
             merchantEntity.setBusinessType(merchantRequestDTO.getBusinessType());
         }
         return merchantEntity;
+    }
+
+    private MerchantEntity createMerchantFromRow(Row row) {
+        MerchantEntity merchant = new MerchantEntity();
+        merchant.setId(UUID.randomUUID().toString());
+        merchant.setPublishId(generateUniquePublishId());
+        merchant.setName(getCellValueAsString(row.getCell(1)));
+        merchant.setFullName(getCellValueAsString(row.getCell(2)));
+        merchant.setAddress(getCellValueAsString(row.getCell(3)));
+        merchant.setNationalId(getCellValueAsInt(row.getCell(4)));
+        merchant.setVso(getCellValueAsString(row.getCell(5)));
+        merchant.setEmail(getCellValueAsString(row.getCell(6)));
+        merchant.setServiceType(getCellValueAsString(row.getCell(7)));
+        merchant.setBusinessSector(getCellValueAsString(row.getCell(8)));
+        String businessTypeStr = getCellValueAsString(row.getCell(9)).toLowerCase();
+        if (Constant.MERCHANT_BUSINESS_TYPE_PERSONAL.equalsIgnoreCase(businessTypeStr)) {
+            merchant.setBusinessType(0);
+        } else if (Constant.MERCHANT_BUSINESS_TYPE_BUSINESS.equalsIgnoreCase(businessTypeStr)) {
+            merchant.setBusinessType(1);
+        }
+        merchant.setStatus(true);
+        LocalDateTime now = LocalDateTime.now();
+        long time = now.toEpochSecond(ZoneOffset.UTC);
+        merchant.setTimeCreate(time);
+        return merchant;
+    }
+
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                return String.valueOf((long) cell.getNumericCellValue());
+            default:
+                return null;
+        }
+    }
+
+    private int getCellValueAsInt(Cell cell) {
+        if (cell == null || cell.getCellType() != CellType.NUMERIC) {
+            return 0;
+        }
+        return (int) cell.getNumericCellValue();
     }
 }
