@@ -33,4 +33,6 @@ public class Constant {
     };
     public static String MERCHANT_STAFF_TITLE = "Staff";
     public static String MERCHANT_STAFF_SHEET_NAME = "staff";
+    public static String MERCHANT_BUSINESS_TYPE_PERSONAL = "cá nhân";
+    public static String MERCHANT_BUSINESS_TYPE_BUSINESS = "doanh nghiệp";
 }

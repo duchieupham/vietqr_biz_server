@@ -7,6 +7,7 @@ import com.vietqr.org.security.Authorized;
 import com.vietqr.org.security.IdParam;
 import com.vietqr.org.security.TypeParam;
 import com.vietqr.org.service.MerchantService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -101,6 +103,12 @@ public class MerchantController {
                                                                    @RequestParam String oldMid, @RequestParam String newMid
                                                                    ) {
         ResponseMessageDTO response = merchantService.merchantDataTransfer(oldMid, newMid);
+        return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
+    }
+
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseMessageDTO> importMerchant(@RequestParam("file") MultipartFile file) {
+        ResponseMessageDTO response = merchantService.importMerchantFromExcel(file);
         return new ResponseEntity<>(response, StatusResponse.getStatusResponseMessage(response));
     }
 }
