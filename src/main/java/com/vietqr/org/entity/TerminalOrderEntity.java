@@ -6,40 +6,48 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "terminalOder")
+@Table(name = "terminal_order")
 public class TerminalOrderEntity {
     @Id
     @Column(name = "id")
     private String id;
-    @Column(name = "timeCreate")
-    private long timeCreate;
-    @Column(name = "timePaid")
+    @Column(name = "timeCreated", nullable = false)
+    private long timeCreated;
+    @Column(name = "timePaid", nullable = false)
     private long timePaid;
-    @Column(name = "status")
-    private boolean status;
-    @Column(name = "totalAmount")
-    private int totalAmount;
-    @Column(name = "vat")
+
+    /*
+    * Status
+    * 0: deleted
+    * 1: paid
+    * 2: waiting
+    * 3: canceled
+    * */
+    @Column(name = "status", nullable = false)
+    private int status;
+    @Column(name = "totalAmount", nullable = false)
+    private long totalAmount;
+    @Column(name = "vat", nullable = false)
     private double vat;
-    @Column(name = "vatAmount")
-    private int vatAmount;
-    @Column(name = "discountAmount")
-    private int discountAmount;
-    @Column(name = "code")
+    @Column(name = "vatAmount", nullable = false)
+    private long vatAmount;
+    @Column(name = "discountAmount", nullable = false)
+    private long discountAmount;
+    @Column(name = "code", nullable = false)
     private String code;
-    @Column(name = "staffId")
+    @Column(name = "staffId", nullable = false)
     private String staffId;
-    @Column(name = "customerId")
+    @Column(name = "customerId", nullable = false)
     private String customerId;
-    @Column(name = "tid")
+    @Column(name = "tid", nullable = false)
     private String tid;
 
     public TerminalOrderEntity() {
     }
 
-    public TerminalOrderEntity(String id, long timeCreate, long timePaid, boolean status, int totalAmount, double vat, int vatAmount, int discountAmount, String code, String staffId, String customerId, String tid) {
+    public TerminalOrderEntity(String id, long timeCreated, long timePaid, int status, long totalAmount, double vat, long vatAmount, long discountAmount, String code, String staffId, String customerId, String tid) {
         this.id = id;
-        this.timeCreate = timeCreate;
+        this.timeCreated = timeCreated;
         this.timePaid = timePaid;
         this.status = status;
         this.totalAmount = totalAmount;
@@ -60,12 +68,12 @@ public class TerminalOrderEntity {
         this.id = id;
     }
 
-    public long getTimeCreate() {
-        return timeCreate;
+    public long getTimeCreated() {
+        return timeCreated;
     }
 
-    public void setTimeCreate(long timeCreate) {
-        this.timeCreate = timeCreate;
+    public void setTimeCreated(long timeCreated) {
+        this.timeCreated = timeCreated;
     }
 
     public long getTimePaid() {
@@ -76,20 +84,12 @@ public class TerminalOrderEntity {
         this.timePaid = timePaid;
     }
 
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
-    }
-
-    public int getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(int totalAmount) {
-        this.totalAmount = totalAmount;
     }
 
     public double getVat() {
@@ -100,19 +100,23 @@ public class TerminalOrderEntity {
         this.vat = vat;
     }
 
-    public int getVatAmount() {
+    public void setTotalAmount(long totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public long getVatAmount() {
         return vatAmount;
     }
 
-    public void setVatAmount(int vatAmount) {
+    public void setVatAmount(long vatAmount) {
         this.vatAmount = vatAmount;
     }
 
-    public int getDiscountAmount() {
+    public long getDiscountAmount() {
         return discountAmount;
     }
 
-    public void setDiscountAmount(int discountAmount) {
+    public void setDiscountAmount(long discountAmount) {
         this.discountAmount = discountAmount;
     }
 

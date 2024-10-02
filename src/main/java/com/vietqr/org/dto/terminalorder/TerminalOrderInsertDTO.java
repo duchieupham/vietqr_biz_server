@@ -1,37 +1,35 @@
 package com.vietqr.org.dto.terminalorder;
 
+import com.vietqr.org.dto.terminalorderitem.TerminalOrderItemInsertDTO;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 public class TerminalOrderInsertDTO {
-    private long timePaid;
     private int totalAmount;
     private double vat;
-    private int vatAmount;
-    private int discountAmount;
+    @NotEmpty
     private String code;
+    @NotEmpty
     private String staffId;
+    @NotEmpty
     private String customerId;
+    @NotEmpty
     private String tid;
+    @NotNull
+    private List<TerminalOrderItemInsertDTO> terminalOrderItemList;
 
     public TerminalOrderInsertDTO() {
     }
 
-    public TerminalOrderInsertDTO(long timePaid, int totalAmount, double vat, int vatAmount, int discountAmount, String code, String staffId, String customerId, String tid) {
-        this.timePaid = timePaid;
+    public TerminalOrderInsertDTO(int totalAmount, double vat, String code, String staffId, String customerId, String tid) {
         this.totalAmount = totalAmount;
         this.vat = vat;
-        this.vatAmount = vatAmount;
-        this.discountAmount = discountAmount;
         this.code = code;
         this.staffId = staffId;
         this.customerId = customerId;
         this.tid = tid;
-    }
-
-    public long getTimePaid() {
-        return timePaid;
-    }
-
-    public void setTimePaid(long timePaid) {
-        this.timePaid = timePaid;
     }
 
     public int getTotalAmount() {
@@ -48,22 +46,6 @@ public class TerminalOrderInsertDTO {
 
     public void setVat(double vat) {
         this.vat = vat;
-    }
-
-    public int getVatAmount() {
-        return vatAmount;
-    }
-
-    public void setVatAmount(int vatAmount) {
-        this.vatAmount = vatAmount;
-    }
-
-    public int getDiscountAmount() {
-        return discountAmount;
-    }
-
-    public void setDiscountAmount(int discountAmount) {
-        this.discountAmount = discountAmount;
     }
 
     public String getCode() {
@@ -96,5 +78,13 @@ public class TerminalOrderInsertDTO {
 
     public void setTid(String tid) {
         this.tid = tid;
+    }
+
+    public List<TerminalOrderItemInsertDTO> getTerminalOrderItemList() {
+        return terminalOrderItemList;
+    }
+
+    public void setTerminalOrderItemList(List<TerminalOrderItemInsertDTO> terminalOrderItemList) {
+        this.terminalOrderItemList = terminalOrderItemList;
     }
 }

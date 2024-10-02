@@ -26,15 +26,15 @@ public class MerchantCustomerEntity implements Serializable {
     private String staffId;
     @Column(name = "status", nullable = false)
     private boolean status;
-    @Column(name = "timeCreate", nullable = false)
-    private long timeCreate;
+    @Column(name = "timeCreated", nullable = false)
+    private long timeCreated;
     @Column(name = "data", nullable = false)
     private String data;
 
     public MerchantCustomerEntity() {
     }
 
-    public MerchantCustomerEntity(String id, String mid, String tid, String userId, String phoneNo, String staffId, boolean status, long timeCreate, String data) {
+    public MerchantCustomerEntity(String id, String mid, String tid, String userId, String phoneNo, String staffId, boolean status, long timeCreated, String data) {
         this.id = id;
         this.mid = mid;
         this.tid = tid;
@@ -42,7 +42,7 @@ public class MerchantCustomerEntity implements Serializable {
         this.phoneNo = phoneNo;
         this.staffId = staffId;
         this.status = status;
-        this.timeCreate = timeCreate;
+        this.timeCreated = timeCreated;
         this.data = data;
     }
 
@@ -103,11 +103,11 @@ public class MerchantCustomerEntity implements Serializable {
     }
 
     public long getTimeCreate() {
-        return timeCreate;
+        return timeCreated;
     }
 
-    public void setTimeCreate(long timeCreate) {
-        this.timeCreate = timeCreate;
+    public void setTimeCreate(long timeCreated) {
+        this.timeCreated = timeCreated;
     }
 
     public String getData() {

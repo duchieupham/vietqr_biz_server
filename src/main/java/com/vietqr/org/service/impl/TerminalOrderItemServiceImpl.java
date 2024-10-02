@@ -44,12 +44,12 @@ public class TerminalOrderItemServiceImpl implements TerminalOrderItemService {
                         dto.getProductId(),
                         dto.getQuantity(),
                         dto.getVat(),
-                        dto.getDiscount()
+                        dto.getDiscount(),
+                        dto.getAmount()
                 );
-                entity.setAmount(optional.get().getAmount());
-                int vat = (int) Math.round(entity.getVat() * entity.getQuantity() * entity.getAmount() / 100.0);
+                long vat = (int) Math.round(entity.getVat() * entity.getQuantity() * entity.getAmount() / 100.0);
                 entity.setVatAmount(vat);
-                int total = entity.getAmount() * entity.getQuantity() + vat - entity.getDiscountAmount();
+                long total = entity.getAmount() * entity.getQuantity() + vat - entity.getDiscountAmount();
                 entity.setTotalAmount(total);
 
                 repo.save(entity);

@@ -20,15 +20,15 @@ public class TerminalOrderItemEntity implements Serializable {
     @Column(nullable = false)
     private int quantity;
     @Column(nullable = false)
-    private int amount;
+    private long amount;
     @Column(name = "total_amount", nullable = false)
-    private int totalAmount;
+    private long totalAmount;
     @Column(nullable = false)
-    private int vat;
+    private double vat;
     @Column(name = "vat_amount", nullable = false)
-    private int vatAmount;
+    private long vatAmount;
     @Column(name = "discount_amount", nullable = false)
-    private int discountAmount;
+    private long discountAmount;
 
     public TerminalOrderItemEntity() {
         super();
@@ -47,7 +47,7 @@ public class TerminalOrderItemEntity implements Serializable {
         this.discountAmount = discountAmount;
     }
 
-    public TerminalOrderItemEntity(String id, String orderId, String productId, int quantity, int vat, int discountAmount) {
+    public TerminalOrderItemEntity(String id, String orderId, String productId, int quantity, double vat, long discountAmount, long amount) {
         super();
         this.id = id;
         this.orderId = orderId;
@@ -55,6 +55,7 @@ public class TerminalOrderItemEntity implements Serializable {
         this.quantity = quantity;
         this.vat = vat;
         this.discountAmount = discountAmount;
+        this.amount = amount;
     }
 
     public String getId() {
@@ -89,43 +90,43 @@ public class TerminalOrderItemEntity implements Serializable {
         this.quantity = quantity;
     }
 
-    public int getAmount() {
+    public long getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(long amount) {
         this.amount = amount;
     }
 
-    public int getTotalAmount() {
+    public long getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(int totalAmount) {
+    public void setTotalAmount(long totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public int getVat() {
+    public double getVat() {
         return vat;
     }
 
-    public void setVat(int vat) {
+    public void setVat(double vat) {
         this.vat = vat;
     }
 
-    public int getVatAmount() {
+    public long getVatAmount() {
         return vatAmount;
     }
 
-    public void setVatAmount(int vatAmount) {
+    public void setVatAmount(long vatAmount) {
         this.vatAmount = vatAmount;
     }
 
-    public int getDiscountAmount() {
+    public long getDiscountAmount() {
         return discountAmount;
     }
 
-    public void setDiscountAmount(int discountAmount) {
+    public void setDiscountAmount(long discountAmount) {
         this.discountAmount = discountAmount;
     }
 }
