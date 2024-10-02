@@ -11,9 +11,11 @@ public class TerminalOrderInfoDTO {
 
     String staffId;
 
-    int totalAmount;
+    long totalAmount;
 
-    int vatAmount;
+    long vatAmount;
+
+    long discount;
 
     long timeCreated;
 
@@ -26,12 +28,13 @@ public class TerminalOrderInfoDTO {
     public TerminalOrderInfoDTO() {
     }
 
-    public TerminalOrderInfoDTO(String tid, String customerId, String staffId, int totalAmount, int vatAmount, long timeCreated, long timePaid, int status, List<ITerminalOrderItemDTO> items) {
+    public TerminalOrderInfoDTO(String tid, String customerId, String staffId, long totalAmount, long vatAmount, long discount, long timeCreated, long timePaid, int status, List<ITerminalOrderItemDTO> items) {
         this.tid = tid;
         this.customerId = customerId;
         this.staffId = staffId;
         this.totalAmount = totalAmount;
         this.vatAmount = vatAmount;
+        this.discount = discount;
         this.timeCreated = timeCreated;
         this.timePaid = timePaid;
         this.status = status;
@@ -62,20 +65,28 @@ public class TerminalOrderInfoDTO {
         this.staffId = staffId;
     }
 
-    public int getTotalAmount() {
+    public long getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(int totalAmount) {
+    public void setTotalAmount(long totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public int getVatAmount() {
+    public long getVatAmount() {
         return vatAmount;
     }
 
-    public void setVatAmount(int vatAmount) {
+    public void setVatAmount(long vatAmount) {
         this.vatAmount = vatAmount;
+    }
+
+    public long getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(long discount) {
+        this.discount = discount;
     }
 
     public long getTimeCreated() {

@@ -10,11 +10,20 @@ public class TerminalOrderItemInsertDTO {
 
     private int quantity;
 
-    private double vat;
-
     private long discount;
 
     private long amount;
+
+    public TerminalOrderItemInsertDTO() {
+    }
+
+    public TerminalOrderItemInsertDTO(String orderId, String productId, int quantity, long discount, long amount) {
+        this.orderId = orderId;
+        this.productId = productId;
+        this.quantity = quantity;
+        this.discount = discount;
+        this.amount = amount;
+    }
 
     public String getOrderId() {
         return orderId;
@@ -38,14 +47,6 @@ public class TerminalOrderItemInsertDTO {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public double getVat() {
-        return vat;
-    }
-
-    public void setVat(double vat) {
-        this.vat = vat;
     }
 
     public long getDiscount() {

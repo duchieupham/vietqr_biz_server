@@ -7,8 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class TerminalOrderInsertDTO {
-    private int totalAmount;
-    private double vat;
+    private long discount;
     @NotEmpty
     private String code;
     @NotEmpty
@@ -23,29 +22,21 @@ public class TerminalOrderInsertDTO {
     public TerminalOrderInsertDTO() {
     }
 
-    public TerminalOrderInsertDTO(int totalAmount, double vat, String code, String staffId, String customerId, String tid) {
-        this.totalAmount = totalAmount;
-        this.vat = vat;
+    public TerminalOrderInsertDTO(long discount, String code, String staffId, String customerId, String tid, List<TerminalOrderItemInsertDTO> terminalOrderItemList) {
+        this.discount = discount;
         this.code = code;
         this.staffId = staffId;
         this.customerId = customerId;
         this.tid = tid;
+        this.terminalOrderItemList = terminalOrderItemList;
     }
 
-    public int getTotalAmount() {
-        return totalAmount;
+    public long getDiscount() {
+        return discount;
     }
 
-    public void setTotalAmount(int totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public double getVat() {
-        return vat;
-    }
-
-    public void setVat(double vat) {
-        this.vat = vat;
+    public void setDiscount(long discount) {
+        this.discount = discount;
     }
 
     public String getCode() {

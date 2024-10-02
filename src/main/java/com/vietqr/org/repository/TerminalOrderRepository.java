@@ -18,6 +18,7 @@ public interface TerminalOrderRepository extends JpaRepository<TerminalOrderEnti
 
     @Query(value = "SELECT tid AS tid, customer_id AS customerId, "
             + "staff_id AS staffId, total_amount AS totalAmount, "
+            + "discount_amount AS discountAmount, "
             + "vat_amount AS vatAmount, time_created AS timeCreated, "
             + "time_paid AS timePaid, status AS status "
             + "FROM terminal_order "

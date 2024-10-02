@@ -9,6 +9,7 @@ import com.vietqr.org.dto.terminalorder.TerminalOrderInsertDTO;
 import com.vietqr.org.dto.terminalorderitem.ITerminalOrderItemDTO;
 import com.vietqr.org.dto.terminalorderitem.TerminalOrderItemInsertDTO;
 import com.vietqr.org.entity.TerminalOrderEntity;
+import com.vietqr.org.repository.SystemDefaultRepository;
 import com.vietqr.org.repository.TerminalOrderItemRepository;
 import com.vietqr.org.repository.TerminalOrderRepository;
 import com.vietqr.org.service.TerminalOrderItemService;
@@ -20,21 +21,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class TerminalOrderServiceImpl implements TerminalOrderService {
     private static final Logger logger = Logger.getLogger(TerminalOrderServiceImpl.class);
+
+    private final String LOG_ERROR = "Failed at TerminalOrderServiceImpl: ";
+
     private final TerminalOrderRepository terminalOrderRepository;
 
     private final TerminalOrderItemService terminalOrderItemService;
 
     private final TerminalOrderItemRepository terminalOrderItemRepository;
 
-    public TerminalOrderServiceImpl(TerminalOrderRepository terminalOrderRepository, TerminalOrderItemService terminalOrderItemService, TerminalOrderItemRepository terminalOrderItemRepository) {
+    private final SystemDefaultRepository systemDefaultRepository;
+
+    public TerminalOrderServiceImpl(TerminalOrderRepository terminalOrderRepository, TerminalOrderItemService terminalOrderItemService, TerminalOrderItemRepository terminalOrderItemRepository, SystemDefaultRepository systemDefaultRepository) {
         this.terminalOrderRepository = terminalOrderRepository;
         this.terminalOrderItemService = terminalOrderItemService;
         this.terminalOrderItemRepository = terminalOrderItemRepository;
+        this.systemDefaultRepository = systemDefaultRepository;
     }
 
     @Override
@@ -42,22 +48,16 @@ public class TerminalOrderServiceImpl implements TerminalOrderService {
         ResponseMessageDTO result;
         try {
             String orderId = GeneratorUtil.generateUniqueId(terminalOrderRepository);
-            AtomicLong amountDiscount = new AtomicLong(0);
-            AtomicLong amountVat = new AtomicLong(0);
+            double systemVat = systemDefaultRepository.getSystemVat();
+            long amountDiscountItems = terminalOrderInsertDTO.getTerminalOrderItemList()
+                    .stream()
+                    .mapToLong(TerminalOrderItemInsertDTO::getDiscount)
+                    .sum();
+            long amountItems = terminalOrderInsertDTO.getTerminalOrderItemList()
+                    .stream()
+                    .mapToLong(item -> item.getAmount() * item.getQuantity())
+                    .sum();
 
-            amountDiscount.set(
-                    terminalOrderInsertDTO.getTerminalOrderItemList()
-                            .stream()
-                            .mapToLong(TerminalOrderItemInsertDTO::getDiscount)
-                            .sum()
-            );
-
-            amountVat.set(
-                    terminalOrderInsertDTO.getTerminalOrderItemList()
-                            .stream()
-                            .mapToLong(TerminalOrderItemInsertDTO::getVat)
-                            .sum()
-            );
             for (TerminalOrderItemInsertDTO item : terminalOrderInsertDTO.getTerminalOrderItemList()) {
                 item.setOrderId(orderId);
                 ResponseMessageDTO itemResult = terminalOrderItemService.insertTerminalOrderItem(item);
@@ -73,10 +73,10 @@ public class TerminalOrderServiceImpl implements TerminalOrderService {
                     DateTimeUtil.getNowUTC(),
                     0,
                     2,
-                    terminalOrderInsertDTO.getTotalAmount(),
-                    terminalOrderInsertDTO.getVat(),
-                    amountVat.get(),
-                    amountDiscount.get(),
+                    Math.round(amountItems * (1 + systemVat) - amountDiscountItems - terminalOrderInsertDTO.getDiscount()),
+                    systemVat,
+                    Math.round(amountItems * systemVat),
+                    terminalOrderInsertDTO.getDiscount(),
                     terminalOrderInsertDTO.getCode().trim(),
                     terminalOrderInsertDTO.getStaffId().trim(),
                     terminalOrderInsertDTO.getCustomerId().trim(),
@@ -84,7 +84,6 @@ public class TerminalOrderServiceImpl implements TerminalOrderService {
             );
 
             result = new ResponseMessageDTO(Status.SUCCESS, "");
-
 
             terminalOrderRepository.save(terminalOrderEntity);
         } catch (Exception e) {
@@ -107,6 +106,7 @@ public class TerminalOrderServiceImpl implements TerminalOrderService {
                         info.get().getStaffId(),
                         info.get().getTotalAmount(),
                         info.get().getVatAmount(),
+                        info.get().getDiscountAmount(),
                         info.get().getTimeCreated(),
                         info.get().getTimePaid(),
                         info.get().getStatus(),

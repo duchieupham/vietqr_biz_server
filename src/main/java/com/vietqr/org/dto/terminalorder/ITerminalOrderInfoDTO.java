@@ -7,9 +7,11 @@ public interface ITerminalOrderInfoDTO {
 
     String getStaffId();
 
-    int getTotalAmount();
+    long getTotalAmount();
 
-    int getVatAmount();
+    long getDiscountAmount();
+
+    long getVatAmount();
 
     long getTimeCreated();
 
