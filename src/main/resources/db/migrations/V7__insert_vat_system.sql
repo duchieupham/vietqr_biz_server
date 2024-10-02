@@ -1,0 +1,2 @@
+INSERT INTO system_default (id, vat)
+VALUES ("361432e0-6e24-481b-8839-b4349c517526", 0.08);

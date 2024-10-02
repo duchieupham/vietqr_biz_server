@@ -2,49 +2,147 @@ package com.vietqr.org.service.impl;
 
 import com.vietqr.org.constant.Status;
 import com.vietqr.org.dto.common.ResponseMessageDTO;
+import com.vietqr.org.dto.common.ResponseObjectDTO;
+import com.vietqr.org.dto.terminalorder.ITerminalOrderInfoDTO;
+import com.vietqr.org.dto.terminalorder.TerminalOrderInfoDTO;
 import com.vietqr.org.dto.terminalorder.TerminalOrderInsertDTO;
+import com.vietqr.org.dto.terminalorderitem.ITerminalOrderItemDTO;
+import com.vietqr.org.dto.terminalorderitem.TerminalOrderItemInsertDTO;
 import com.vietqr.org.entity.TerminalOrderEntity;
+import com.vietqr.org.repository.SystemDefaultRepository;
+import com.vietqr.org.repository.TerminalOrderItemRepository;
 import com.vietqr.org.repository.TerminalOrderRepository;
+import com.vietqr.org.service.TerminalOrderItemService;
 import com.vietqr.org.service.TerminalOrderService;
+import com.vietqr.org.utils.DateTimeUtil;
+import com.vietqr.org.utils.GeneratorUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.UUID;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TerminalOrderServiceImpl implements TerminalOrderService {
     private static final Logger logger = Logger.getLogger(TerminalOrderServiceImpl.class);
+
+    private final String LOG_ERROR = "Failed at TerminalOrderServiceImpl: ";
+
     private final TerminalOrderRepository terminalOrderRepository;
 
-    public TerminalOrderServiceImpl(TerminalOrderRepository terminalOrderRepository) {
+    private final TerminalOrderItemService terminalOrderItemService;
+
+    private final TerminalOrderItemRepository terminalOrderItemRepository;
+
+    private final SystemDefaultRepository systemDefaultRepository;
+
+    public TerminalOrderServiceImpl(TerminalOrderRepository terminalOrderRepository, TerminalOrderItemService terminalOrderItemService, TerminalOrderItemRepository terminalOrderItemRepository, SystemDefaultRepository systemDefaultRepository) {
         this.terminalOrderRepository = terminalOrderRepository;
+        this.terminalOrderItemService = terminalOrderItemService;
+        this.terminalOrderItemRepository = terminalOrderItemRepository;
+        this.systemDefaultRepository = systemDefaultRepository;
     }
 
     @Override
-    public ResponseMessageDTO insertTerminalOder(TerminalOrderInsertDTO terminalOrderInsertDTO) {
+    public ResponseMessageDTO insertTerminalOrder(TerminalOrderInsertDTO terminalOrderInsertDTO) {
         ResponseMessageDTO result;
         try {
-            TerminalOrderEntity terminalOrderEntity = new TerminalOrderEntity();
-            terminalOrderEntity.setId(UUID.randomUUID().toString());
-            LocalDateTime now = LocalDateTime.now();
-            long time = now.toEpochSecond(ZoneOffset.UTC);
-            terminalOrderEntity.setTimeCreate(time);
-            terminalOrderEntity.setTimePaid(terminalOrderInsertDTO.getTimePaid());
-            terminalOrderEntity.setStatus(true);
-            terminalOrderEntity.setTotalAmount(terminalOrderInsertDTO.getTotalAmount());
-            terminalOrderEntity.setVat(terminalOrderInsertDTO.getVat());
-            terminalOrderEntity.setVatAmount(terminalOrderInsertDTO.getVatAmount());
-            terminalOrderEntity.setDiscountAmount(terminalOrderInsertDTO.getDiscountAmount());
-            terminalOrderEntity.setCode(terminalOrderInsertDTO.getCode());
-            terminalOrderEntity.setStaffId(terminalOrderInsertDTO.getStaffId());
-            terminalOrderEntity.setCustomerId(terminalOrderInsertDTO.getCustomerId());
-            terminalOrderEntity.setTid(terminalOrderInsertDTO.getTid());
-            terminalOrderRepository.save(terminalOrderEntity);
+            String orderId = GeneratorUtil.generateUniqueId(terminalOrderRepository);
+            double systemVat = systemDefaultRepository.getSystemVat();
+            long amountDiscountItems = terminalOrderInsertDTO.getTerminalOrderItemList()
+                    .stream()
+                    .mapToLong(TerminalOrderItemInsertDTO::getDiscount)
+                    .sum();
+            long amountItems = terminalOrderInsertDTO.getTerminalOrderItemList()
+                    .stream()
+                    .mapToLong(item -> item.getAmount() * item.getQuantity())
+                    .sum();
+
+            for (TerminalOrderItemInsertDTO item : terminalOrderInsertDTO.getTerminalOrderItemList()) {
+                item.setOrderId(orderId);
+                ResponseMessageDTO itemResult = terminalOrderItemService.insertTerminalOrderItem(item);
+
+                // rollback and return error
+                if (itemResult.getStatus().equals(Status.FAILED)) {
+                    return itemResult;
+                }
+            }
+
+            TerminalOrderEntity terminalOrderEntity = new TerminalOrderEntity(
+                    orderId,
+                    DateTimeUtil.getNowUTC(),
+                    0,
+                    2,
+                    Math.round(amountItems * (1 + systemVat) - amountDiscountItems - terminalOrderInsertDTO.getDiscount()),
+                    systemVat,
+                    Math.round(amountItems * systemVat),
+                    terminalOrderInsertDTO.getDiscount(),
+                    terminalOrderInsertDTO.getCode().trim(),
+                    terminalOrderInsertDTO.getStaffId().trim(),
+                    terminalOrderInsertDTO.getCustomerId().trim(),
+                    terminalOrderInsertDTO.getTid().trim()
+            );
+
             result = new ResponseMessageDTO(Status.SUCCESS, "");
+
+            terminalOrderRepository.save(terminalOrderEntity);
         } catch (Exception e) {
             logger.error("insertTerminalOder ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
+        return result;
+    }
+
+    @Override
+    public Object findTerminalOrderInfoById(String toId) {
+        Object result;
+        try {
+            Optional<ITerminalOrderInfoDTO> info = terminalOrderRepository.findTerminalOderInfoById(toId);
+            List<ITerminalOrderItemDTO> items = terminalOrderItemRepository.findTerminalOrderItemByOrderId(toId);
+            if (info.isPresent()) {
+                TerminalOrderInfoDTO data = new TerminalOrderInfoDTO(
+                        info.get().getTid(),
+                        info.get().getCustomerId(),
+                        info.get().getStaffId(),
+                        info.get().getTotalAmount(),
+                        info.get().getVatAmount(),
+                        info.get().getDiscountAmount(),
+                        info.get().getTimeCreated(),
+                        info.get().getTimePaid(),
+                        info.get().getStatus(),
+                        items
+                );
+                result = new ResponseObjectDTO(Status.SUCCESS, data);
+            } else {
+                result = new ResponseMessageDTO(Status.FAILED, "");
+            }
+        } catch (Exception e) {
+            logger.error("findTerminalOrderInfoById ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
+            result = new ResponseMessageDTO(Status.FAILED, "E05");
+        }
+        return result;
+    }
+
+    @Override
+    public ResponseMessageDTO updateTerminalOrderStatusById(String toId, int status) {
+        ResponseMessageDTO result;
+        try {
+            switch (status) {
+                case 0:
+                case 3:
+                    terminalOrderRepository.updateTerminalOderStatusById(toId, status);
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                    break;
+                case 1:
+                    terminalOrderRepository.updateTerminalOderPaidById(toId, DateTimeUtil.getNowUTC());
+                    result = new ResponseMessageDTO(Status.SUCCESS, "");
+                    break;
+                default:
+                    result = new ResponseMessageDTO(Status.FAILED, "");
+            }
+
+        } catch (Exception e) {
+            logger.error("updateTerminalOrderStatusById ERROR: " + e.getMessage() + " at " + System.currentTimeMillis());
             result = new ResponseMessageDTO(Status.FAILED, "E05");
         }
         return result;

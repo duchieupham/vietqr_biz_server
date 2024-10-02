@@ -3,7 +3,6 @@ package com.vietqr.org.dto.terminalorderitem;
 import javax.validation.constraints.NotEmpty;
 
 public class TerminalOrderItemInsertDTO {
-    @NotEmpty
     private String orderId;
 
     @NotEmpty
@@ -11,9 +10,20 @@ public class TerminalOrderItemInsertDTO {
 
     private int quantity;
 
-    private int vat;
+    private long discount;
 
-    private int discount;
+    private long amount;
+
+    public TerminalOrderItemInsertDTO() {
+    }
+
+    public TerminalOrderItemInsertDTO(String orderId, String productId, int quantity, long discount, long amount) {
+        this.orderId = orderId;
+        this.productId = productId;
+        this.quantity = quantity;
+        this.discount = discount;
+        this.amount = amount;
+    }
 
     public String getOrderId() {
         return orderId;
@@ -39,19 +49,19 @@ public class TerminalOrderItemInsertDTO {
         this.quantity = quantity;
     }
 
-    public int getVat() {
-        return vat;
-    }
-
-    public void setVat(int vat) {
-        this.vat = vat;
-    }
-
-    public int getDiscount() {
+    public long getDiscount() {
         return discount;
     }
 
-    public void setDiscount(int discount) {
+    public void setDiscount(long discount) {
         this.discount = discount;
+    }
+
+    public long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 }

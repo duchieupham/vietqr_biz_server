@@ -9,6 +9,7 @@ import com.vietqr.org.dto.terminalorderitem.ITerminalOrderItemIdDTO;
 import com.vietqr.org.dto.terminalorderitem.TerminalOrderItemInsertDTO;
 import com.vietqr.org.entity.TerminalOrderItemEntity;
 import com.vietqr.org.repository.ProductPriceRepository;
+import com.vietqr.org.repository.SystemDefaultRepository;
 import com.vietqr.org.repository.TerminalOrderItemRepository;
 import com.vietqr.org.service.TerminalOrderItemService;
 import com.vietqr.org.utils.GeneratorUtil;
@@ -25,10 +26,13 @@ public class TerminalOrderItemServiceImpl implements TerminalOrderItemService {
 
     private final TerminalOrderItemRepository repo;
 
+    private final SystemDefaultRepository systemDefaultRepository;
+
     private final ProductPriceRepository productPriceRepository;
 
-    public TerminalOrderItemServiceImpl(TerminalOrderItemRepository repo, ProductPriceRepository productPriceRepository) {
+    public TerminalOrderItemServiceImpl(TerminalOrderItemRepository repo, SystemDefaultRepository systemDefaultRepository, ProductPriceRepository productPriceRepository) {
         this.repo = repo;
+        this.systemDefaultRepository = systemDefaultRepository;
         this.productPriceRepository = productPriceRepository;
     }
 
@@ -37,19 +41,21 @@ public class TerminalOrderItemServiceImpl implements TerminalOrderItemService {
         ResponseMessageDTO result = null;
         try {
             Optional<IProductPriceDTO> optional = productPriceRepository.findProductPriceByProductId(dto.getProductId());
+            double systemVat = systemDefaultRepository.getSystemVat();
             if (optional.isPresent()) {
                 TerminalOrderItemEntity entity = new TerminalOrderItemEntity(
                         GeneratorUtil.generateUniqueId(repo),
                         dto.getOrderId(),
                         dto.getProductId(),
                         dto.getQuantity(),
-                        dto.getVat(),
-                        dto.getDiscount()
+                        systemVat,
+                        dto.getDiscount(),
+                        optional.get().getAmount()
                 );
-                entity.setAmount(optional.get().getAmount());
-                int vat = (int) Math.round(entity.getVat() * entity.getQuantity() * entity.getAmount() / 100.0);
+                long vat = Math.round(systemVat * entity.getQuantity() * entity.getAmount());
+                long total = entity.getAmount() * entity.getQuantity() + vat - entity.getDiscountAmount();
+
                 entity.setVatAmount(vat);
-                int total = entity.getAmount() * entity.getQuantity() + vat - entity.getDiscountAmount();
                 entity.setTotalAmount(total);
 
                 repo.save(entity);
